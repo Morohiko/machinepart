@@ -1,6 +1,6 @@
-#include "stdio.h"
+#include "log.h"
 
 int main() {
-    printf("hello world");
+    print("hello world");
     return 0;
 }

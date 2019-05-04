@@ -3,12 +3,10 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-
 #include <assert.h>
 
 #include "string.h"
-#include "stdio.h"
-
+#include "log.h"
 #include "wifi.h"
 
 // by default s_addr = htonl(INADDR_ANY), all interfaces
@@ -19,7 +17,7 @@ int create_tcp_socket(struct tcp_socket *sock, int port) {
     sock->connfd = 0;
    
     if (sock->listenfd <= 0) {
-        printf("ERROR: cannot create socket\n");
+        print("ERROR: cannot create socket");
 	return -1;
     }
 
@@ -30,7 +28,7 @@ int create_tcp_socket(struct tcp_socket *sock, int port) {
     bind(sock->listenfd, (struct sockaddr*)&sock->serv_addr, sizeof(sock->serv_addr));
 
 // Make socket pasive
-    printf("DEBUG: socket created\n");
+    print("DEBUG: socket created");
 
     return 0;
 }
@@ -38,7 +36,7 @@ int create_tcp_socket(struct tcp_socket *sock, int port) {
 int listen_tcp_connection(struct tcp_socket *sock, int max_connection) {
     assert(sock);
     if (sock->listenfd < 0) {
-        printf("ERROR: cannot start listen socket cause fd = %d\n", sock->listenfd);
+        print("ERROR: cannot start listen socket cause fd = %d", sock->listenfd);
 	return -1;
     }
 
@@ -49,12 +47,12 @@ int accept_tcp_connection(struct tcp_socket *sock) {
     assert(sock);
 
     if (sock->connfd < 0) {
-        printf("ERROR: cannot accept, config is %d\n", sock->connfd);
+        print("ERROR: cannot accept, config is %d", sock->connfd);
 	return -1;
     }
 
     sock->connfd = accept(sock->listenfd, (struct sockaddr*)NULL, NULL);
-    printf("DEBUG: accepted!\n");
+    print("DEBUG: accepted!");
     return 0;
 }
 
@@ -62,11 +60,11 @@ int send_tcp_message(struct tcp_socket *sock, char *msg) {
     assert(sock); assert(msg);
 
     if (sock->connfd <= 0) {
-        printf("ERROR: socket was not created, maybe accept it?\n");
+        print("ERROR: socket was not created, maybe accept it?");
 	return -1;
     }
 
-    printf("DEBUG: send message \"%s\"\n", msg);
+    print("DEBUG: send message \"%s\"", msg);
 
     send(sock->connfd, msg, strlen(msg), 0);
 
@@ -77,13 +75,13 @@ int recv_tcp_message(struct tcp_socket *sock, char *msg) {
     assert(sock); assert(msg);
 
     if (sock->connfd <= 0) {
-        printf("ERROR: socket was not created, maybe accept it?\n");
+        print("ERROR: socket was not created, maybe accept it?");
 	return -1;
     }
 
     ssize_t size = recv(sock->connfd, msg, strlen(msg), 0);
 
-    printf("DEBUG: recv tcp size = %zu msg = %s\n", size, msg);
+    print("DEBUG: recv tcp size = %zu msg = %s", size, msg);
 
     return 0;
 }
@@ -92,20 +90,20 @@ int close_socket(struct tcp_socket *sock) {
     assert(sock);
 
     if (sock->connfd <= 0) {
-        printf("ERROR: cannot close socket, connfd = %d\n", sock->connfd);
+        print("ERROR: cannot close socket, connfd = %d", sock->connfd);
 	return -1;
     }
 
     close(sock->connfd);
 
     if (sock->listenfd <= 0) {
-        printf("ERROR: cannot close socket, listenfd = %d\n", sock->listenfd);
+        print("ERROR: cannot close socket, listenfd = %d", sock->listenfd);
 	return -1;
     }
 
     close(sock->listenfd);
 
-    printf("DEBUG: socket was closed\n");
+    print("DEBUG: socket was closed");
 
     return 0;
 }
