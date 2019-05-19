@@ -80,7 +80,10 @@ int recv_tcp_message(struct tcp_socket *sock, char *msg) {
     }
 
     ssize_t size = recv(sock->connfd, msg, strlen(msg), 0);
-
+    if (size == 0) {
+        print("ERROR: recv tcp message size == 0");
+	return -1;
+    }
     print("DEBUG: recv tcp size = %zu msg = %s", size, msg);
 
     return 0;
