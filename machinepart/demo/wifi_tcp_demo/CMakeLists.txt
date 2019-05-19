@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-set(WIFI_DEMO_NAME wifi_demo)
+set(WIFI_DEMO_NAME wifi_tcp_demo)
 
 set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 

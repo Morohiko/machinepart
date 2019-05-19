@@ -90,13 +90,10 @@ int recv_message_through_tcp(int port, char *msg, int quantity) {
 }
 
 int main() {
-    print("hello world");
-
-    int status = 0;
-
     char *message = "test123";
-//    char message[100];
     send_message_through_tcp(WIFI_PORT, message, 5);
+
+//    char message[100];
 //    recv_message_through_tcp(WIFI_PORT, message, 5);
 
     return 0;
