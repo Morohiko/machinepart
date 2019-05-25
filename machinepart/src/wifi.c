@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <assert.h>
 
+#include "config.h"
 #include "string.h"
 #include "log.h"
 #include "wifi.h"
@@ -26,8 +27,6 @@ int create_tcp_socket(struct tcp_socket *sock, int port) {
     sock->serv_addr.sin_port = htons(port);
 
     bind(sock->listenfd, (struct sockaddr*)&sock->serv_addr, sizeof(sock->serv_addr));
-
-// Make socket pasive
     print("DEBUG: socket created");
 
     return 0;
@@ -89,7 +88,7 @@ int recv_tcp_message(struct tcp_socket *sock, char *msg) {
     return 0;
 }
 
-int close_socket(struct tcp_socket *sock) {
+int close_tcp_socket(struct tcp_socket *sock) {
     assert(sock);
 
     if (sock->connfd <= 0) {
@@ -111,4 +110,108 @@ int close_socket(struct tcp_socket *sock) {
     return 0;
 }
 
+int create_udp_socket(struct udp_socket *sock,
+#ifdef WITH_SELECTED_IP
+                      const char *local_ip, const char *target_ip,
+#endif
+                      int local_port, int target_port) {
+    assert(sock);
 
+    sock->sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
+   
+    if (sock->sock_fd <= 0) {
+        print("ERROR: cannot create socket");
+	return -1;
+    }
+
+    bzero(&sock->local_sock, sizeof(sock->local_sock));
+    sock->local_sock.sin_family = AF_INET;
+#ifndef WITH_SELECTED_IP
+    sock->target_sock.sin_addr.s_addr = htonl(INADDR_ANY);
+#endif
+    sock->local_sock.sin_port = htons(local_port);
+
+#ifdef WITH_SELECTED_IP
+    assert(local_ip);
+
+    if (!inet_aton(local_ip, &sock->local_sock.sin_addr)) {
+        print("ERROR: cannot do inet_aton, local_ip = %s", local_ip);
+        return -1;
+    }
+#endif
+
+    bind(sock->sock_fd, (struct sockaddr*)&sock->local_sock, sizeof(sock->local_sock));
+
+    print("DEBUG: local socket created with port = %d", local_port);
+#ifdef WITH_SELECTED_IP
+    print("DEBUG: local ip = %s", local_ip);
+#endif
+
+    bzero(&sock->target_sock, sizeof(sock->target_sock));
+    sock->target_sock.sin_family = AF_INET;
+#ifndef WITH_SELECTED_IP
+    sock->target_sock.sin_addr.s_addr = htonl(INADDR_ANY);
+#endif
+    sock->target_sock.sin_port = htons(target_port);
+
+#ifdef WITH_SELECTED_IP
+    assert(target_ip);
+
+    if (!inet_aton(target_ip, &sock->target_sock.sin_addr)) {
+        print("ERROR: cannot do inet_aton, local_ip = %s", local_ip);
+        return -1;
+    }
+#endif
+
+    print("DEBUG: target sock is on port = %d", target_port);
+#ifdef WITH_SELECTED_IP
+    print("DEBUG: target ip = %s", target_ip);
+#endif
+
+    return 0;
+}
+
+int send_udp_message(struct udp_socket *sock, char *msg) {
+    assert(sock); assert(msg);
+
+    if (sock->sock_fd <= 0) {
+        print("ERROR: socket was not created, maybe accept it?");
+	return -1;
+    }
+
+    print("DEBUG: send message \"%s\"", msg);
+
+    sendto(sock->sock_fd, msg, strlen(msg), 0, (struct sockaddr*)&sock->target_sock, sizeof(sock->target_sock));
+
+    return 0;
+}
+
+int recv_udp_message(struct udp_socket *sock, char *msg) {
+    assert(sock); assert(msg);
+
+    if (sock->sock_fd <= 0) {
+        print("ERROR: socket was not created, maybe accept it?");
+	return -1;
+    }
+
+
+    recvfrom(sock->sock_fd, msg, strlen(msg), 0, (struct sockaddr*)&sock->target_sock, sizeof(sock->target_sock));
+
+    print("DEBUG: received message \"%s\"", msg);
+
+    return 0;
+}
+
+int close_udp_socket(struct udp_socket *sock) {
+    assert(sock);
+
+    if (sock->sock_fd < 0) {
+        print("ERROR: cannot close udp socket cause fd = %d", sock->sock_fd);
+	return -1;
+    }
+
+    close(sock->sock_fd);
+
+    print("DEBUG: udp socket is closed");
+    return 0;
+}

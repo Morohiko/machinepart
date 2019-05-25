@@ -1,0 +1,10 @@
+
+#define MAX_TCP_CONNECTION 10
+#define LOCAL_PORT 3333
+#define TARGET_PORT 3334
+
+#define WITH_SELECTED_IP
+#ifdef WITH_SELECTED_IP
+  #define LOCAL_IP "192.168.43.154"
+  #define TARGET_IP "192.168.43.123"
+#endif
