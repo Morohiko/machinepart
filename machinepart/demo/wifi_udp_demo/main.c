@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <assert.h>
 
-int send_message_through_udp(char *msg, int quantity) {
+int send_message_through_udp(char *msg, size_t msg_size, int quantity) {
     assert(msg);
 
     struct udp_socket sock;
@@ -23,7 +23,7 @@ int send_message_through_udp(char *msg, int quantity) {
     print("DEBUG: socket created");
 
     while(quantity--) {
-        if (send_udp_message(&sock, msg) < 0) {
+        if (send_udp_message(&sock, msg, msg_size) < 0) {
 	    print("ERROR: cannot send message");
 	    break;
 	}
@@ -41,7 +41,7 @@ int send_message_through_udp(char *msg, int quantity) {
     return 0;
 }
 
-int recv_message_through_udp(char *msg, int quantity) {
+int recv_message_through_udp(char *msg, size_t msg_size, int quantity) {
     assert(msg);
 
     struct udp_socket sock;
@@ -58,7 +58,7 @@ int recv_message_through_udp(char *msg, int quantity) {
     print("DEBUG: socket created");
 
     while(quantity--) {
-        if (recv_udp_message(&sock, msg) < 0) {
+        if (recv_udp_message(&sock, msg, msg_size) < 0) {
 	    print("ERROR: cannot send message");
 	    break;
 	}
@@ -80,11 +80,11 @@ int recv_message_through_udp(char *msg, int quantity) {
 }
 
 int main() {
-    char *message = "test123";
-    send_message_through_udp(message, 20);
+//    char *message = "test123";
+//    send_message_through_udp(message, 8, 20);
 
-//    char message[100];
-//    recv_message_through_udp(message, 5);
+    char message[100];
+    recv_message_through_udp(message, 100, 5);
 
     return 0;
 }

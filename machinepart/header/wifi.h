@@ -14,8 +14,8 @@ int listen_tcp_connection(struct tcp_socket *sock, int max_connection);
 int accept_tcp_connection(struct tcp_socket *sock);
 int close_tcp_socket();
 
-int send_tcp_message(struct tcp_socket *sock, char *msg);
-int recv_tcp_message(struct tcp_socket *sock, char *msg);
+int send_tcp_message(struct tcp_socket *sock, char *msg, size_t msg_size);
+int recv_tcp_message(struct tcp_socket *sock, char *msg, size_t msg_size);
 
 
 struct udp_socket {
@@ -31,5 +31,5 @@ int create_udp_socket(struct udp_socket *sock,
 #endif
                       int local_port, int target_port);
 int close_udp_socket(struct udp_socket *sock);
-int send_udp_message(struct udp_socket *sock, char *msg);
-int recv_udp_message(struct udp_socket *sock, char *msg);
+int send_udp_message(struct udp_socket *sock, char *msg, size_t msg_size);
+int recv_udp_message(struct udp_socket *sock, char *msg, size_t msg_size);

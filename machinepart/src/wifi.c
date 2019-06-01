@@ -55,7 +55,7 @@ int accept_tcp_connection(struct tcp_socket *sock) {
     return 0;
 }
 
-int send_tcp_message(struct tcp_socket *sock, char *msg) {
+int send_tcp_message(struct tcp_socket *sock, char *msg, size_t msg_size) {
     assert(sock); assert(msg);
 
     if (sock->connfd <= 0) {
@@ -65,12 +65,12 @@ int send_tcp_message(struct tcp_socket *sock, char *msg) {
 
     print("DEBUG: send message \"%s\"", msg);
 
-    send(sock->connfd, msg, strlen(msg), 0);
+    send(sock->connfd, msg, msg_size, 0);
 
     return 0;
 }
 
-int recv_tcp_message(struct tcp_socket *sock, char *msg) {
+int recv_tcp_message(struct tcp_socket *sock, char *msg, size_t msg_size) {
     assert(sock); assert(msg);
 
     if (sock->connfd <= 0) {
@@ -78,7 +78,7 @@ int recv_tcp_message(struct tcp_socket *sock, char *msg) {
 	return -1;
     }
 
-    ssize_t size = recv(sock->connfd, msg, strlen(msg), 0);
+    ssize_t size = recv(sock->connfd, msg, msg_size, 0);
     if (size == 0) {
         print("ERROR: recv tcp message size == 0");
 	return -1;
@@ -171,7 +171,7 @@ int create_udp_socket(struct udp_socket *sock,
     return 0;
 }
 
-int send_udp_message(struct udp_socket *sock, char *msg) {
+int send_udp_message(struct udp_socket *sock, char *msg, size_t msg_size) {
     assert(sock); assert(msg);
 
     if (sock->sock_fd <= 0) {
@@ -181,12 +181,12 @@ int send_udp_message(struct udp_socket *sock, char *msg) {
 
     print("DEBUG: send message \"%s\"", msg);
 
-    sendto(sock->sock_fd, msg, strlen(msg), 0, (struct sockaddr*)&sock->target_sock, sizeof(sock->target_sock));
+    sendto(sock->sock_fd, msg, msg_size, 0, (struct sockaddr*)&sock->target_sock, sizeof(sock->target_sock));
 
     return 0;
 }
 
-int recv_udp_message(struct udp_socket *sock, char *msg) {
+int recv_udp_message(struct udp_socket *sock, char *msg, size_t msg_size) {
     assert(sock); assert(msg);
 
     if (sock->sock_fd <= 0) {
@@ -195,9 +195,9 @@ int recv_udp_message(struct udp_socket *sock, char *msg) {
     }
 
 
-    recvfrom(sock->sock_fd, msg, strlen(msg), 0, (struct sockaddr*)&sock->target_sock, sizeof(sock->target_sock));
+    recvfrom(sock->sock_fd, msg, msg_size, 0, (struct sockaddr*)&sock->target_sock, sizeof(sock->target_sock));
 
-    print("DEBUG: received message \"%s\"", msg);
+    print("DEBUG: received message: %s", msg);
 
     return 0;
 }

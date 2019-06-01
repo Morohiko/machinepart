@@ -6,5 +6,5 @@
 #define WITH_SELECTED_IP
 #ifdef WITH_SELECTED_IP
   #define LOCAL_IP "192.168.43.154"
-  #define TARGET_IP "192.168.43.123"
+  #define TARGET_IP "192.168.43.47"
 #endif

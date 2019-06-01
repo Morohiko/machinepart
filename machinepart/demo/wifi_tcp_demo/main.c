@@ -8,7 +8,7 @@
 #define WIFI_PORT 3333
 #define MAX_TCP_CONNECTION 10
 
-int send_message_through_tcp(int port, char *msg, int quantity) {
+int send_message_through_tcp(int port, char *msg, size_t msg_size, int quantity) {
     assert(msg);
 
     struct tcp_socket sock;
@@ -33,7 +33,7 @@ int send_message_through_tcp(int port, char *msg, int quantity) {
     print("DEBUG: connection accepted");
 
     while(quantity--) {
-        if (send_tcp_message(&sock, msg) < 0) {
+        if (send_tcp_message(&sock, msg, msg_size) < 0) {
 	    print("ERROR: cannot send message");
 	    break;
 	}
@@ -41,14 +41,14 @@ int send_message_through_tcp(int port, char *msg, int quantity) {
         sleep(1);
     }
 
-    close_socket(&sock);
+    close_tcp_socket(&sock);
 
     print("DEBUG: look like send msg through tcp is good working");
 
     return 0;
 }
 
-int recv_message_through_tcp(int port, char *msg, int quantity) {
+int recv_message_through_tcp(int port, char *msg, size_t msg_size, int quantity) {
     assert(msg);
 
     struct tcp_socket sock;
@@ -73,7 +73,7 @@ int recv_message_through_tcp(int port, char *msg, int quantity) {
     print("DEBUG: connection accepted");
 
     while(quantity--) {
-        if (recv_tcp_message(&sock, msg) < 0) {
+        if (recv_tcp_message(&sock, msg, msg_size) < 0) {
 	    print("ERROR: cannot recv message");
 	    break;
 	}
@@ -82,7 +82,7 @@ int recv_message_through_tcp(int port, char *msg, int quantity) {
         sleep(1);
     }
 
-    close_socket(&sock);
+    close_tcp_socket(&sock);
 
     print("DEBUG: look like recv msg through tcp is good working");
 
@@ -91,10 +91,11 @@ int recv_message_through_tcp(int port, char *msg, int quantity) {
 
 int main() {
     char *message = "test123";
-    send_message_through_tcp(WIFI_PORT, message, 5);
+
+    send_message_through_tcp(WIFI_PORT, message, 8, 5);
 
 //    char message[100];
-//    recv_message_through_tcp(WIFI_PORT, message, 5);
+//    recv_message_through_tcp(WIFI_PORT, message, 100, 5);
 
     return 0;
 }
