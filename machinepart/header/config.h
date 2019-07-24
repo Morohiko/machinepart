@@ -1,3 +1,5 @@
+#ifndef CONFIG_H
+#define CONFIG_H
 
 #define MAX_TCP_CONNECTION 10
 #define LOCAL_PORT 3333
@@ -13,3 +15,5 @@
 #define CAMERA_FRAME_HEIGHT 480
 #define CAMERA_FRAME_TYPE CV_8UC3
 #define CAMERA_FRAME_ELEM_SIZE 3
+
+#endif

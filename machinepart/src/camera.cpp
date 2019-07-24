@@ -39,6 +39,7 @@ static int int_arr_to_mat(int *src, Mat *dest) {
 
     return 0;
 }
+
 static int check_camera_config_with_default(Mat *frame) {
     if (CAMERA_FRAME_WIDTH != frame->cols) {
         print("ERROR: camera frame width: config = %d, camera = %d", CAMERA_FRAME_WIDTH, frame->rows);
@@ -116,8 +117,14 @@ extern "C" {
 int get_frame_from_camera(struct camera_ctx *ctx) {
     assert(ctx);
     int retval = 0;
+    if (ctx->isBusy == true) {
+        print("WARNING: camera ctx is busy, return -1");
+        return -1;
+    }
 
+    ctx->isBusy = true;
     retval = get_next_frame(ctx);
+    ctx->isBusy = false;
 
     assert(!retval);
 
