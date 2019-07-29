@@ -32,32 +32,32 @@ int recv_gyroscope_data(char *msg) {
 #endif
                           LOCAL_PORT, TARGET_PORT) != 0) {
         print("ERROR: cannot create socket");
-	return -1;
+        return -1;
     }
 
     print("DEBUG: socket created");
 
     while(1) {
-	memset(msg, '\0', MAX_GYROSCOPE_DATA_SIZE);
+        memset(msg, '\0', MAX_GYROSCOPE_DATA_SIZE);
         if (recv_udp_message(&sock, msg, MAX_GYROSCOPE_DATA_SIZE) < 0) {
-	    print("ERROR: cannot send message");
-	    break;
-	}
+            print("ERROR: cannot send message");
+            break;
+        }
 
-	if (msg != NULL) {
-	    print("DEBUG: received udp msg: %s", msg);
-	}
+    if (msg != NULL) {
+        print("DEBUG: received udp msg: %s", msg);
+    }
 
-	if (parse_gyroscope_data(msg)) {
-	    print("ERROR: cant parse gyroscope data, msg: %s", msg);
-	    break;
-	}
+    if (parse_gyroscope_data(msg)) {
+        print("ERROR: cant parse gyroscope data, msg: %s", msg);
+        break;
+    }
 //        sleep(1);
     }
 
     if (close_udp_socket(&sock)) {
         print("ERROR: cannot close socket");
-	return -1;
+        return -1;
     }
 
     print("DEBUG: look like recv msg through udp is good working");
@@ -68,6 +68,5 @@ int recv_gyroscope_data(char *msg) {
 int main() {
     char buffer[MAX_GYROSCOPE_DATA_SIZE];
     recv_gyroscope_data(buffer);
-
     return 0;
 }

@@ -13,7 +13,6 @@ using namespace std;
 static int mat_to_int_arr(Mat* src, int *dest) {
     assert(src); assert(src->rows);
     assert(src->cols); assert(src->data);
-
     assert(dest);
 
     int count = 0;
@@ -21,7 +20,7 @@ static int mat_to_int_arr(Mat* src, int *dest) {
     for(int i = 0; i < src->cols; ++i) {
         for (int j = 0; j < src->rows; ++j) {
             dest[count++] = src->at<int>(i, j);
-	}
+        }
     }
 
     return 0;
@@ -34,7 +33,7 @@ static int int_arr_to_mat(int *src, Mat *dest) {
     for(int i = 0; i < dest->cols; ++i) {
         for (int j = 0; j < dest->rows; ++j) {
             dest->at<int>(i, j) = src[count++];
-	}
+        }
     }
 
     return 0;
@@ -99,7 +98,7 @@ int get_next_frame(struct camera_ctx *cam) {
 
     if (attempts == 0) {
         print("ERROR: Cannot get frame, return -1");
-	return -1;
+        return -1;
     }
 
     check_camera_config_with_default(&frame);

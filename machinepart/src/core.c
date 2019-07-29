@@ -36,7 +36,7 @@ int stop_remote_controller(machine_controller *controller) {
 static void *camera_thread(void *user_data) {
     while (1) {
         print("DEBUG: camera thread");
-	sleep(1);
+    sleep(1);
     }
 }
 

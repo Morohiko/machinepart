@@ -10,7 +10,7 @@ set(WIFI_SRC ${PROJ_DIR}/src/wifi.c
 set(LOG_SRC  ${PROJ_DIR}/header/log.h)
 
 set(ALL_SRC ${WIFI_SRC}
-	    ${LOG_SRC})
+            ${LOG_SRC})
 
 include_directories(${PROJ_DIR}/header)
 

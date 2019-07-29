@@ -60,7 +60,7 @@ set(ALL_SRC src/controller.c
             src/core.c
             ${ALL_SRC}
             ${WIFI_SRC}
-	    ${LOG_SRC})
+            ${LOG_SRC})
 
 include_directories(header)
 

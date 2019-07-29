@@ -17,23 +17,23 @@ int send_message_through_udp(char *msg, size_t msg_size, int quantity) {
 #endif
                           LOCAL_PORT, TARGET_PORT) != 0) {
         print("ERROR: cannot create socket");
-	return -1;
+        return -1;
     }
 
     print("DEBUG: socket created");
 
     while(quantity--) {
         if (send_udp_message(&sock, msg, msg_size) < 0) {
-	    print("ERROR: cannot send message");
-	    break;
-	}
+            print("ERROR: cannot send message");
+            break;
+        }
 
         sleep(1);
     }
 
     if (close_udp_socket(&sock)) {
         print("ERROR: cannot close socket");
-	return -1;
+        return -1;
     }
 
     print("DEBUG: look like send msg through udp is good working");
@@ -52,26 +52,26 @@ int recv_message_through_udp(char *msg, size_t msg_size, int quantity) {
 #endif
                           LOCAL_PORT, TARGET_PORT) != 0) {
         print("ERROR: cannot create socket");
-	return -1;
+        return -1;
     }
 
     print("DEBUG: socket created");
 
     while(quantity--) {
         if (recv_udp_message(&sock, msg, msg_size) < 0) {
-	    print("ERROR: cannot send message");
-	    break;
-	}
+            print("ERROR: cannot send message");
+            break;
+        }
 
-	if (msg != NULL) {
-	    print("DEBUG: received udp msg: %s", msg);
-	}
+    if (msg != NULL) {
+        print("DEBUG: received udp msg: %s", msg);
+    }
 //        sleep(1);
     }
 
     if (close_udp_socket(&sock)) {
         print("ERROR: cannot close socket");
-	return -1;
+        return -1;
     }
 
     print("DEBUG: look like recv msg through udp is good working");

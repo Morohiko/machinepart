@@ -10,17 +10,14 @@ static int update_machine_controller(machine_controller *machineController, int 
     case CTRL_CAMERA_TRANSMITTER:
         machineController->camera_transmitter_state = state;
         print("DEBUG: request camera transmitter state to %d", machineController->camera_transmitter_state);
-
         break;
     case CTRL_GYROSCOPE_RECEIVER:
         machineController->gyryscope_receiver_state = state;
         print("DEBUG: request gyroscope receiver state to %d", machineController->gyryscope_receiver_state);
-
         break;
     case CTRL_MOTOR:
         machineController->motor_state = state;
         print("DEBUG: request mototr state to %d", machineController->motor_state);
-
         break;
     default:
         print("ERROR: cannot find module %d", module);

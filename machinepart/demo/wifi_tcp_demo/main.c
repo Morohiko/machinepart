@@ -15,7 +15,7 @@ int send_message_through_tcp(int port, char *msg, size_t msg_size, int quantity)
    
     if (create_tcp_socket(&sock, port) != 0) {
         print("ERROR: cannot create socket");
-	return -1;
+        return -1;
     }
 
     print("DEBUG: socket created");
@@ -34,10 +34,9 @@ int send_message_through_tcp(int port, char *msg, size_t msg_size, int quantity)
 
     while(quantity--) {
         if (send_tcp_message(&sock, msg, msg_size) < 0) {
-	    print("ERROR: cannot send message");
-	    break;
-	}
-
+            print("ERROR: cannot send message");
+            break;
+        }
         sleep(1);
     }
 
@@ -55,7 +54,7 @@ int recv_message_through_tcp(int port, char *msg, size_t msg_size, int quantity)
    
     if (create_tcp_socket(&sock, port) != 0) {
         print("ERROR: cannot create socket");
-	return -1;
+        return -1;
     }
 
     print("DEBUG: socket created");
@@ -74,11 +73,11 @@ int recv_message_through_tcp(int port, char *msg, size_t msg_size, int quantity)
 
     while(quantity--) {
         if (recv_tcp_message(&sock, msg, msg_size) < 0) {
-	    print("ERROR: cannot recv message");
-	    break;
-	}
+            print("ERROR: cannot recv message");
+            break;
+        }
 
-	print("DEBUG: received msg = %s", msg);
+        print("DEBUG: received msg = %s", msg);
         sleep(1);
     }
 

@@ -19,7 +19,7 @@ int create_tcp_socket(struct tcp_socket *sock, int port) {
    
     if (sock->listenfd <= 0) {
         print("ERROR: cannot create socket");
-	return -1;
+        return -1;
     }
 
     sock->serv_addr.sin_family = AF_INET;
@@ -36,7 +36,7 @@ int listen_tcp_connection(struct tcp_socket *sock, int max_connection) {
     assert(sock);
     if (sock->listenfd < 0) {
         print("ERROR: cannot start listen socket cause fd = %d", sock->listenfd);
-	return -1;
+        return -1;
     }
 
     return listen(sock->listenfd, max_connection);
@@ -47,7 +47,7 @@ int accept_tcp_connection(struct tcp_socket *sock) {
 
     if (sock->connfd < 0) {
         print("ERROR: cannot accept, config is %d", sock->connfd);
-	return -1;
+        return -1;
     }
 
     sock->connfd = accept(sock->listenfd, (struct sockaddr*)NULL, NULL);
@@ -60,7 +60,7 @@ int send_tcp_message(struct tcp_socket *sock, char *msg, size_t msg_size) {
 
     if (sock->connfd <= 0) {
         print("ERROR: socket was not created, maybe accept it?");
-	return -1;
+        return -1;
     }
 
     print("DEBUG: send message \"%s\"", msg);
@@ -75,13 +75,13 @@ int recv_tcp_message(struct tcp_socket *sock, char *msg, size_t msg_size) {
 
     if (sock->connfd <= 0) {
         print("ERROR: socket was not created, maybe accept it?");
-	return -1;
+        return -1;
     }
 
     ssize_t size = recv(sock->connfd, msg, msg_size, 0);
     if (size == 0) {
         print("ERROR: recv tcp message size == 0");
-	return -1;
+        return -1;
     }
     print("DEBUG: recv tcp size = %zu msg = %s", size, msg);
 
@@ -93,14 +93,14 @@ int close_tcp_socket(struct tcp_socket *sock) {
 
     if (sock->connfd <= 0) {
         print("ERROR: cannot close socket, connfd = %d", sock->connfd);
-	return -1;
+        return -1;
     }
 
     close(sock->connfd);
 
     if (sock->listenfd <= 0) {
         print("ERROR: cannot close socket, listenfd = %d", sock->listenfd);
-	return -1;
+        return -1;
     }
 
     close(sock->listenfd);
@@ -121,7 +121,7 @@ int create_udp_socket(struct udp_socket *sock,
    
     if (sock->sock_fd <= 0) {
         print("ERROR: cannot create socket");
-	return -1;
+        return -1;
     }
 
     bzero(&sock->local_sock, sizeof(sock->local_sock));
@@ -176,7 +176,7 @@ int send_udp_message(struct udp_socket *sock, char *msg, size_t msg_size) {
 
     if (sock->sock_fd <= 0) {
         print("ERROR: socket was not created, maybe accept it?");
-	return -1;
+        return -1;
     }
 
     print("DEBUG: send message \"%s\"", msg);
@@ -191,7 +191,7 @@ int recv_udp_message(struct udp_socket *sock, char *msg, size_t msg_size) {
 
     if (sock->sock_fd <= 0) {
         print("ERROR: socket was not created, maybe accept it?");
-	return -1;
+        return -1;
     }
 
 
@@ -207,7 +207,7 @@ int close_udp_socket(struct udp_socket *sock) {
 
     if (sock->sock_fd < 0) {
         print("ERROR: cannot close udp socket cause fd = %d", sock->sock_fd);
-	return -1;
+        return -1;
     }
 
     close(sock->sock_fd);
