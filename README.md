@@ -39,11 +39,15 @@ Communication can be like `sharing one memory`.
 In that case need avoid access to that memory from different modules at the same time.
 Make variable like `busy`. When write/read to memory, install variable to true, if another memory want to write/read then he need to check busy variable. Something like `condition variable`.
 
+Machine part like a server(slave), all constrol instruction must send from glasses(android).
+How it must work:
+
 #### Core (module & main thread(main() ) )
- - start Camera module thread
- - start Camera data transmitter thread
- - start Gyroscope data receiver thread
- - start Motor Controller thread
+ - create thread for connecting machinepart to phone through TCP, this stream using for controlling machine part.
+ - start Camera module thread(on request)
+ - start Camera data transmitter thread(on request)
+ - start Gyroscope data receiver thread(on request)
+ - start Motor Controller thread(on request)
  
 #### Camera module (module & thread)
  - get stream from camera (must have access to camera)
