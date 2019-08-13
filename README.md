@@ -67,6 +67,9 @@ How it must work:
  - get data from memory struct
  - make interrupt for motor start move to possition based on memory struct (mocked cause not have real motor) ?
 
+### Lib versions
+ - opencv: 2.4.9.1
+
 ### Preinstall environment
 
 #### CMake
