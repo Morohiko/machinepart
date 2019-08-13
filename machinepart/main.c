@@ -93,6 +93,8 @@ static int configure_network(struct connection_info *conn_info) {
 
 int main() {
     set_log_level(DEBUG);
+    enable_log_with_module_names();
+    register_log_module("MAIN_MODULE", pthread_self());
 
     print(INFO, "======== Start Machinepart =======");
 

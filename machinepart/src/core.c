@@ -18,6 +18,7 @@
 #define MAX_GYROSCOPE_DATA_SIZE 15
 
 static void* remote_controller_thread(void *user_data) {
+    register_log_module("REMOTE_CONTROLLER_MODULE", pthread_self());
     machine_controller *controller = (machine_controller*) user_data;
     while (1) {
         print(DEBUG, "remote controller thread");
@@ -38,6 +39,7 @@ int stop_remote_controller(machine_controller *controller) {
 
 #ifdef ENABLE_CAMERA
 static void *camera_thread(void *user_data) {
+    register_log_module("CAMERA_MODULE", pthread_self());
     while (1) {
         print(DEBUG, "camera thread");
         sleep(1);
@@ -52,6 +54,7 @@ int start_camera(machine_controller *controller) {
 }
 
 static void *camera_transmitter_thread(void *user_data) {
+    register_log_module("CAMERA_TRANSMITTER_MODULE", pthread_self());
     while (1) {
         print(DEBUG, "camera transmitter thread");
         sleep(1);
@@ -72,19 +75,8 @@ int stop_camera_transmitter(machine_controller *controller) {
 #endif
 
 #ifdef ENABLE_GYROSCOPE_RECEIVER
-//parse like X:Y:Z 
-int parse_gyroscope_data(char *data) {
-    int x = 0;
-    int y = 0;
-    int z = 0;
-
-    sscanf(data, "%d:%d:%d", &x, &y, &z);
-
-    print(DEBUG, "try parse gyroscope data: %s, x = %d, y = %d, z = %d", data, x, y, z);
-    return 0;
-}
-
 static void *gyroscope_receiver_thread(void *user_data) {
+    register_log_module("GYROSCOPE_RECEIVER_MODULE", pthread_self());
     struct gyroscope_ctx ctx;
     struct connection_info *conn = (struct connection_info *) user_data;
 
@@ -110,6 +102,7 @@ int stop_gyroscope_data_receiver(machine_controller *controller) {
 #endif
 
 static void *motor_controller_thread(void* user_data) {
+    register_log_module("MOTOR_CONTROLLER_MODULE", pthread_self());
     while (1) {
         print(DEBUG, "motor controller thread");
         sleep(1);
