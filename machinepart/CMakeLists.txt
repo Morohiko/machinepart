@@ -54,7 +54,8 @@ set(WIFI_SRC ${PROJ_DIR}/src/wifi.c
              ${PROJ_DIR}/header/wifi.h)
 
 
-set(LOG_SRC  ${PROJ_DIR}/header/log.h)
+set(LOG_SRC ${PROJ_DIR}/src/log.c
+            ${PROJ_DIR}/header/log.h)
 
 set(ALL_SRC src/controller.c
             src/core.c

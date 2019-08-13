@@ -20,7 +20,7 @@
 static void* remote_controller_thread(void *user_data) {
     machine_controller *controller = (machine_controller*) user_data;
     while (1) {
-        print("DEBUG: remote controller thread");
+        print(DEBUG, "remote controller thread");
         receive_stdin_controller_message(controller);
         sleep(1);
     }
@@ -39,7 +39,7 @@ int stop_remote_controller(machine_controller *controller) {
 #ifdef ENABLE_CAMERA
 static void *camera_thread(void *user_data) {
     while (1) {
-        print("DEBUG: camera thread");
+        print(DEBUG, "camera thread");
         sleep(1);
     }
 }
@@ -53,7 +53,7 @@ int start_camera(machine_controller *controller) {
 
 static void *camera_transmitter_thread(void *user_data) {
     while (1) {
-        print("DEBUG: camera transmitter thread");
+        print(DEBUG, "camera transmitter thread");
         sleep(1);
     }
 }
@@ -64,7 +64,7 @@ int start_camera_transmitter(machine_controller *controller) {
 }
 
 int stop_camera_transmitter(machine_controller *controller) {
-    print("DEBUG: stop camera transmitter");
+    print(DEBUG, "stop camera transmitter");
     pthread_cancel(controller->cameraTransmitterThreadID);
     return 0;
 }
@@ -80,7 +80,7 @@ int parse_gyroscope_data(char *data) {
 
     sscanf(data, "%d:%d:%d", &x, &y, &z);
 
-    print("DEBUG: try parse gyroscope data: %s, x = %d, y = %d, z = %d", data, x, y, z);
+    print(DEBUG, "try parse gyroscope data: %s, x = %d, y = %d, z = %d", data, x, y, z);
     return 0;
 }
 
@@ -103,7 +103,7 @@ int start_gyroscope_data_receiver(machine_controller *controller, struct connect
 }
 
 int stop_gyroscope_data_receiver(machine_controller *controller) {
-    print("DEBUG: stop gyroscope data receiver");
+    print(DEBUG, "stop gyroscope data receiver");
     pthread_cancel(controller->gyroscopeRecvThreadID);
     return 0;
 }
@@ -111,7 +111,7 @@ int stop_gyroscope_data_receiver(machine_controller *controller) {
 
 static void *motor_controller_thread(void* user_data) {
     while (1) {
-        print("DEBUG: motor controller thread");
+        print(DEBUG, "motor controller thread");
         sleep(1);
     }
 }
@@ -123,7 +123,7 @@ int start_motor(machine_controller *controller) {
 }
 
 int stop_motor(machine_controller *controller) {
-    print("DEBUG: stop motor");
+    print(DEBUG, "stop motor");
     pthread_cancel(controller->motorControllerThreadID);
     return 0;
 }

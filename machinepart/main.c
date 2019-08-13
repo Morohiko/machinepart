@@ -23,7 +23,7 @@ static int main_loop(machine_controller *controller, struct connection_info *con
             }
             assert(!status);
             controller->camera_current_state = controller->camera_state;
-            print("DEBUG: changed camera state to %d", controller->camera_current_state);
+            print(DEBUG, "changed camera state to %d", controller->camera_current_state);
         }
 
         if (controller->camera_transmitter_current_state != controller->camera_transmitter_state) {
@@ -35,7 +35,7 @@ static int main_loop(machine_controller *controller, struct connection_info *con
             }
             assert(!status);
             controller->camera_transmitter_current_state = controller->camera_transmitter_state;
-            print("DEBUG: changed camera transmitter state to %d", controller->camera_transmitter_current_state);
+            print(DEBUG, "changed camera transmitter state to %d", controller->camera_transmitter_current_state);
         }
 #endif
         if (controller->gyroscope_receiver_current_state != controller->gyroscope_receiver_state) {
@@ -47,7 +47,7 @@ static int main_loop(machine_controller *controller, struct connection_info *con
             }
             assert(!status);
             controller->gyroscope_receiver_current_state = controller->gyroscope_receiver_state;
-            print("DEBUG: changed gyroscope receiver state to %d", controller->gyroscope_receiver_current_state);
+            print(DEBUG, "changed gyroscope receiver state to %d", controller->gyroscope_receiver_current_state);
         }
         if (controller->motor_current_state != controller->motor_state) {
             if (controller->motor_state == 1) {
@@ -58,7 +58,7 @@ static int main_loop(machine_controller *controller, struct connection_info *con
             }
             assert(!status);
             controller->motor_current_state = controller->motor_state;
-            print("DEBUG: changed motor state to %d", controller->motor_current_state);
+            print(DEBUG, "changed motor state to %d", controller->motor_current_state);
         }
         sleep(1);
     }
@@ -72,35 +72,37 @@ static int configure_network(struct connection_info *conn_info) {
 
     retval = get_target_ip_addr(ip_addr);
     if (retval != 0) {
-        print("ERROR: cannot get target ip addr, retval: %d", retval);
+        print(ERROR, "cannot get target ip addr, retval: %d", retval);
         return retval;
     }
 
     memcpy(conn_info->local_ip, LOCAL_IP, 16);
     memcpy(conn_info->target_ip, ip_addr, 16);
 
-    print("INFO: selected ip: local = %s, target = %s", conn_info->local_ip, conn_info->target_ip);
+    print(INFO, "selected ip: local = %s, target = %s", conn_info->local_ip, conn_info->target_ip);
     assert(conn_info->target_ip);
 
 #ifdef ENABLE_GYROSCOPE_RECEIVER
     conn_info->local_port_gyroscope = LOCAL_GYROSCOPE_PORT;
     conn_info->target_port_gyroscope = TARGET_GYROSCOPE_PORT;
-    print("INFO: selected gyroscope port: local = %d, target = %d", conn_info->local_port_gyroscope, conn_info->target_port_gyroscope);
+    print(INFO, "selected gyroscope port: local = %d, target = %d", conn_info->local_port_gyroscope, conn_info->target_port_gyroscope);
 #endif
 
     return 0;
 }
 
 int main() {
-    print("======== Start Machinepart =======");
+    set_log_level(DEBUG);
 
-    print("======== configure network =======");
+    print(INFO, "======== Start Machinepart =======");
+
+    print(INFO, "======== configure network =======");
 
     struct connection_info conn_info;
 
     configure_network(&conn_info);
 
-    print("DEBUG: start remote controller");
+    print(DEBUG, "start remote controller");
 
     machine_controller controller;
 

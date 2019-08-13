@@ -21,7 +21,7 @@ static int parse_gyroscope_data(char *msg, struct gyroscope_data *data) {
     data->y = y;
     data->z = z;
 
-    print("DEBUG: parsed gyroscope data: %s, x = %d, y = %d, z = %d", msg, data->x, data->y, data->z);
+    print(DEBUG, "parsed gyroscope data: %s, x = %d, y = %d, z = %d", msg, data->x, data->y, data->z);
 
     return 0;
 }
@@ -39,7 +39,7 @@ int start_receive_gyroscope_data(struct gyroscope_ctx *ctx) {
     if (create_udp_socket(&ctx->sock,
                           ctx->conn.local_ip, ctx->conn.target_ip,
                           ctx->conn.local_port_gyroscope, ctx->conn.target_port_gyroscope) != 0) {
-        print("ERROR: cannot create socket");
+        print(ERROR, "cannot create socket");
         return -1;
     }
 
@@ -47,13 +47,13 @@ int start_receive_gyroscope_data(struct gyroscope_ctx *ctx) {
     int try = 0;
     while(ctx->is_working) {
         if (recv_udp_message(&ctx->sock, msg, MAX_GYROSCOPE_DATA_SIZE) < 0) {
-            print("ERROR: cannot recv message");
+            print(ERROR, "cannot recv message");
             break;
         }
 
         if (msg == NULL) {
-            print("DEBUG: received udp message is empty");
-            print("DEBUG: try = %d", try);
+            print(DEBUG, "received udp message is empty");
+            print(DEBUG, "try = %d", try);
 
             if (try++ == 10) {
                 return -1;
@@ -62,11 +62,11 @@ int start_receive_gyroscope_data(struct gyroscope_ctx *ctx) {
             continue;
         }
 
-        print("DEBUG: received udp msg: %s", msg);
+        print(DEBUG, "received udp msg: %s", msg);
 
 
         if (parse_gyroscope_data(msg, &ctx->data)) {
-            print("ERROR: cant parse gyroscope data, msg: %s", msg);
+            print(ERROR, "cant parse gyroscope data, msg: %s", msg);
             memset(msg, '\0', MAX_GYROSCOPE_DATA_SIZE);
             break;
         }
@@ -80,7 +80,7 @@ int stop_receive_gyroscope_data(struct gyroscope_ctx *ctx) {
     sleep(5);
 
     if (close_udp_socket(&ctx->sock)) {
-        print("ERROR: cannot close socket");
+        print(ERROR, "cannot close socket");
         return -1;
     }
 }
@@ -93,25 +93,25 @@ int recv_gyroscope_data(struct gyroscope_ctx *ctx) {
     if (create_udp_socket(&ctx->sock,
                           LOCAL_IP, TARGET_IP,
                           LOCAL_PORT, TARGET_PORT) != 0) {
-        print("ERROR: cannot create socket");
+        print(ERROR, "cannot create socket");
         return -1;
     }
 
-    print("DEBUG: socket created");
+    print(DEBUG, "socket created");
 
     while(1) {
 //        memset(msg, '\0', MAX_GYROSCOPE_DATA_SIZE);
         if (recv_udp_message(&ctx->sock, msg, MAX_GYROSCOPE_DATA_SIZE) < 0) {
-            print("ERROR: cannot send message");
+            print(ERROR, "cannot send message");
             break;
         }
 
         if (msg != NULL) {
-            print("DEBUG: received udp msg: %s", msg);
+            print(DEBUG, "received udp msg: %s", msg);
         }
 
         if (parse_gyroscope_data(msg, &ctx->data)) {
-            print("ERROR: cant parse gyroscope data, msg: %s", msg);
+            print(ERROR, "cant parse gyroscope data, msg: %s", msg);
             memset(msg, '\0', MAX_GYROSCOPE_DATA_SIZE);
             break;
         }
@@ -119,11 +119,11 @@ int recv_gyroscope_data(struct gyroscope_ctx *ctx) {
     }
 
     if (close_udp_socket(&ctx->sock)) {
-        print("ERROR: cannot close socket");
+        print(ERROR, "cannot close socket");
         return -1;
     }
 
-    print("DEBUG: look like recv msg through udp is good working");
+    print(DEBUG, "look like recv msg through udp is good working");
 
     return 0;
 }

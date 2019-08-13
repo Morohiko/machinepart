@@ -41,26 +41,26 @@ static int int_arr_to_mat(int *src, Mat *dest) {
 
 static int check_camera_config_with_default(Mat *frame) {
     if (CAMERA_FRAME_WIDTH != frame->cols) {
-        print("ERROR: camera frame width: config = %d, camera = %d", CAMERA_FRAME_WIDTH, frame->rows);
+        print(ERROR, "camera frame width: config = %d, camera = %d", CAMERA_FRAME_WIDTH, frame->rows);
         return -1;
     }
 
     if (CAMERA_FRAME_HEIGHT != frame->rows) {
-        print("ERROR: camera frame height: config = %d, camera = %d", CAMERA_FRAME_HEIGHT, frame->cols);
+        print(ERROR, "camera frame height: config = %d, camera = %d", CAMERA_FRAME_HEIGHT, frame->cols);
         return -1;
     }
 
     if (CAMERA_FRAME_TYPE != frame->type()) {
-        print("ERROR: camera frame type: config = %d, camera = %d", CAMERA_FRAME_TYPE, frame->type());
+        print(ERROR, "camera frame type: config = %d, camera = %d", CAMERA_FRAME_TYPE, frame->type());
         return -1;
     }
 
     if (CAMERA_FRAME_ELEM_SIZE != frame->elemSize()) {
-        print("ERROR: camera frame elem size: config = %d, camera = %d", CAMERA_FRAME_ELEM_SIZE, frame->elemSize());
+        print(ERROR, "camera frame elem size: config = %d, camera = %d", CAMERA_FRAME_ELEM_SIZE, frame->elemSize());
         return -1;
     }
 
-    print("INFO: camera config corresponds with config.h");
+    print(INFO, "camera config corresponds with config.h");
     return 0;
 }
 
@@ -71,10 +71,10 @@ int get_next_frame(struct camera_ctx *cam) {
     VideoCapture cap(0);
 
     if (!cap.isOpened()) {
-        print("Cannot open the web cam");
+        print(ERROR, "Cannot open the web cam");
         return -1;
     }
-    print("Camera is opened");
+    print(INFO, "Camera is opened");
 
     int deviceID = 0;             // 0 = open default camera
     int apiID = cv::CAP_ANY;      // 0 = autodetect default API
@@ -83,7 +83,7 @@ int get_next_frame(struct camera_ctx *cam) {
     cap.open(deviceID + apiID);
 
     if (!cap.isOpened()) {
-        print("ERROR! Unable to open camera");
+        print(ERROR, "Unable to open camera");
         return -1;
     }
     cap.grab();
@@ -93,11 +93,11 @@ int get_next_frame(struct camera_ctx *cam) {
         if (!frame.empty()) {
             break;
         }
-        print("Warning: cannot get frame, attempt left %d");
+        print(ERROR, "cannot get frame, attempt left %d");
     } while (--attempts > 0);
 
     if (attempts == 0) {
-        print("ERROR: Cannot get frame, return -1");
+        print(ERROR, "Cannot get frame, return -1");
         return -1;
     }
 
@@ -117,7 +117,7 @@ int get_frame_from_camera(struct camera_ctx *ctx) {
     assert(ctx);
     int retval = 0;
     if (ctx->isBusy == true) {
-        print("WARNING: camera ctx is busy, return -1");
+        print(ERROR, "camera ctx is busy, return -1");
         return -1;
     }
 

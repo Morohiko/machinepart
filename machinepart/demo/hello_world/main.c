@@ -1,6 +1,8 @@
 #include "log.h"
 
 int main() {
-    print("hello world");
+    set_log_level(INFO);
+
+    print(INFO, "hello world");
     return 0;
 }

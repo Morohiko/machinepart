@@ -4,7 +4,8 @@ set(NET_TOOLS_DEMO_NAME net_tools_demo)
 
 set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 
-set(LOG_SRC ${PROJ_DIR}/header/log.h)
+set(LOG_SRC   ${PROJ_DIR}/header/log.h
+              ${PROJ_DIR}/src/log.c)
 
 set(UTILS_SRC ${PROJ_DIR}/header/utils.h
               ${PROJ_DIR}/src/utils.c)

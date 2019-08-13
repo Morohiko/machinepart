@@ -10,6 +10,7 @@ int test_camera_ctx() {
 }
 
 int main(int argc, char** argv){
+    set_log_level(DEBUG);
     test_camera_ctx();
     return 0;
 }

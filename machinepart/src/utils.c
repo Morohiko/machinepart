@@ -11,7 +11,7 @@ static int get_file_size(char *filename, size_t *file_size) {
     FILE *file = fopen(filename, "r");
 
     if (file == NULL) {
-        print("ERROR: cannot open file %s", filename);
+        print(ERROR, "cannot open file %s", filename);
         return -1;
     }
 
@@ -33,7 +33,7 @@ static int read_from_file(char *filename, char *dest) {
     FILE *file = fopen(filename, "r");
 
     if (file == NULL) {
-        print("ERROR: cannot open file %s", filename);
+        print(ERROR, "cannot open file %s", filename);
         return -1;
     }
 
@@ -136,7 +136,7 @@ int get_target_ip_addr(char *dest) {
 
     char source[file_size];
     if (read_from_file(filename, source)) {
-        print("ERROR: Cannot get ip addr");
+        print(ERROR, "Cannot get ip addr");
         return -1;
     }
 
@@ -148,7 +148,7 @@ int get_target_ip_addr(char *dest) {
 
 // in case empty file
     if (count_of_ips == 0) {
-        print("ERROR: Cannot find ip`s from file %s", filename);
+        print(ERROR, "Cannot find ip`s from file %s", filename);
         return -1;
     }
 
@@ -158,7 +158,7 @@ int get_target_ip_addr(char *dest) {
         return 0;
     }
 
-    print("DEBUG: need check ip addr from ip_heap, just put number of ip, \"start from 1\", 0 for localhost\n%s", ip_heap);
+    print(INFO, "need check ip addr from ip_heap, just put number of ip, \"start from 1\", 0 for localhost\n%s", ip_heap);
 
     int requested_ip;
     scanf("%d", &requested_ip);
@@ -168,7 +168,7 @@ int get_target_ip_addr(char *dest) {
     }
 
     if (get_once_ip_from_heap(ip_heap, dest, requested_ip)) {
-         print("ERROR: cannot found ip");
+         print(ERROR, "cannot found ip");
          return -1;
     }
 

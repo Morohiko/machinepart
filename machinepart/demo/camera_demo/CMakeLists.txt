@@ -6,7 +6,8 @@ set(CAMERA_DEMO_NAME camera_demo)
 
 set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 
-set(LOG_SRC ${PROJ_DIR}/header/log.h)
+set(LOG_SRC ${PROJ_DIR}/header/log.h
+            ${PROJ_DIR}/src/log.c)
 
 set(CAMERA_SRC ${PROJ_DIR}/src/camera.cpp
                ${PROJ_DIR}/header/camera.h)
