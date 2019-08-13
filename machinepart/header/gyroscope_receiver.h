@@ -1,12 +1,29 @@
 #ifndef GYROSCOPE_RECEIVER_H
 #define GYROSCOPE_RECEIVER_H
 
-struct gyroscope_ctx {
+#include "stdbool.h"
+
+#include "core.h"
+#include "wifi.h"
+
+struct gyroscope_data {
     int x;
     int y;
     int z;
 };
 
+struct gyroscope_ctx {
+    bool is_working;
+    struct connection_info conn;
+    struct udp_socket sock;
+    struct gyroscope_data data;
+};
+
+int start_receive_gyroscope_data();
+
+int stop_receive_gyroscope_data();
+
+// deprecated
 int recv_gyroscope_data(struct gyroscope_ctx *ctx);
 
 #endif

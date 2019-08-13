@@ -100,7 +100,7 @@ static int get_once_ip_from_heap(char *src, char *dest, int requested_ip) {
 
     char *first_ip = NULL;
     for (int i = 0; i < strlen(src); i++) {
-        if (src[i] ==  '\n') {
+        if (src[i] == '\n') {
             spaces++;
         }
 
@@ -112,9 +112,12 @@ static int get_once_ip_from_heap(char *src, char *dest, int requested_ip) {
         if (spaces > requested_ip) {
             src[i] = '\0';
             int iter = 0;
+            memset(dest, '\0', 16);
             while (first_ip != &src[i]) {
+                if (*first_ip != '\n') {
+                    dest[iter++] = *first_ip;
+                }
                 first_ip++;
-                dest[iter++] = *first_ip;
             }
             return 0;
         }
@@ -155,10 +158,14 @@ int get_target_ip_addr(char *dest) {
         return 0;
     }
 
-    print("DEBUG: need check ip addr from ip_heap, just put number of ip, \"start from 1\"\n%s", ip_heap);
+    print("DEBUG: need check ip addr from ip_heap, just put number of ip, \"start from 1\", 0 for localhost\n%s", ip_heap);
 
     int requested_ip;
     scanf("%d", &requested_ip);
+    if (requested_ip == 0) {
+        memcpy(dest, "127.0.0.1", 10);
+        return 0;
+    }
 
     if (get_once_ip_from_heap(ip_heap, dest, requested_ip)) {
          print("ERROR: cannot found ip");

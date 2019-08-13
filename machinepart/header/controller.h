@@ -16,7 +16,7 @@ typedef struct {
 
     int camera_state;
     int camera_transmitter_state;
-    int gyryscope_receiver_state;
+    int gyroscope_receiver_state;
     int motor_state;
 
     pthread_t remoteControllerThreadID;
@@ -28,5 +28,6 @@ typedef struct {
 
 int receive_stdin_controller_message(machine_controller *machineController);
 int receive_remote_controller_message(machine_controller *machineController);
+int init_machine_controller_states(machine_controller *controller);
 
 #endif

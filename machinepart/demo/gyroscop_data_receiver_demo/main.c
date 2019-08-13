@@ -27,9 +27,7 @@ int recv_gyroscope_data(char *msg) {
     struct udp_socket sock;
    
     if (create_udp_socket(&sock,
-#ifdef WITH_SELECTED_IP
                           LOCAL_IP, TARGET_IP,
-#endif
                           LOCAL_PORT, TARGET_PORT) != 0) {
         print("ERROR: cannot create socket");
         return -1;
@@ -44,14 +42,14 @@ int recv_gyroscope_data(char *msg) {
             break;
         }
 
-    if (msg != NULL) {
-        print("DEBUG: received udp msg: %s", msg);
-    }
+        if (msg != NULL) {
+            print("DEBUG: received udp msg: %s", msg);
+        }
 
-    if (parse_gyroscope_data(msg)) {
-        print("ERROR: cant parse gyroscope data, msg: %s", msg);
-        break;
-    }
+        if (parse_gyroscope_data(msg)) {
+            print("ERROR: cant parse gyroscope data, msg: %s", msg);
+            break;
+        }
 //        sleep(1);
     }
 

@@ -1,9 +1,11 @@
 #include <pthread.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "core.h"
 #include "log.h"
 #include "wifi.h"
+#include "config.h"
 
 #ifdef ENABLE_GYROSCOPE_RECEIVER
 #include "gyroscope_receiver.h"
@@ -12,6 +14,8 @@
 #ifdef ENABLE_CAMERA
 #include "camera.h"
 #endif
+
+#define MAX_GYROSCOPE_DATA_SIZE 15
 
 static void* remote_controller_thread(void *user_data) {
     machine_controller *controller = (machine_controller*) user_data;
@@ -36,7 +40,7 @@ int stop_remote_controller(machine_controller *controller) {
 static void *camera_thread(void *user_data) {
     while (1) {
         print("DEBUG: camera thread");
-    sleep(1);
+        sleep(1);
     }
 }
 
@@ -68,15 +72,33 @@ int stop_camera_transmitter(machine_controller *controller) {
 #endif
 
 #ifdef ENABLE_GYROSCOPE_RECEIVER
-static void *gyroscope_receiver_thread(void *user_data) {
-    while(1) {
-        print("DEBUG: gyroscope receiver thread");
-        sleep(1);
-    }
+//parse like X:Y:Z 
+int parse_gyroscope_data(char *data) {
+    int x = 0;
+    int y = 0;
+    int z = 0;
+
+    sscanf(data, "%d:%d:%d", &x, &y, &z);
+
+    print("DEBUG: try parse gyroscope data: %s, x = %d, y = %d, z = %d", data, x, y, z);
+    return 0;
 }
 
-int start_gyroscope_data_receiver(machine_controller *controller) {
-    pthread_create(&controller->gyroscopeRecvThreadID, NULL, gyroscope_receiver_thread, NULL);
+static void *gyroscope_receiver_thread(void *user_data) {
+    struct gyroscope_ctx ctx;
+    struct connection_info *conn = (struct connection_info *) user_data;
+
+    ctx.conn.local_port_gyroscope = conn->local_port_gyroscope;
+    memcpy(ctx.conn.local_ip, conn->local_ip, 16);
+
+    ctx.conn.target_port_gyroscope = conn->target_port_gyroscope;
+    memcpy(ctx.conn.target_ip, conn->target_ip, 16);
+
+    start_receive_gyroscope_data(&ctx);
+}
+
+int start_gyroscope_data_receiver(machine_controller *controller, struct connection_info *conn) {
+    pthread_create(&controller->gyroscopeRecvThreadID, NULL, gyroscope_receiver_thread, conn);
     return 0;
 }
 

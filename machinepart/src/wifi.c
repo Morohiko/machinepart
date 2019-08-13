@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <assert.h>
 
-#include "config.h"
 #include "string.h"
 #include "log.h"
 #include "wifi.h"
@@ -111,9 +110,7 @@ int close_tcp_socket(struct tcp_socket *sock) {
 }
 
 int create_udp_socket(struct udp_socket *sock,
-#ifdef WITH_SELECTED_IP
                       const char *local_ip, const char *target_ip,
-#endif
                       int local_port, int target_port) {
     assert(sock);
 
@@ -126,47 +123,31 @@ int create_udp_socket(struct udp_socket *sock,
 
     bzero(&sock->local_sock, sizeof(sock->local_sock));
     sock->local_sock.sin_family = AF_INET;
-#ifndef WITH_SELECTED_IP
-    sock->target_sock.sin_addr.s_addr = htonl(INADDR_ANY);
-#endif
     sock->local_sock.sin_port = htons(local_port);
 
-#ifdef WITH_SELECTED_IP
     assert(local_ip);
 
     if (!inet_aton(local_ip, &sock->local_sock.sin_addr)) {
         print("ERROR: cannot do inet_aton, local_ip = %s", local_ip);
         return -1;
     }
-#endif
 
     bind(sock->sock_fd, (struct sockaddr*)&sock->local_sock, sizeof(sock->local_sock));
 
     print("DEBUG: local socket created with port = %d", local_port);
-#ifdef WITH_SELECTED_IP
-    print("DEBUG: local ip = %s", local_ip);
-#endif
 
     bzero(&sock->target_sock, sizeof(sock->target_sock));
     sock->target_sock.sin_family = AF_INET;
-#ifndef WITH_SELECTED_IP
-    sock->target_sock.sin_addr.s_addr = htonl(INADDR_ANY);
-#endif
     sock->target_sock.sin_port = htons(target_port);
 
-#ifdef WITH_SELECTED_IP
     assert(target_ip);
 
     if (!inet_aton(target_ip, &sock->target_sock.sin_addr)) {
         print("ERROR: cannot do inet_aton, local_ip = %s", local_ip);
         return -1;
     }
-#endif
 
     print("DEBUG: target sock is on port = %d", target_port);
-#ifdef WITH_SELECTED_IP
-    print("DEBUG: target ip = %s", target_ip);
-#endif
 
     return 0;
 }

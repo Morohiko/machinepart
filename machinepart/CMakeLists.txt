@@ -58,6 +58,7 @@ set(LOG_SRC  ${PROJ_DIR}/header/log.h)
 
 set(ALL_SRC src/controller.c
             src/core.c
+            src/utils.c
             ${ALL_SRC}
             ${WIFI_SRC}
             ${LOG_SRC})

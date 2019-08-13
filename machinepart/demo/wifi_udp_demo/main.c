@@ -12,9 +12,7 @@ int send_message_through_udp(char *msg, size_t msg_size, int quantity) {
     struct udp_socket sock;
    
     if (create_udp_socket(&sock,
-#ifdef WITH_SELECTED_IP
                           LOCAL_IP, TARGET_IP,
-#endif
                           LOCAL_PORT, TARGET_PORT) != 0) {
         print("ERROR: cannot create socket");
         return -1;
@@ -47,9 +45,7 @@ int recv_message_through_udp(char *msg, size_t msg_size, int quantity) {
     struct udp_socket sock;
    
     if (create_udp_socket(&sock,
-#ifdef WITH_SELECTED_IP
                           LOCAL_IP, TARGET_IP,
-#endif
                           LOCAL_PORT, TARGET_PORT) != 0) {
         print("ERROR: cannot create socket");
         return -1;
@@ -80,11 +76,12 @@ int recv_message_through_udp(char *msg, size_t msg_size, int quantity) {
 }
 
 int main() {
-//    char *message = "test123";
-//    send_message_through_udp(message, 8, 20);
-
+#if 0
+    char *message = "0:0:0";
+    send_message_through_udp(message, 8, 20);
+#else
     char message[100];
     recv_message_through_udp(message, 100, 5);
-
+#endif
     return 0;
 }

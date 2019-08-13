@@ -29,9 +29,7 @@ struct udp_socket {
 };
 
 int create_udp_socket(struct udp_socket *sock,
-#ifdef WITH_SELECTED_IP
                       const char *local_ip, const char *target_ip,
-#endif
                       int local_port, int target_port);
 int close_udp_socket(struct udp_socket *sock);
 int send_udp_message(struct udp_socket *sock, char *msg, size_t msg_size);
