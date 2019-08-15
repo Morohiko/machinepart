@@ -2,10 +2,19 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
-#include "assert.h"
-#include "log.h"
-#include "camera.h"
 #include <iostream>
+#include "assert.h"
+
+#include "camera.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include "log.h"
+#include "config.h"
+#ifdef __cplusplus
+}
+#endif
 
 using namespace cv;
 using namespace std;
@@ -56,7 +65,7 @@ static int check_camera_config_with_default(Mat *frame) {
     }
 
     if (CAMERA_FRAME_ELEM_SIZE != frame->elemSize()) {
-        print(ERROR, "camera frame elem size: config = %d, camera = %d", CAMERA_FRAME_ELEM_SIZE, frame->elemSize());
+        print(ERROR, "camera frame elem size: config = %d, camera = %zu", CAMERA_FRAME_ELEM_SIZE, frame->elemSize());
         return -1;
     }
 
@@ -93,7 +102,7 @@ int get_next_frame(struct camera_ctx *cam) {
         if (!frame.empty()) {
             break;
         }
-        print(ERROR, "cannot get frame, attempt left %d");
+        print(ERROR, "cannot get frame, attempt left %d", attempts);
     } while (--attempts > 0);
 
     if (attempts == 0) {

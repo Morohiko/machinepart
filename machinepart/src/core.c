@@ -53,6 +53,12 @@ int start_camera(machine_controller *controller) {
     return 0;
 }
 
+int stop_camera(machine_controller *controller) {
+    print(DEBUG, "stop camera");
+    pthread_cancel(controller->cameraThreadID);
+    return 0;
+}
+
 static void *camera_transmitter_thread(void *user_data) {
     register_log_module("CAMERA_TRANSMITTER_MODULE", pthread_self());
     while (1) {
