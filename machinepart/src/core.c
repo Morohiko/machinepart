@@ -12,7 +12,8 @@
 #endif
 
 #ifdef ENABLE_CAMERA
-#include "camera.h"
+#include "camera/camera_opencv.h"
+#include "camera/camera.h"
 #endif
 
 #define MAX_GYROSCOPE_DATA_SIZE 15
@@ -38,18 +39,23 @@ int stop_remote_controller(machine_controller *controller) {
 }
 
 #ifdef ENABLE_CAMERA
+static struct camera_ctx cam_ctx;
+
 static void *camera_thread(void *user_data) {
     register_log_module("CAMERA_MODULE", pthread_self());
+    struct camera_ctx *cam = (struct camera_ctx *) user_data;
+    int retval = 0;
+    cam->isBusy = false;
     while (1) {
+int a = 0;
+        get_frame_from_camera(&cam->data.data[0], &cam->data.size, &cam->isBusy, &cam->isNewData);
         print(DEBUG, "camera thread");
         sleep(1);
     }
 }
 
 int start_camera(machine_controller *controller) {
-    struct camera_ctx cam;
-    cam.isBusy = false;
-    pthread_create(&controller->cameraThreadID, NULL, camera_thread, &cam);
+    pthread_create(&controller->cameraThreadID, NULL, camera_thread, &cam_ctx);
     return 0;
 }
 
@@ -61,14 +67,21 @@ int stop_camera(machine_controller *controller) {
 
 static void *camera_transmitter_thread(void *user_data) {
     register_log_module("CAMERA_TRANSMITTER_MODULE", pthread_self());
-    while (1) {
-        print(DEBUG, "camera transmitter thread");
-        sleep(1);
-    }
+
+    struct connection_info *conn = (struct connection_info *) user_data;
+
+    cam_ctx.conn.local_port = conn->local_port;
+    memcpy(cam_ctx.conn.local_ip, conn->local_ip, 16);
+
+    cam_ctx.conn.target_port = conn->target_port;
+    memcpy(cam_ctx.conn.target_ip, conn->target_ip, 16);
+
+    start_send_camera_data_through_udp(&cam_ctx);
 }
 
-int start_camera_transmitter(machine_controller *controller) {
-    pthread_create(&controller->cameraTransmitterThreadID, NULL, camera_transmitter_thread, NULL);
+int start_camera_transmitter(machine_controller *controller, struct connection_info *conn) {
+
+    pthread_create(&controller->cameraTransmitterThreadID, NULL, camera_transmitter_thread, conn);
     return 0;
 }
 
@@ -86,10 +99,10 @@ static void *gyroscope_receiver_thread(void *user_data) {
     struct gyroscope_ctx ctx;
     struct connection_info *conn = (struct connection_info *) user_data;
 
-    ctx.conn.local_port_gyroscope = conn->local_port_gyroscope;
+    ctx.conn.local_port = conn->local_port;
     memcpy(ctx.conn.local_ip, conn->local_ip, 16);
 
-    ctx.conn.target_port_gyroscope = conn->target_port_gyroscope;
+    ctx.conn.target_port = conn->target_port;
     memcpy(ctx.conn.target_ip, conn->target_ip, 16);
 
     start_receive_gyroscope_data(&ctx);

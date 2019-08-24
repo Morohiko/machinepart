@@ -5,6 +5,19 @@
 
 #include "config.h"
 
+struct connection_info {
+    char local_ip[16];
+    char target_ip[16];
+
+    int local_port;
+    int target_port;
+//    int local_port_gyroscope;
+//    int target_port_gyroscope;
+
+//    int local_port_camera;
+//    int target_port_camera;
+};
+
 struct tcp_socket {
     struct sockaddr_in serv_addr;
 

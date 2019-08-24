@@ -34,8 +34,10 @@ int receive_stdin_controller_message(machine_controller *machineController) {
     char buff[1000];
     int n1 = 0;
     int n2 = 0;
+    print(INFO, "wait stdin controller message in format: \"2:1\", where :1 - on, :0 - off");
+    print(INFO, "modules 0: - CAMERA_CONTROLER, 1: - CAMERA_TRANSMITTER, 2: - GYROSCOPE_RECEIVER, 3: - MOTOR");
     scanf("%d:%d", &n1, &n2);
-    print(DEBUG, "n1 = %d, n2 = %d", n1, n2);
+    print(INFO, "n1 = %d, n2 = %d", n1, n2);
     update_machine_controller(machineController, n1, n2);
     return 0;
 }

@@ -28,7 +28,7 @@ static int parse_gyroscope_data(char *msg, struct gyroscope_data *data) {
 
 int start_receive_gyroscope_data(struct gyroscope_ctx *ctx) {
 #if 0
-    print("=============== create socket ==============");
+camera("=============== create socket ==============");
     print("local ip = %s", ctx->conn.local_ip);
     print("target ip = %s", ctx->conn.target_ip);
     print("local port = %d", ctx->conn.local_port_gyroscope);
@@ -38,7 +38,7 @@ int start_receive_gyroscope_data(struct gyroscope_ctx *ctx) {
 
     if (create_udp_socket(&ctx->sock,
                           ctx->conn.local_ip, ctx->conn.target_ip,
-                          ctx->conn.local_port_gyroscope, ctx->conn.target_port_gyroscope) != 0) {
+                          ctx->conn.local_port, ctx->conn.target_port) != 0) {
         print(ERROR, "cannot create socket");
         return -1;
     }

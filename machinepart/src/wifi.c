@@ -160,7 +160,7 @@ int send_udp_message(struct udp_socket *sock, char *msg, size_t msg_size) {
         return -1;
     }
 
-    print(DEBUG, "send message \"%s\"", msg);
+//    print(DEBUG, "send message \"%s\"", msg);
 
     sendto(sock->sock_fd, msg, msg_size, 0, (struct sockaddr*)&sock->target_sock, sizeof(sock->target_sock));
 

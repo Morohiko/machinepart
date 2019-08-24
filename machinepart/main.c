@@ -8,7 +8,7 @@
 #include "wifi.h"
 #include "utils.h"
 
-static int main_loop(machine_controller *controller, struct connection_info *conn_info) {
+static int main_loop(machine_controller *controller, struct connection_info *conn_info_gyroscope, struct connection_info *conn_info_camera) {
     int status = 0;
 
     while (1) {
@@ -28,7 +28,7 @@ static int main_loop(machine_controller *controller, struct connection_info *con
 
         if (controller->camera_transmitter_current_state != controller->camera_transmitter_state) {
             if (controller->camera_transmitter_state == 1) {
-                status = start_camera_transmitter(controller);
+                status = start_camera_transmitter(controller, conn_info_camera);
             }
             if (controller->camera_transmitter_state == 0) {
                 status = stop_camera_transmitter(controller);
@@ -40,7 +40,7 @@ static int main_loop(machine_controller *controller, struct connection_info *con
 #endif
         if (controller->gyroscope_receiver_current_state != controller->gyroscope_receiver_state) {
             if (controller->gyroscope_receiver_state == 1) {
-                status = start_gyroscope_data_receiver(controller, conn_info);
+                status = start_gyroscope_data_receiver(controller, conn_info_gyroscope);
             }
             if (controller->gyroscope_receiver_state == 0) {
                 status = stop_gyroscope_data_receiver(controller);
@@ -64,8 +64,9 @@ static int main_loop(machine_controller *controller, struct connection_info *con
     }
 }
 
-static int configure_network(struct connection_info *conn_info) {
-    assert(conn_info);
+static int configure_network(struct connection_info *conn_info_gyroscope, struct connection_info *conn_info_camera) {
+    assert(conn_info_gyroscope);
+    assert(conn_info_camera);
 
     int retval = 0;
     char ip_addr[16];
@@ -76,18 +77,37 @@ static int configure_network(struct connection_info *conn_info) {
         return retval;
     }
 
-    memcpy(conn_info->local_ip, LOCAL_IP, 16);
-    memcpy(conn_info->target_ip, ip_addr, 16);
+//    memcpy(conn_info->local_ip, LOCAL_IP, 16);
+//    memcpy(conn_info->target_ip, ip_addr, 16);
 
-    print(INFO, "selected ip: local = %s, target = %s", conn_info->local_ip, conn_info->target_ip);
-    assert(conn_info->target_ip);
+//    print(INFO, "selected ip: local = %s, target = %s", conn_info->local_ip, conn_info->target_ip);
+//    assert(conn_info->target_ip);
 
 #ifdef ENABLE_GYROSCOPE_RECEIVER
-    conn_info->local_port_gyroscope = LOCAL_GYROSCOPE_PORT;
-    conn_info->target_port_gyroscope = TARGET_GYROSCOPE_PORT;
-    print(INFO, "selected gyroscope port: local = %d, target = %d", conn_info->local_port_gyroscope, conn_info->target_port_gyroscope);
+    memcpy(conn_info_gyroscope->local_ip, LOCAL_IP, 16);
+    memcpy(conn_info_gyroscope->target_ip, ip_addr, 16);
+
+    assert(conn_info_gyroscope->local_ip);
+    assert(conn_info_gyroscope->target_ip);
+
+    conn_info_gyroscope->local_port = LOCAL_GYROSCOPE_PORT;
+    conn_info_gyroscope->target_port = TARGET_GYROSCOPE_PORT;
+    print(INFO, "selected gyroscope connection:\n local ip: %s, target ip: %s, local port: %d, target port: %d", 
+                 conn_info_gyroscope->local_ip, conn_info_gyroscope->target_ip, conn_info_gyroscope->local_port, conn_info_gyroscope->target_port);
 #endif
 
+#ifdef ENABLE_CAMERA
+    memcpy(conn_info_camera->local_ip, LOCAL_IP, 16);
+    memcpy(conn_info_camera->target_ip, ip_addr, 16);
+
+    assert(conn_info_camera->local_ip);
+    assert(conn_info_camera->target_ip);
+
+    conn_info_camera->local_port = LOCAL_CAMERA_PORT;
+    conn_info_camera->target_port = TARGET_CAMERA_PORT;
+    print(INFO, "selected camera connection:\n local ip: %s, target ip: %s, local port: %d, target port: %d", 
+                 conn_info_camera->local_ip, conn_info_camera->target_ip, conn_info_camera->local_port, conn_info_camera->target_port);
+#endif
     return 0;
 }
 
@@ -100,9 +120,10 @@ int main() {
 
     print(INFO, "======== configure network =======");
 
-    struct connection_info conn_info;
+    struct connection_info conn_info_camera;
+    struct connection_info conn_info_gyroscope;
 
-    configure_network(&conn_info);
+    configure_network(&conn_info_gyroscope, &conn_info_camera);
 
     print(DEBUG, "start remote controller");
 
@@ -112,7 +133,7 @@ int main() {
    
     start_remote_controller(&controller);
 
-    main_loop(&controller, &conn_info);
+    main_loop(&controller, &conn_info_gyroscope, &conn_info_camera);
 
     return 0;
 }

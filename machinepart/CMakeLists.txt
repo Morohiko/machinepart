@@ -41,10 +41,14 @@ if(ENABLE_CAMERA STREQUAL "ON")
 
    find_package(OpenCV REQUIRED)
 
-   set(CAMERA_SRC ${PROJ_DIR}/src/camera.cpp
-                  ${PROJ_DIR}/header/camera.h)
+   set(CAMERA_SRC ${PROJ_DIR}/src/camera/camera.c
+                  ${PROJ_DIR}/header/camera/camera.h)
 
-   set(ALL_SRC ${ALL_SRC} ${CAMERA_SRC})
+   set(CAMERA_OPENCV_SRC ${PROJ_DIR}/src/camera/camera_opencv.cpp
+                         ${PROJ_DIR}/header/camera/camera_opencv.h)
+
+
+   set(ALL_SRC ${ALL_SRC} ${CAMERA_SRC} ${CAMERA_OPENCV_SRC})
 endif()
 
 if(ENABLE_GYROSCOPE_RECEIVER STREQUAL "ON")
@@ -83,6 +87,9 @@ set(ALL_SRC ${CONTROLLER_SRC}
 
 include_directories(header)
 
+#***************************************************
+# target
+#***************************************************
 add_executable(${HEAD_MACHINE_NAME} main.c ${ALL_SRC})
 
 if(NOT DEFINED DISABLE_CAMERA)

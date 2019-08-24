@@ -5,6 +5,7 @@
 
 int test_camera_ctx() {
     struct camera_ctx cam;
+    cam.isBusy = false;
     get_frame_from_camera(&cam);
     return 0;
 }

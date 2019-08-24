@@ -2,13 +2,7 @@
 #define CORE_H
 
 #include "controller.h"
-
-struct connection_info {
-    char local_ip[16];
-    char target_ip[16];
-    int local_port_gyroscope;
-    int target_port_gyroscope;
-};
+#include "wifi.h"
 
 int start_remote_controller(machine_controller *controller);
 int stop_remote_controller(machine_controller *controller);
@@ -17,7 +11,7 @@ int stop_remote_controller(machine_controller *controller);
 int start_camera(machine_controller *controller);
 int stop_camera(machine_controller *controller);
 
-int start_camera_transmitter(machine_controller *controller);
+int start_camera_transmitter(machine_controller *controller, struct connection_info *conn);
 int stop_camera_transmitter(machine_controller *controller);
 #endif
 

@@ -164,6 +164,7 @@ int get_target_ip_addr(char *dest) {
     scanf("%d", &requested_ip);
     if (requested_ip == 0) {
         memcpy(dest, "127.0.0.1", 10);
+//        memcpy(dest, "0.0.0.0", 8);
         return 0;
     }
 
