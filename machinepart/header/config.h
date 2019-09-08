@@ -2,8 +2,6 @@
 #define CONFIG_H
 
 #define MAX_TCP_CONNECTION 10
-#define LOCAL_PORT 3333
-#define TARGET_PORT 3334
 
 #define LOCAL_IP "0.0.0.0"
 #define TARGET_IP "192.168.43.177"
@@ -11,14 +9,14 @@
 //#define TARGET_IP "127.0.0.1"
 //#define TARGET_IP "172.24.223.80"
 
-
-
-
 #define LOCAL_GYROSCOPE_PORT 3333
 #define TARGET_GYROSCOPE_PORT 3334
 #define LOCAL_CAMERA_PORT 3335
 #define TARGET_CAMERA_PORT 3336
 
+//using in wifi tcp/udp demoes
+#define LOCAL_TEST_PORT 3337
+#define TARGET_TEST_PORT 3338
 
 #define CAMERA_FRAME_WIDTH 640
 #define CAMERA_FRAME_HEIGHT 480

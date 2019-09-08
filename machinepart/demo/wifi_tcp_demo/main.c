@@ -1,12 +1,10 @@
 #include "wifi.h"
 #include "log.h"
+#include "config.h"
 #include "string.h"
 
 #include <unistd.h>
 #include <assert.h>
-
-#define WIFI_PORT 3333
-#define MAX_TCP_CONNECTION 10
 
 int send_message_through_tcp(int port, char *msg, size_t msg_size, int quantity) {
     assert(msg);
@@ -93,10 +91,10 @@ int main() {
 
     char *message = "test123";
 
-    send_message_through_tcp(WIFI_PORT, message, 8, 5);
+    send_message_through_tcp(TARGET_TEST_PORT, message, 8, 5);
 
 //    char message[100];
-//    recv_message_through_tcp(WIFI_PORT, message, 100, 5);
+//    recv_message_through_tcp(TARGET_TEST_PORT, message, 100, 5);
 
     return 0;
 }

@@ -11,15 +11,15 @@ int send_message_through_udp(char *msg, size_t msg_size, int quantity) {
 
     struct udp_socket sock;
 
-    print(DEBUG, "local ip = %s", LOCAL_IP);  
-    print(DEBUG, "target ip = %s", TARGET_IP);  
+    print(DEBUG, "local ip = %s", LOCAL_IP);
+    print(DEBUG, "target ip = %s", TARGET_IP);
 
-    print(DEBUG, "local port = %d", LOCAL_CAMERA_PORT);  
-    print(DEBUG, "target port = %d", TARGET_CAMERA_PORT);  
+    print(DEBUG, "local port = %d", LOCAL_TEST_PORT);
+    print(DEBUG, "target port = %d", TARGET_TEST_PORT);
 
     if (create_udp_socket(&sock,
                           LOCAL_IP, TARGET_IP,
-                          LOCAL_PORT, TARGET_PORT) != 0) {
+                          LOCAL_TEST_PORT, TARGET_TEST_PORT) != 0) {
         print(ERROR, "cannot create socket");
         return -1;
     }
@@ -52,7 +52,7 @@ int recv_message_through_udp(char *msg, size_t msg_size, int quantity) {
    
     if (create_udp_socket(&sock,
                           LOCAL_IP, TARGET_IP,
-                          LOCAL_PORT, TARGET_PORT) != 0) {
+                          LOCAL_TEST_PORT, TARGET_TEST_PORT) != 0) {
         print(ERROR, "cannot create socket");
         return -1;
     }

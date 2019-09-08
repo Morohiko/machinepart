@@ -92,7 +92,7 @@ int recv_gyroscope_data(struct gyroscope_ctx *ctx) {
     assert(msg);  
     if (create_udp_socket(&ctx->sock,
                           LOCAL_IP, TARGET_IP,
-                          LOCAL_PORT, TARGET_PORT) != 0) {
+                          LOCAL_GYROSCOPE_PORT, TARGET_GYROSCOPE_PORT) != 0) {
         print(ERROR, "cannot create socket");
         return -1;
     }

@@ -28,7 +28,7 @@ int recv_gyroscope_data(char *msg) {
    
     if (create_udp_socket(&sock,
                           LOCAL_IP, TARGET_IP,
-                          LOCAL_PORT, TARGET_PORT) != 0) {
+                          LOCAL_GYROSCOPE_PORT, TARGET_GYROSOPOPE_PORT) != 0) {
         print(ERROR, "cannot create socket");
         return -1;
     }
