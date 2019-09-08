@@ -76,6 +76,7 @@ How it must work:
 #### CMake
     sudo apt install cmake
 
+### capture video 1 (OpenCV way)
 #### Python (required for OpenCV)
     sudo apt-get -y install python3-dev python3-pip
     sudo -H pip3 install -U pip numpy
@@ -151,8 +152,11 @@ How it must work:
 
     echo "sudo modprobe bcm2835-v4l2" >> ~/.profile
 
+### capture video 2 (vgrabbj way)
+    sudo apt install libv4l-dev
+    sudo ln /usr/include/libv4l1-videodev.h /usr/include/linux/videodev.h
 
-    ### Demo
+### Demo
 
 #### Camera demo
 Provide example of functional for using camera sources.

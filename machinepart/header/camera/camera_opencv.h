@@ -12,6 +12,11 @@ extern "C" {
 #ifdef __cplusplus
 extern "C" {
 #endif
+struct camera_data {
+    int size;
+    int data[307200];
+};
+
 int get_frame_from_camera(int *data, int *size, bool *isBusy, bool *isNewData);
 #ifdef __cplusplus
 }

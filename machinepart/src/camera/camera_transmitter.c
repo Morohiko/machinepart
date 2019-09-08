@@ -6,7 +6,7 @@
 #include "wifi.h"
 #include "core.h"
 #include "log.h"
-#include "camera/camera.h"
+#include "camera/camera_transmitter.h"
 
 int start_send_camera_data_through_udp(struct camera_ctx *ctx) {
 #if 1

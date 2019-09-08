@@ -12,8 +12,12 @@
 #endif
 
 #ifdef ENABLE_CAMERA
+#ifdef USING_OPENCV
 #include "camera/camera_opencv.h"
-#include "camera/camera.h"
+#else
+#include "camera/camera_v4l.h"
+#endif
+#include "camera/camera_transmitter.h"
 #endif
 
 #define MAX_GYROSCOPE_DATA_SIZE 15
