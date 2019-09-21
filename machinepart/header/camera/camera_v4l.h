@@ -14,6 +14,6 @@ int run_camera(struct camera_ctx *cam_ctx);
 
 int pause_camera();
 
-int get_frame_from_camera(void *data, size_t *size, bool *isBusy, bool *isNewData);
+int get_frame_from_camera(struct camera_ctx *cam_ctx);
 
 #endif

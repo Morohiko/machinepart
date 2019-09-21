@@ -185,7 +185,8 @@ int run_camera(struct camera_ctx *cam_ctx) {
             print(ERROR, "select timeout");
             continue;
         }
-        if (cam_ctx->isBusy) {
+
+        if (cam_ctx->isBusy == true) {
             continue;
 	}
 
@@ -207,8 +208,32 @@ int run_camera(struct camera_ctx *cam_ctx) {
 int pause_camera() {
 }
 
-int get_frame_from_camera(void *data, size_t *size, bool *isBusy, bool *isNewData) {
-#ifdef aa
+// int get_frame_from_camera(void *data, size_t *size, bool *isBusy, bool *isNewData) {
+int get_frame_from_camera(struct camera_ctx *cam_ctx) {
+if (cam_ctx->isBusy) {
+    print(DEBUG, "ftw cam is busy?");
+}
+    int retval = 0;
+
+    print(INFO, "init camera");
+
+    retval = init_camera(cam_ctx);
+
+    if (retval != 0) {
+        print(ERROR, "cannot init camera");
+        return -1;
+    }
+
+    print(INFO, "run camera");
+
+    retval = run_camera(cam_ctx);
+
+    if (retval != 0) {
+        print(ERROR, "run camera error");
+        return -1;
+    }
+
+#ifdef aa //opencv
     assert(data); assert(size); assert(isBusy);
 
     int retval = 0;

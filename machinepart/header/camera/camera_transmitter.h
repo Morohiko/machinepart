@@ -17,6 +17,7 @@ struct camera_ctx {
     bool isNewData;
     struct connection_info conn;
     struct udp_socket sock;
+    struct tcp_socket camera_tcp_sock;
     struct camera_data data;
 };
 

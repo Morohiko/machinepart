@@ -47,12 +47,10 @@ static struct camera_ctx cam_ctx;
 
 static void *camera_thread(void *user_data) {
     register_log_module("CAMERA_MODULE", pthread_self());
-    struct camera_ctx *cam = (struct camera_ctx *) user_data;
     int retval = 0;
-    cam->isBusy = false;
+    cam_ctx.isBusy = false;
     while (1) {
-int a = 0;
-        get_frame_from_camera(&cam->data.data[0], &cam->data.size, &cam->isBusy, &cam->isNewData);
+        get_frame_from_camera(&cam_ctx);
         print(DEBUG, "camera thread");
         sleep(1);
     }
@@ -80,7 +78,8 @@ static void *camera_transmitter_thread(void *user_data) {
     cam_ctx.conn.target_port = conn->target_port;
     memcpy(cam_ctx.conn.target_ip, conn->target_ip, 16);
 
-    start_send_camera_data_through_udp(&cam_ctx);
+//    start_send_camera_data_through_udp(&cam_ctx);
+    start_send_camera_data_through_tcp(&cam_ctx);
 }
 
 int start_camera_transmitter(machine_controller *controller, struct connection_info *conn) {

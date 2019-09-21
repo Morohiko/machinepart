@@ -27,16 +27,10 @@ int start_send_camera_data_through_udp(struct camera_ctx *ctx) {
     }
 
     int *data = (int *) malloc(ctx->data.size);
-assert(ctx);
-//assert(ctx->data);
-assert(ctx->data.data);
+    assert(ctx); assert(ctx->data.data);
     while(ctx->isWorking) {
-//print(DEBUG, "ctx is busy = %d", ctx->isBusy);
-
         if (!ctx->isNewData) {
             print(DEBUG, "it is not new data, skip");
-sleep(1);
-
             continue;
         }
 
@@ -47,22 +41,13 @@ sleep(1);
         }
         ctx->isBusy = true;
 
-//print(DEBUG, "befor memcpu");
         memcpy((int *) data, &ctx->data.data[0], ctx->data.size);
-print(DEBUG, "data = %d", *data);
-//print(DEBUG, "after memcpu");
-
-//print(DEBUG, "before send");
-sleep(1);
 
         if (send_udp_message(&ctx->sock, data, ctx->data.size) < 0) {
             print(ERROR, "cannot send message");
             break;
         }
-ctx->isNewData = false;
         ctx->isBusy = false;
-
-print(DEBUG, "sended message through udp send");
     }
 
     return 0;
@@ -106,3 +91,52 @@ int stop_recv_camera_data_through_udp(struct camera_ctx *ctx) {
 
     return 0;
 }
+
+int start_send_camera_data_through_tcp(struct camera_ctx *ctx) {
+#if 1
+    print(DEBUG, "=============== create socket ==============");
+    print(DEBUG, "local ip = %s", ctx->conn.local_ip);
+    print(DEBUG, "target ip = %s", ctx->conn.target_ip);
+    print(DEBUG, "local port = %d", ctx->conn.local_port);
+    print(DEBUG, "target port = %d", ctx->conn.target_port);
+#endif
+    print(DEBUG, "start send camera data through tcp");
+    ctx->isWorking = true;
+
+    if (create_tcp_socket(&ctx->camera_tcp_sock,
+			   LOCAL_CAMERA_PORT) != 0) {
+        print(ERROR, "cannot create socket");
+        return -1;
+    }
+
+    print(DEBUG, "socket created");
+    if (listen_tcp_connection(&ctx->camera_tcp_sock, MAX_TCP_CONNECTION) != 0) {
+        print(ERROR, "cannot start tcp listen connection");
+        return -1;
+    }
+
+    print(DEBUG, "listen tcp connection");
+    if (accept_tcp_connection(&ctx->camera_tcp_sock) != 0) {
+        print(ERROR, "cannot accept connection");
+        return -1;
+    }
+
+    print(DEBUG, "connection accepted");
+
+    for(;;) {
+        sleep(1);
+
+        if (ctx->data.data == NULL) {
+            print(ERROR, "msg is empty, size = %zu", ctx->data.size);
+	    continue;
+        }
+        if (send_tcp_message(&ctx->camera_tcp_sock, ctx->data.data, ctx->data.size) < 0) {
+            print(ERROR, "cannot send message");
+            break;
+        }
+	print(DEBUG, "sended message");
+    }
+
+    return 0;
+}
+
