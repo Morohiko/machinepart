@@ -11,12 +11,19 @@ struct connection_info {
 
     int local_port;
     int target_port;
-//    int local_port_gyroscope;
-//    int target_port_gyroscope;
-
-//    int local_port_camera;
-//    int target_port_camera;
 };
+
+struct connection_info_cam {
+    char local_ip[16];
+    char target_ip[16];
+
+    int frame_local_port;
+    int frame_target_port;
+
+    int ack_local_port;
+    int ack_target_port;
+};
+
 
 struct tcp_socket {
     struct sockaddr_in serv_addr;

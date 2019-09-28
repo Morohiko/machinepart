@@ -8,7 +8,9 @@
 #include "wifi.h"
 #include "utils.h"
 
-static int main_loop(machine_controller *controller, struct connection_info *conn_info_gyroscope, struct connection_info *conn_info_camera) {
+static int main_loop(machine_controller *controller,
+		     struct connection_info *conn_info_gyroscope,
+		     struct connection_info_cam *conn_info_camera) {
     int status = 0;
 
     while (1) {
@@ -64,7 +66,8 @@ static int main_loop(machine_controller *controller, struct connection_info *con
     }
 }
 
-static int configure_network(struct connection_info *conn_info_gyroscope, struct connection_info *conn_info_camera) {
+static int configure_network(struct connection_info *conn_info_gyroscope,
+                             struct connection_info_cam *conn_info_camera) {
     assert(conn_info_gyroscope);
     assert(conn_info_camera);
 
@@ -97,16 +100,27 @@ static int configure_network(struct connection_info *conn_info_gyroscope, struct
 #endif
 
 #ifdef ENABLE_CAMERA
+// install connection info for camera frame
     memcpy(conn_info_camera->local_ip, LOCAL_IP, 16);
     memcpy(conn_info_camera->target_ip, ip_addr, 16);
 
     assert(conn_info_camera->local_ip);
     assert(conn_info_camera->target_ip);
 
-    conn_info_camera->local_port = LOCAL_CAMERA_PORT;
-    conn_info_camera->target_port = TARGET_CAMERA_PORT;
-    print(INFO, "selected camera connection:\n local ip: %s, target ip: %s, local port: %d, target port: %d", 
-                 conn_info_camera->local_ip, conn_info_camera->target_ip, conn_info_camera->local_port, conn_info_camera->target_port);
+// configure camera frame port
+    conn_info_camera->frame_local_port = LOCAL_CAMERA_FRAME_PORT;
+    conn_info_camera->frame_target_port = TARGET_CAMERA_FRAME_PORT;
+// configure camera ack port
+    conn_info_camera->ack_local_port = LOCAL_CAMERA_ACK_PORT;
+    conn_info_camera->ack_target_port = TARGET_CAMERA_ACK_PORT;
+
+    print(INFO, "selected camera frame connection:\n local ip: %s, target ip: %s, frame local port: %d, frame target port: %d, ack local port: %d, ack target port: %d",
+		    conn_info_camera->local_ip,
+		    conn_info_camera->target_ip,
+		    conn_info_camera->frame_local_port,
+		    conn_info_camera->frame_target_port,
+		    conn_info_camera->ack_local_port,
+		    conn_info_camera->ack_target_port);
 #endif
     return 0;
 }
@@ -120,8 +134,8 @@ int main() {
 
     print(INFO, "======== configure network =======");
 
-    struct connection_info conn_info_camera;
     struct connection_info conn_info_gyroscope;
+    struct connection_info_cam conn_info_camera;
 
     configure_network(&conn_info_gyroscope, &conn_info_camera);
 

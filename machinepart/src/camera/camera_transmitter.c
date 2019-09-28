@@ -8,6 +8,9 @@
 #include "log.h"
 #include "camera/camera_transmitter.h"
 
+#define ACK_MESSAGE_SIZE 4
+
+#ifdef SEND_CAMERA_DATA_OVER_UDP
 int start_send_camera_data_through_udp(struct camera_ctx *ctx) {
 #if 1
     print(DEBUG, "=============== create socket ==============");
@@ -91,50 +94,104 @@ int stop_recv_camera_data_through_udp(struct camera_ctx *ctx) {
 
     return 0;
 }
+#endif // SEND_CAMERA_DATA_OVER_UDP
 
 int start_send_camera_data_through_tcp(struct camera_ctx *ctx) {
 #if 1
-    print(DEBUG, "=============== create socket ==============");
+    print(DEBUG, "\n=============== create socket ==============");
+
     print(DEBUG, "local ip = %s", ctx->conn.local_ip);
     print(DEBUG, "target ip = %s", ctx->conn.target_ip);
-    print(DEBUG, "local port = %d", ctx->conn.local_port);
-    print(DEBUG, "target port = %d", ctx->conn.target_port);
+
+    print(DEBUG, "frame local port = %d", ctx->conn.frame_local_port);
+    print(DEBUG, "frame target port = %d", ctx->conn.frame_target_port);
+
+    print(DEBUG, "ack local port = %d", ctx->conn.ack_local_port);
+    print(DEBUG, "ack target port = %d", ctx->conn.ack_target_port);
 #endif
     print(DEBUG, "start send camera data through tcp");
     ctx->isWorking = true;
 
-    if (create_tcp_socket(&ctx->camera_tcp_sock,
-			   LOCAL_CAMERA_PORT) != 0) {
+// configure camera frame socket
+    print(DEBUG, "start configure camera frame socket");
+
+    if (create_tcp_socket(&ctx->camera_tcp_sock_frame,
+			   LOCAL_CAMERA_FRAME_PORT) != 0) {
         print(ERROR, "cannot create socket");
         return -1;
     }
 
     print(DEBUG, "socket created");
-    if (listen_tcp_connection(&ctx->camera_tcp_sock, MAX_TCP_CONNECTION) != 0) {
+    if (listen_tcp_connection(&ctx->camera_tcp_sock_frame, MAX_TCP_CONNECTION) != 0) {
         print(ERROR, "cannot start tcp listen connection");
         return -1;
     }
 
     print(DEBUG, "listen tcp connection");
-    if (accept_tcp_connection(&ctx->camera_tcp_sock) != 0) {
+    if (accept_tcp_connection(&ctx->camera_tcp_sock_frame) != 0) {
         print(ERROR, "cannot accept connection");
         return -1;
     }
 
+// configure camera ack socket
+    print(DEBUG, "start configure camera ack socket");
+
+    if (create_tcp_socket(&ctx->camera_tcp_sock_ack,
+			   LOCAL_CAMERA_ACK_PORT) != 0) {
+        print(ERROR, "cannot create socket");
+        return -1;
+    }
+
+    print(DEBUG, "socket created");
+    if (listen_tcp_connection(&ctx->camera_tcp_sock_ack, MAX_TCP_CONNECTION) != 0) {
+        print(ERROR, "cannot start tcp listen connection");
+        return -1;
+    }
+
+    print(DEBUG, "listen tcp connection");
+    if (accept_tcp_connection(&ctx->camera_tcp_sock_ack) != 0) {
+        print(ERROR, "cannot accept connection");
+        return -1;
+    }
+
+
     print(DEBUG, "connection accepted");
 
+    char ack_message[ACK_MESSAGE_SIZE];
     for(;;) {
-        sleep(1);
+        print(ERROR, "msg size = %zu", ctx->data.size);
 
         if (ctx->data.data == NULL) {
             print(ERROR, "msg is empty, size = %zu", ctx->data.size);
 	    continue;
         }
-        if (send_tcp_message(&ctx->camera_tcp_sock, ctx->data.data, ctx->data.size) < 0) {
+#ifdef SEND_MTU_SIZE_MESSAGES
+        print(ERROR, "frame size = %zu, sends = %zu", ctx->data.size, MTU_SIZE_MESSAGE);
+
+        if (send_tcp_message(&ctx->camera_tcp_sock, ctx->data.data, MTU_SIZE_MESSAGE) < 0) {
+
+#else
+        print(ERROR, "frame size = %zu, sends = %zu", ctx->data.size, ctx->data.size);
+
+        if (send_tcp_message(&ctx->camera_tcp_sock_frame, ctx->data.data, ctx->data.size) < 0) {
+#endif
             print(ERROR, "cannot send message");
             break;
         }
+// receive acknowledge
+
 	print(DEBUG, "sended message");
+
+        memset(ack_message, '\0', sizeof(ack_message));
+
+        while (recv_tcp_message(&ctx->camera_tcp_sock_ack, ack_message, ACK_MESSAGE_SIZE)) {
+            print(DEBUG, "ack received, message...");
+            print(DEBUG, "AAAack received, message: %s", ack_message);
+            sleep(1);
+
+        }
+        print(DEBUG, "ack received, message: %s", ack_message);
+
     }
 
     return 0;

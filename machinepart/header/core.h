@@ -11,7 +11,8 @@ int stop_remote_controller(machine_controller *controller);
 int start_camera(machine_controller *controller);
 int stop_camera(machine_controller *controller);
 
-int start_camera_transmitter(machine_controller *controller, struct connection_info *conn);
+int start_camera_transmitter(machine_controller *controller,
+                             struct connection_info_cam *conn_info_camera);
 int stop_camera_transmitter(machine_controller *controller);
 #endif
 

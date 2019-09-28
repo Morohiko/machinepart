@@ -15,9 +15,10 @@ struct camera_ctx {
     bool isWorking;
     bool isBusy;
     bool isNewData;
-    struct connection_info conn;
+    struct connection_info_cam conn;
     struct udp_socket sock;
-    struct tcp_socket camera_tcp_sock;
+    struct tcp_socket camera_tcp_sock_frame;
+    struct tcp_socket camera_tcp_sock_ack;
     struct camera_data data;
 };
 

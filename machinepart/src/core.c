@@ -67,24 +67,30 @@ int stop_camera(machine_controller *controller) {
     return 0;
 }
 
+static struct connection_info conn_info_camera_frame;
+static struct connection_info conn_info_camera_ack;
+
 static void *camera_transmitter_thread(void *user_data) {
     register_log_module("CAMERA_TRANSMITTER_MODULE", pthread_self());
 
-    struct connection_info *conn = (struct connection_info *) user_data;
-
-    cam_ctx.conn.local_port = conn->local_port;
+    struct connection_info_cam *conn = (struct connection_info_cam *) user_data;
     memcpy(cam_ctx.conn.local_ip, conn->local_ip, 16);
-
-    cam_ctx.conn.target_port = conn->target_port;
     memcpy(cam_ctx.conn.target_ip, conn->target_ip, 16);
+
+    cam_ctx.conn.frame_local_port = conn->frame_local_port;
+    cam_ctx.conn.frame_target_port = conn->frame_target_port;
+
+    cam_ctx.conn.ack_local_port = conn->ack_local_port;
+    cam_ctx.conn.ack_target_port = conn->ack_target_port;
 
 //    start_send_camera_data_through_udp(&cam_ctx);
     start_send_camera_data_through_tcp(&cam_ctx);
 }
 
-int start_camera_transmitter(machine_controller *controller, struct connection_info *conn) {
+int start_camera_transmitter(machine_controller *controller,
+                             struct connection_info_cam *conn_info_camera) {
 
-    pthread_create(&controller->cameraTransmitterThreadID, NULL, camera_transmitter_thread, conn);
+    pthread_create(&controller->cameraTransmitterThreadID, NULL, camera_transmitter_thread, conn_info_camera);
     return 0;
 }
 
