@@ -41,4 +41,7 @@
 #define MTU_SIZE_MESSAGE 131072
 #endif
 
+#define WITH_FPS_CHECKER
+#define FPS_UPDATE_VALUE_EVERY 5
+
 #endif

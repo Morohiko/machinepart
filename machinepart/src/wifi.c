@@ -62,7 +62,7 @@ int send_tcp_message(struct tcp_socket *sock, char *msg, size_t msg_size) {
         return -1;
     }
 
-    print(DEBUG, "send message: \"%s\", size: %zu", msg, msg_size);
+//    print(DEBUG, "send message: \"%s\", size: %zu", msg, msg_size);
     int sended = send(sock->connfd, msg, msg_size, 0);
 
     return 0;
@@ -81,7 +81,7 @@ int recv_tcp_message(struct tcp_socket *sock, char *msg, size_t msg_size) {
         print(ERROR, "recv tcp message size == 0");
         return -1;
     }
-    print(DEBUG, "recv tcp size = %zu msg = %s", size, msg);
+//    print(DEBUG, "recv tcp size = %zu msg = %s", size, msg);
 
     return 0;
 }

@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <unistd.h>
 
+#include "fps_checker.h"
 #include "wifi.h"
 #include "core.h"
 #include "log.h"
@@ -157,41 +158,42 @@ int start_send_camera_data_through_tcp(struct camera_ctx *ctx) {
 
     print(DEBUG, "connection accepted");
 
+#ifdef WITH_FPS_CHECKER
+    struct fps_checker_t fps_checker;
+    init_fps_checker(&fps_checker);
+#endif // WITH_FPS_CHECKER
+
+    print(DEBUG, "start sending messages");
     char ack_message[ACK_MESSAGE_SIZE];
     for(;;) {
-        print(ERROR, "msg size = %zu", ctx->data.size);
+
+#ifdef WITH_FPS_CHECKER
+        update_fps_value(&fps_checker, "send camera messages");
+#endif // WITH_FPS_CHECKER
 
         if (ctx->data.data == NULL) {
             print(ERROR, "msg is empty, size = %zu", ctx->data.size);
 	    continue;
         }
 #ifdef SEND_MTU_SIZE_MESSAGES
-        print(ERROR, "frame size = %zu, sends = %zu", ctx->data.size, MTU_SIZE_MESSAGE);
-
         if (send_tcp_message(&ctx->camera_tcp_sock, ctx->data.data, MTU_SIZE_MESSAGE) < 0) {
 
 #else
-        print(ERROR, "frame size = %zu, sends = %zu", ctx->data.size, ctx->data.size);
-
         if (send_tcp_message(&ctx->camera_tcp_sock_frame, ctx->data.data, ctx->data.size) < 0) {
 #endif
             print(ERROR, "cannot send message");
             break;
         }
+
+//	print(DEBUG, "sended message");
+
 // receive acknowledge
-
-	print(DEBUG, "sended message");
-
-        memset(ack_message, '\0', sizeof(ack_message));
-
         while (recv_tcp_message(&ctx->camera_tcp_sock_ack, ack_message, ACK_MESSAGE_SIZE)) {
-            print(DEBUG, "ack received, message...");
-            print(DEBUG, "AAAack received, message: %s", ack_message);
+            print(DEBUG, "ack received, message: %s", ack_message);
             sleep(1);
 
         }
-        print(DEBUG, "ack received, message: %s", ack_message);
-
+//        print(DEBUG, "ack received, message: %s", ack_message);
     }
 
     return 0;

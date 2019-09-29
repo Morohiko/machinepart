@@ -85,12 +85,16 @@ set(WIFI_SRC ${PROJ_DIR}/src/wifi.c
 set(LOG_SRC ${PROJ_DIR}/src/log.c
             ${PROJ_DIR}/header/log.h)
 
+set(FPS_CHECKER_SRC ${PROJ_DIR}/src/fps_checker.c
+                    ${PROJ_DIR}/header/fps_checker.h)
+
 set(ALL_SRC ${CONTROLLER_SRC}
             ${CORE_SRC}
             ${UTILS_SRC}
             ${ALL_SRC}
             ${WIFI_SRC}
-            ${LOG_SRC})
+            ${LOG_SRC}
+            ${FPS_CHECKER_SRC})
 
 include_directories(header)
 
