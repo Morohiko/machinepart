@@ -3,16 +3,22 @@
 
 #define MAX_TCP_CONNECTION 10
 
+//************ ip/port *************//
 #define LOCAL_IP "0.0.0.0"
 #define TARGET_IP "192.168.43.177"
 //#define TARGET_IP "127.0.0.1"
 //#define TARGET_IP "127.0.0.1"
 //#define TARGET_IP "172.24.223.80"
 
+#define LOCAL_CONTROLLER_PORT 3331
+#define TARGET_CONTROLLER_PORT 3332
+
 #define LOCAL_GYROSCOPE_PORT 3333
 #define TARGET_GYROSCOPE_PORT 3334
+
 #define LOCAL_CAMERA_FRAME_PORT 3335
 #define TARGET_CAMERA_FRAME_PORT 3336
+
 #define LOCAL_CAMERA_ACK_PORT 3337
 #define TARGET_CAMERA_ACK_PORT 3338
 
@@ -20,12 +26,15 @@
 #define LOCAL_TEST_PORT 3339
 #define TARGET_TEST_PORT 3340
 
+
+//*********** camera config ***********//
 #define CAMERA_FRAME_WIDTH 640
 #define CAMERA_FRAME_HEIGHT 480
 #define CAMERA_FRAME_TYPE CV_8UC3
 #define CAMERA_FRAME_ELEM_SIZE 3
 
-//modules name
+
+//*********** modules name ************//
 #define MAIN_MODULE "MAIN_MODULE"
 #define REMOTE_CONTROLLER_MODULE "REMOTE_CONTROLLER_MODULE"
 #define CAMERA_MODULE "CAMERA_MODULE"
@@ -44,4 +53,6 @@
 #define WITH_FPS_CHECKER
 #define FPS_UPDATE_VALUE_EVERY 5
 
+// ifndef then default - stdin
+#define REMOTE_CONTROLLER
 #endif

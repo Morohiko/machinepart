@@ -99,7 +99,7 @@ int stop_recv_camera_data_through_udp(struct camera_ctx *ctx) {
 
 int start_send_camera_data_through_tcp(struct camera_ctx *ctx) {
 #if 1
-    print(DEBUG, "\n=============== create socket ==============");
+    print(DEBUG, "\n=============== camera create socket ==============");
 
     print(DEBUG, "local ip = %s", ctx->conn.local_ip);
     print(DEBUG, "target ip = %s", ctx->conn.target_ip);
@@ -173,6 +173,7 @@ int start_send_camera_data_through_tcp(struct camera_ctx *ctx) {
 
         if (ctx->data.data == NULL) {
             print(ERROR, "msg is empty, size = %zu", ctx->data.size);
+	    sleep(1);
 	    continue;
         }
 #ifdef SEND_MTU_SIZE_MESSAGES

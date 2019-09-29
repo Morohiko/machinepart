@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <unistd.h>
 
 #include "log.h"
 #include "controller.h"
@@ -34,19 +35,77 @@ int receive_stdin_controller_message(machine_controller *machineController) {
     char buff[1000];
     int n1 = 0;
     int n2 = 0;
-    print(INFO, "wait stdin controller message in format: \"2:1\", where :1 - on, :0 - off");
-    print(INFO, "modules 0: - CAMERA_CONTROLER, 1: - CAMERA_TRANSMITTER, 2: - GYROSCOPE_RECEIVER, 3: - MOTOR");
-    scanf("%d:%d", &n1, &n2);
-    print(INFO, "n1 = %d, n2 = %d", n1, n2);
-    update_machine_controller(machineController, n1, n2);
+    while (1) {
+        print(INFO, "wait STDIN controller message in format: \"2:1\", where :1 - on, :0 - off");
+        print(INFO, "modules 0: - CAMERA_CONTROLER, 1: - CAMERA_TRANSMITTER, 2: - GYROSCOPE_RECEIVER, 3: - MOTOR");
+        scanf("%d:%d", &n1, &n2);
+        print(INFO, "n1 = %d, n2 = %d", n1, n2);
+        update_machine_controller(machineController, n1, n2);
+    }
     return 0;
 }
 
-// mocked
+#define REMOTE_CONTROLLER_MESSAGE_SIZE 4
+static int parse_remote_controller_message(char *msg, int *dest_mod, int *dest_value) {
+    assert(msg); assert(dest_mod); assert(dest_value);
+
+    sscanf(msg, "%d:%d", dest_mod, dest_value);
+    return 0;
+}
+
+// receive remote control from gp
 int receive_remote_controller_message(machine_controller *machineController) {
     assert(machineController);
-//    char buff[1000];
-//    update_machine_controller(machineController);
+    char buff[1000];
+    int n1 = 0;
+    int n2 = 0;
+
+    print(DEBUG, "\n=============== controller create socket ==============");
+
+    print(DEBUG, "local ip = %s", machineController->conn.local_ip);
+    print(DEBUG, "target ip = %s", machineController->conn.target_ip);
+
+    print(DEBUG, "local port = %d", machineController->conn.local_port);
+    print(DEBUG, "target port = %d", machineController->conn.target_port);
+
+// configure remote controller socket
+    if (create_tcp_socket(&machineController->controller_sock,
+                          machineController->conn.local_port) != 0) {
+        print(ERROR, "cannot create socket");
+        return -1;
+    }
+
+    print(DEBUG, "socket created");
+    if (listen_tcp_connection(&machineController->controller_sock, MAX_TCP_CONNECTION) != 0) {
+        print(ERROR, "cannot start tcp listen connection");
+        return -1;
+    }
+
+    print(DEBUG, "listen tcp connection");
+    if (accept_tcp_connection(&machineController->controller_sock) != 0) {
+        print(ERROR, "cannot accept connection");
+        return -1;
+    }
+
+    char controller_message[REMOTE_CONTROLLER_MESSAGE_SIZE];
+
+    while (1) {
+        print(INFO, "wait REMOTE controller message in format: \"2:1\", where :1 - on, :0 - off");
+        print(INFO, "modules 0: - CAMERA_CONTROLER, 1: - CAMERA_TRANSMITTER, 2: - GYROSCOPE_RECEIVER, 3: - MOTOR");
+        while (recv_tcp_message(&machineController->controller_sock, controller_message, REMOTE_CONTROLLER_MESSAGE_SIZE)) {
+            print(DEBUG, "controller message received, message: %s", controller_message);
+            sleep(1);
+        }
+
+        print(DEBUG, "controller received message: %s", controller_message);
+
+	if (parse_remote_controller_message(controller_message, &n1, &n2)) {
+            print(ERROR, "cannot parse controller message");
+            continue;
+	}
+
+        update_machine_controller(machineController, n1, n2);
+    }
     return 0;
 }
 

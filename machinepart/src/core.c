@@ -25,11 +25,13 @@
 static void* remote_controller_thread(void *user_data) {
     register_log_module("REMOTE_CONTROLLER_MODULE", pthread_self());
     machine_controller *controller = (machine_controller*) user_data;
-    while (1) {
-        print(DEBUG, "remote controller thread");
-        receive_stdin_controller_message(controller);
-        sleep(1);
-    }
+
+    print(DEBUG, "remote controller thread");
+#ifdef REMOTE_CONTROLLER
+    receive_remote_controller_message(controller);
+#else // REMOTE_CONTRLLER
+    receive_stdin_controller_message(controller);
+#endif // REMOTE_CONTRLLER
 }
 
 int start_remote_controller(machine_controller *controller) {

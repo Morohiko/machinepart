@@ -39,7 +39,7 @@ static int main_loop(machine_controller *controller,
             controller->camera_transmitter_current_state = controller->camera_transmitter_state;
             print(DEBUG, "changed camera transmitter state to %d", controller->camera_transmitter_current_state);
         }
-#endif
+#endif // ENABLE_CAMERA
         if (controller->gyroscope_receiver_current_state != controller->gyroscope_receiver_state) {
             if (controller->gyroscope_receiver_state == 1) {
                 status = start_gyroscope_data_receiver(controller, conn_info_gyroscope);
@@ -66,7 +66,8 @@ static int main_loop(machine_controller *controller,
     }
 }
 
-static int configure_network(struct connection_info *conn_info_gyroscope,
+static int configure_network(struct connection_info *conn_info_controller,
+                             struct connection_info *conn_info_gyroscope,
                              struct connection_info_cam *conn_info_camera) {
     assert(conn_info_gyroscope);
     assert(conn_info_camera);
@@ -80,11 +81,22 @@ static int configure_network(struct connection_info *conn_info_gyroscope,
         return retval;
     }
 
-//    memcpy(conn_info->local_ip, LOCAL_IP, 16);
-//    memcpy(conn_info->target_ip, ip_addr, 16);
+#ifdef REMOTE_CONTROLLER
+    memcpy(conn_info_controller->local_ip, LOCAL_IP, 16);
+    memcpy(conn_info_controller->target_ip, ip_addr, 16);
 
-//    print(INFO, "selected ip: local = %s, target = %s", conn_info->local_ip, conn_info->target_ip);
-//    assert(conn_info->target_ip);
+    assert(conn_info_controller->local_ip);
+    assert(conn_info_controller->target_ip);
+
+    conn_info_controller->local_port = LOCAL_CONTROLLER_PORT;
+    conn_info_controller->target_port = TARGET_CONTROLLER_PORT;
+
+    print(INFO, "selected controller connection:\n local ip: %s, target ip: %s, local port: %d, target port: %d",
+                conn_info_controller->local_ip,
+                conn_info_controller->target_ip,
+                conn_info_controller->local_port,
+                conn_info_controller->target_port);
+#endif // REMOTE_CONTROLLER
 
 #ifdef ENABLE_GYROSCOPE_RECEIVER
     memcpy(conn_info_gyroscope->local_ip, LOCAL_IP, 16);
@@ -96,8 +108,11 @@ static int configure_network(struct connection_info *conn_info_gyroscope,
     conn_info_gyroscope->local_port = LOCAL_GYROSCOPE_PORT;
     conn_info_gyroscope->target_port = TARGET_GYROSCOPE_PORT;
     print(INFO, "selected gyroscope connection:\n local ip: %s, target ip: %s, local port: %d, target port: %d", 
-                 conn_info_gyroscope->local_ip, conn_info_gyroscope->target_ip, conn_info_gyroscope->local_port, conn_info_gyroscope->target_port);
-#endif
+                 conn_info_gyroscope->local_ip,
+                 conn_info_gyroscope->target_ip,
+                 conn_info_gyroscope->local_port,
+                 conn_info_gyroscope->target_port);
+#endif // ENABLE_GYROSCOPE_RECEIVER
 
 #ifdef ENABLE_CAMERA
 // install connection info for camera frame
@@ -121,7 +136,7 @@ static int configure_network(struct connection_info *conn_info_gyroscope,
 		    conn_info_camera->frame_target_port,
 		    conn_info_camera->ack_local_port,
 		    conn_info_camera->ack_target_port);
-#endif
+#endif // ENABLE_CAMERA
     return 0;
 }
 
@@ -134,17 +149,20 @@ int main() {
 
     print(INFO, "======== configure network =======");
 
+    struct connection_info conn_info_controller;
     struct connection_info conn_info_gyroscope;
     struct connection_info_cam conn_info_camera;
 
-    configure_network(&conn_info_gyroscope, &conn_info_camera);
+    configure_network(&conn_info_controller, &conn_info_gyroscope, &conn_info_camera);
 
     print(DEBUG, "start remote controller");
 
     machine_controller controller;
 
     init_machine_controller_states(&controller);
-   
+#ifdef REMOTE_CONTROLLER
+    controller.conn = conn_info_controller;
+#endif // REMOTE_CONTROLLER
     start_remote_controller(&controller);
 
     main_loop(&controller, &conn_info_gyroscope, &conn_info_camera);
