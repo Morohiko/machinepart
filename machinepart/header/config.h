@@ -28,10 +28,14 @@
 
 
 //*********** camera config ***********//
-#define CAMERA_FRAME_WIDTH 640
-#define CAMERA_FRAME_HEIGHT 480
+//#define CAMERA_FRAME_WIDTH 640
+//#define CAMERA_FRAME_HEIGHT 480
+#define CAMERA_FRAME_WIDTH 350
+#define CAMERA_FRAME_HEIGHT 350
+#define CAMERA_DATA_SIZE CAMERA_FRAME_WIDTH*CAMERA_FRAME_HEIGHT*2
+
 #define CAMERA_FRAME_TYPE CV_8UC3
-#define CAMERA_FRAME_ELEM_SIZE 3
+#define CAMERA_FRAME_ELEM_SIZE 2
 
 
 //*********** modules name ************//
@@ -50,9 +54,14 @@
 #define MTU_SIZE_MESSAGE 131072
 #endif
 
+//********** fps checker *************//
 #define WITH_FPS_CHECKER
+#ifdef WITH_FPS_CHECKER
 #define FPS_UPDATE_VALUE_EVERY 5
+#endif // WITH_FPS_CHECKER
 
+//********* controller **************//
 // ifndef then default - stdin
 #define REMOTE_CONTROLLER
-#endif
+
+#endif // CONFIG_H

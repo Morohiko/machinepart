@@ -16,4 +16,4 @@ int pause_camera();
 
 int get_frame_from_camera(struct camera_ctx *cam_ctx);
 
-#endif
+#endif // CAMERA_V4L_H

@@ -14,14 +14,14 @@ int stop_camera(machine_controller *controller);
 int start_camera_transmitter(machine_controller *controller,
                              struct connection_info_cam *conn_info_camera);
 int stop_camera_transmitter(machine_controller *controller);
-#endif
+#endif // ENABLE_CAMERA
 
 #ifdef ENABLE_GYROSCOPE_RECEIVER
 int start_gyroscope_data_receiver(machine_controller *controller, struct connection_info *conn);
 int stop_gyroscope_data_receiver(machine_controller *controller);
-#endif
+#endif // ENABLE_GYROSCOPE_RECEIVER
 
 int start_motor(machine_controller *controller);
 int stop_motor(machine_controller *controller);
 
-#endif
+#endif // CORE_H

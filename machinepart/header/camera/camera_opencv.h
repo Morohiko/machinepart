@@ -22,4 +22,4 @@ int get_frame_from_camera(int *data, int *size, bool *isBusy, bool *isNewData);
 }
 #endif
 
-#endif
+#endif // CAMERA_H

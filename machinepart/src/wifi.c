@@ -177,7 +177,7 @@ int recv_udp_message(struct udp_socket *sock, char *msg, size_t msg_size) {
 
     recvfrom(sock->sock_fd, msg, msg_size, 0, (struct sockaddr*)&sock->target_sock, sizeof(sock->target_sock));
 
-    print(DEBUG, "received message: %s", msg);
+//    print(DEBUG, "received message: %s", msg);
 
     return 0;
 }

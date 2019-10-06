@@ -55,4 +55,4 @@ int close_udp_socket(struct udp_socket *sock);
 int send_udp_message(struct udp_socket *sock, char *msg, size_t msg_size);
 int recv_udp_message(struct udp_socket *sock, char *msg, size_t msg_size);
 
-#endif
+#endif // WIFI_H

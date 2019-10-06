@@ -15,13 +15,20 @@ static int parse_gyroscope_data(char *msg, struct gyroscope_data *data) {
     int y = 0;
     int z = 0;
 
-    sscanf(msg, "%d:%d:%d", &x, &y, &z);
+    int parsed = 0;
+
+    parsed = sscanf(msg, "%d:%d:%d", &x, &y, &z);
+
+    if (parsed != 3) {
+        print(ERROR, "parsed: %d, must be 3", parsed);
+	return -1;
+    }
 
     data->x = x;
     data->y = y;
     data->z = z;
 
-    print(DEBUG, "parsed gyroscope data: %s, x = %d, y = %d, z = %d", msg, data->x, data->y, data->z);
+    print(DEBUG, "parsed gyroscope data: x: %d, y: %d, z: %d", data->x, data->y, data->z);
 
     return 0;
 }
@@ -62,7 +69,7 @@ camera("=============== create socket ==============");
             continue;
         }
 
-        print(DEBUG, "received udp msg: %s", msg);
+//        print(DEBUG, "received udp msg: %s", msg);
 
 
         if (parse_gyroscope_data(msg, &ctx->data)) {

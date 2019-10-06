@@ -44,4 +44,4 @@ void register_log_module(char *module_name, int thread_id);
             printf("\n"); \
         }
 
-#endif
+#endif // LOG_H

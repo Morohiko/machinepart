@@ -26,5 +26,5 @@ int stop_receive_gyroscope_data();
 // deprecated
 int recv_gyroscope_data(struct gyroscope_ctx *ctx);
 
-#endif
+#endif // GYROSCOPE_RECEIVER_H
 
