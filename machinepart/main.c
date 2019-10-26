@@ -75,11 +75,15 @@ static int configure_network(struct connection_info *conn_info_controller,
     int retval = 0;
     char ip_addr[16];
 
+#ifdef GET_CUSTOM_IP_FROM_CONFIG
+    memcpy(ip_addr, TARGET_IP, 16);
+#else // get ip from /proc/net/arp
     retval = get_target_ip_addr(ip_addr);
     if (retval != 0) {
         print(ERROR, "cannot get target ip addr, retval: %d", retval);
         return retval;
     }
+#endif // GET_CUSTOM_IP_FROM_CONFIG
 
 #ifdef REMOTE_CONTROLLER
     memcpy(conn_info_controller->local_ip, LOCAL_IP, 16);

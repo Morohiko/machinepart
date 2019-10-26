@@ -5,6 +5,7 @@
 
 #include "core.h"
 #include "wifi.h"
+#include "motor_controller.h"
 
 struct gyroscope_data {
     int x;
@@ -17,6 +18,7 @@ struct gyroscope_ctx {
     struct connection_info conn;
     struct udp_socket sock;
     struct gyroscope_data data;
+    struct motors_controller_data motor_data;
 };
 
 int start_receive_gyroscope_data();

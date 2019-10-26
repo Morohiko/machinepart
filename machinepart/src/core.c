@@ -9,6 +9,7 @@
 
 #ifdef ENABLE_GYROSCOPE_RECEIVER
 #include "gyroscope_receiver.h"
+#include "motor_controller.h"
 #endif
 
 #ifdef ENABLE_CAMERA
@@ -105,9 +106,10 @@ int stop_camera_transmitter(machine_controller *controller) {
 #endif
 
 #ifdef ENABLE_GYROSCOPE_RECEIVER
+struct gyroscope_ctx ctx;
+
 static void *gyroscope_receiver_thread(void *user_data) {
     register_log_module("GYROSCOPE_RECEIVER_MODULE", pthread_self());
-    struct gyroscope_ctx ctx;
     struct connection_info *conn = (struct connection_info *) user_data;
 
     ctx.conn.local_port = conn->local_port;
@@ -129,14 +131,12 @@ int stop_gyroscope_data_receiver(machine_controller *controller) {
     pthread_cancel(controller->gyroscopeRecvThreadID);
     return 0;
 }
-#endif
 
 static void *motor_controller_thread(void* user_data) {
     register_log_module("MOTOR_CONTROLLER_MODULE", pthread_self());
-    while (1) {
-        print(DEBUG, "motor controller thread");
-        sleep(1);
-    }
+
+    print(DEBUG, "motor controller thread");
+    start_configure_motors_angle(&ctx.motor_data);
 }
 
 int start_motor(machine_controller *controller) {
@@ -150,3 +150,6 @@ int stop_motor(machine_controller *controller) {
     pthread_cancel(controller->motorControllerThreadID);
     return 0;
 }
+
+#endif // ENABLE_GYROSCOPE_RECEIVER
+

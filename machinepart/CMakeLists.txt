@@ -38,7 +38,7 @@ endif()
 
 set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-pthread")
+set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-pthread -lwiringPi")
 set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-pthread")
 
 if(ENABLE_CAMERA STREQUAL "ON")
@@ -64,7 +64,12 @@ if(ENABLE_GYROSCOPE_RECEIVER STREQUAL "ON")
    set(GYROSCOPE_RECEIVER ${PROJ_DIR}/src/gyroscope_receiver.c
                           ${PROJ_DIR}/header/gyroscope_receiver.h)
 
-   set(ALL_SRC ${ALL_SRC} ${GYROSCOPE_RECEIVER})
+		  #   set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-lwiringPi")
+
+   set(MOTOR_CONTROLLER ${PROJ_DIR}/src/motor_controller.c
+                        ${PROJ_DIR}/header/motor_controller.h)
+
+   set(ALL_SRC ${ALL_SRC} ${GYROSCOPE_RECEIVER} ${MOTOR_CONTROLLER})
 endif()
 
 #***************************************************

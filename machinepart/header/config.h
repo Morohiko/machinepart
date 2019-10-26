@@ -5,10 +5,7 @@
 
 //************ ip/port *************//
 #define LOCAL_IP "0.0.0.0"
-#define TARGET_IP "192.168.43.177"
-//#define TARGET_IP "127.0.0.1"
-//#define TARGET_IP "127.0.0.1"
-//#define TARGET_IP "172.24.223.80"
+#define TARGET_IP "192.168.43.162"
 
 #define LOCAL_CONTROLLER_PORT 3331
 #define TARGET_CONTROLLER_PORT 3332
@@ -63,5 +60,11 @@
 //********* controller **************//
 // ifndef then default - stdin
 #define REMOTE_CONTROLLER
+
+//********* motor module ************//
+#define MOTORS_DELAY_MS 20
+
+#define MOTOR_X_GPIO_PIN 18
+#define MOTOR_Y_GPIO_PIN 17
 
 #endif // CONFIG_H

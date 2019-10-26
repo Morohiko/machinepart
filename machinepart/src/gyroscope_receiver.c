@@ -1,34 +1,41 @@
 #include <unistd.h>
 #include <assert.h>
 
+#include "motor_controller.h"
 #include "gyroscope_receiver.h"
 #include "wifi.h"
 #include "log.h"
 #include "string.h"
 #include "config.h"
 
-#define MAX_GYROSCOPE_DATA_SIZE 15
+#define MAX_GYROSCOPE_DATA_SIZE 8
 
 //parse in format: X:Y:Z
-static int parse_gyroscope_data(char *msg, struct gyroscope_data *data) {
+static int
+parse_gyroscope_data(char *msg,
+                     struct gyroscope_data *data,
+                     struct motors_controller_data *motor_data) {
     int x = 0;
     int y = 0;
-    int z = 0;
 
     int parsed = 0;
 
-    parsed = sscanf(msg, "%d:%d:%d", &x, &y, &z);
+    parsed = sscanf(msg, "%d:%d", &x, &y);
 
-    if (parsed != 3) {
-        print(ERROR, "parsed: %d, must be 3", parsed);
+    if (parsed != 2) {
+        print(ERROR, "parsed: %d, must be 2", parsed);
 	return -1;
     }
 
+//TODO: remove functionality, deprecated
     data->x = x;
     data->y = y;
-    data->z = z;
+//
 
-    print(DEBUG, "parsed gyroscope data: x: %d, y: %d, z: %d", data->x, data->y, data->z);
+    motor_data->motor_x_angle = x;
+    motor_data->motor_y_angle = y;
+
+    print(DEBUG, "parsed gyroscope data: x: %d, y: %d", data->x, data->y);
 
     return 0;
 }
@@ -72,7 +79,7 @@ camera("=============== create socket ==============");
 //        print(DEBUG, "received udp msg: %s", msg);
 
 
-        if (parse_gyroscope_data(msg, &ctx->data)) {
+        if (parse_gyroscope_data(msg, &ctx->data, &ctx->motor_data)) {
             print(ERROR, "cant parse gyroscope data, msg: %s", msg);
             memset(msg, '\0', MAX_GYROSCOPE_DATA_SIZE);
             break;
@@ -117,7 +124,7 @@ int recv_gyroscope_data(struct gyroscope_ctx *ctx) {
             print(DEBUG, "received udp msg: %s", msg);
         }
 
-        if (parse_gyroscope_data(msg, &ctx->data)) {
+        if (parse_gyroscope_data(msg, &ctx->data, &ctx->motor_data)) {
             print(ERROR, "cant parse gyroscope data, msg: %s", msg);
             memset(msg, '\0', MAX_GYROSCOPE_DATA_SIZE);
             break;

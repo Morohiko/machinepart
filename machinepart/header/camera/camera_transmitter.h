@@ -22,10 +22,15 @@ struct camera_ctx {
     struct camera_data data;
 };
 
+#ifdef SEND_CAMERA_DATA_OVER_UDP
 int start_send_camera_data_through_udp(struct camera_ctx *ctx);
 int stop_send_camera_data_through_udp(struct camera_ctx *ctx);
 
 int start_recv_camera_data_through_udp(struct camera_ctx *ctx);
 int stop_recv_camera_data_through_udp(struct camera_ctx *ctx);
+#endif
+
+int start_send_camera_data_through_tcp(struct camera_ctx *ctx);
+
 
 #endif // CAMERA_TRANSMITTER_H
