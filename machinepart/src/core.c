@@ -13,11 +13,7 @@
 #endif
 
 #ifdef ENABLE_CAMERA
-#ifdef USING_OPENCV
-#include "camera/camera_opencv.h"
-#else
 #include "camera/camera_v4l.h"
-#endif
 #include "camera/camera_transmitter.h"
 #endif
 

@@ -230,23 +230,4 @@ if (cam_ctx->isBusy) {
         print(ERROR, "run camera error");
         return -1;
     }
-
-#ifdef aa //opencv
-    assert(data); assert(size); assert(isBusy);
-
-    int retval = 0;
-    if (*isBusy == true) {
-        print(ERROR, "camera ctx is busy, return -1");
-        return -1;
-    }
-    *isBusy = false;
-    print(DEBUG, "get next frame");
-    retval = get_next_frame(data, size, isBusy, isNewData);
-//    ctx->isBusy = false;
-
-    assert(!retval);
-
-    return retval;
-#endif
 }
-

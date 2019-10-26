@@ -18,7 +18,6 @@ message("-- CMAKE_SYSTEM_VERSION:   ${CMAKE_SYSTEM_VERSION}")
 #***************************************************
 option(WITH_MOTOR_CONTROLLER_ONLY "Enable only gyroscope" OFF)
 option(WITH_CAMERA_ONLY "Enable only only" OFF)
-option(CAMERA_USING_OPENCV "For camera uses opencv lib(deprecated, uses cpp)" OFF)
 
 if(WITH_MOTOR_CONTROLLER_ONLY)
    add_definitions(-DENABLE_GYROSCOPE_RECEIVER)
@@ -32,30 +31,19 @@ else()
    add_definitions(-DENABLE_CAMERA -DENABLE_GYROSCOPE_RECEIVER)
 endif()
 
-if(CAMERA_USING_OPENCV)
-   add_definitions(-DUSING_OPENCV)
-endif()
-
 set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-pthread -lwiringPi")
-set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-pthread")
 
 if(ENABLE_CAMERA STREQUAL "ON")
    message("ENABLE CAMERA")
 
    set(CAMERA_SRC ${PROJ_DIR}/src/camera/camera_transmitter.c
                   ${PROJ_DIR}/header/camera/camera_transmitter.h)
-   if(USING_OPENCV STREQUAL "ON")
-      find_package(OpenCV REQUIRED)
-      set(CAMERA_INTERNAL_SRC ${PROJ_DIR}/src/camera/camera_opencv.cpp
-                              ${PROJ_DIR}/header/camera/camera_opencv.h)
-   else()
-      set(CAMERA_INTERNAL_SRC ${PROJ_DIR}/src/camera/camera_v4l.c
+   set(CAMERA_INTERNAL_SRC ${PROJ_DIR}/src/camera/camera_v4l.c
                               ${PROJ_DIR}/header/camera/camera_v4l.h)
-   endif()
 
-      set(ALL_SRC ${ALL_SRC} ${CAMERA_SRC} ${CAMERA_INTERNAL_SRC})
+   set(ALL_SRC ${ALL_SRC} ${CAMERA_SRC} ${CAMERA_INTERNAL_SRC})
 endif()
 
 if(ENABLE_GYROSCOPE_RECEIVER STREQUAL "ON")
@@ -107,8 +95,3 @@ include_directories(header)
 # target
 #***************************************************
 add_executable(${HEAD_MACHINE_NAME} main.c ${ALL_SRC})
-
-if(NOT DEFINED DISABLE_CAMERA)
-   target_link_libraries(${HEAD_MACHINE_NAME} ${OpenCV_LIBS})
-endif()
-
