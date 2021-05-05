@@ -40,6 +40,7 @@ static int main_loop(machine_controller *controller,
             print(DEBUG, "changed camera transmitter state to %d", controller->camera_transmitter_current_state);
         }
 #endif // ENABLE_CAMERA
+#ifdef ENABLE_GYROSCOPE_RECEIVER
         if (controller->gyroscope_receiver_current_state != controller->gyroscope_receiver_state) {
             if (controller->gyroscope_receiver_state == 1) {
                 status = start_gyroscope_data_receiver(controller, conn_info_gyroscope);
@@ -62,6 +63,7 @@ static int main_loop(machine_controller *controller,
             controller->motor_current_state = controller->motor_state;
             print(DEBUG, "changed motor state to %d", controller->motor_current_state);
         }
+#endif // ENABLE_GYROSCOPE_RECEIVER
         sleep(1);
     }
 }

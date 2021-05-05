@@ -1,3 +1,4 @@
+project("machinepart")
 cmake_minimum_required(VERSION 3.5)
 
 set(HEAD_MACHINE_NAME head_machine)
@@ -17,7 +18,7 @@ message("-- CMAKE_SYSTEM_VERSION:   ${CMAKE_SYSTEM_VERSION}")
 # choose target option
 #***************************************************
 option(WITH_MOTOR_CONTROLLER_ONLY "Enable only gyroscope" OFF)
-option(WITH_CAMERA_ONLY "Enable only only" OFF)
+option(WITH_CAMERA_ONLY "Enable camera only" OFF)
 
 if(WITH_MOTOR_CONTROLLER_ONLY)
    add_definitions(-DENABLE_GYROSCOPE_RECEIVER)
@@ -33,7 +34,7 @@ endif()
 
 set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-pthread -lwiringPi")
+set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-pthread")
 
 if(ENABLE_CAMERA STREQUAL "ON")
    message("ENABLE CAMERA")
@@ -52,7 +53,7 @@ if(ENABLE_GYROSCOPE_RECEIVER STREQUAL "ON")
    set(GYROSCOPE_RECEIVER ${PROJ_DIR}/src/gyroscope_receiver.c
                           ${PROJ_DIR}/header/gyroscope_receiver.h)
 
-		  #   set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-lwiringPi")
+   set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-lwiringPi")
 
    set(MOTOR_CONTROLLER ${PROJ_DIR}/src/motor_controller.c
                         ${PROJ_DIR}/header/motor_controller.h)
