@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 set(V4L_DEMO_NAME v4l_demo)
 
+project(${V4L_DEMO_NAME})
+
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -lv4l2 -lv4l1 -ggdb -pthread")
 
 set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../..)

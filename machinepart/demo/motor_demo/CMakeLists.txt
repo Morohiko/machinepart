@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 set(MOTOR_DEMO_NAME motor_demo)
 
+project(${MOTOR_DEMO_NAME})
+
 set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-lwiringPi -pthread")
 
 set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../..)

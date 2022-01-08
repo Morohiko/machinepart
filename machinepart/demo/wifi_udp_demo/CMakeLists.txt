@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 set(WIFI_DEMO_NAME wifi_udp_demo)
 
+project(${WIFI_DEMO_NAME})
+
 set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 
 set(WIFI_SRC ${PROJ_DIR}/src/wifi.c

@@ -6,6 +6,8 @@ set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-pthread")
 
 set(CAMERA_DATA_RECEIVER_DEMO_NAME camera_data_receiver_demo)
 
+project(${CAMERA_DATA_RECEIVER_DEMO_NAME})
+
 set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 
 set(LOG_SRC ${PROJ_DIR}/header/log.h
