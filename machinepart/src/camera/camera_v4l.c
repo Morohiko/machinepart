@@ -186,15 +186,15 @@ int run_camera(struct camera_ctx *cam_ctx) {
 
         if (cam_ctx->isBusy == true) {
             continue;
-	}
+    }
 
         cam_ctx->isBusy = true;
-	retval = read(fd, cam_ctx->data.data, cam_ctx->data.size);
-	cam_ctx->isBusy = false;
+    retval = read(fd, cam_ctx->data.data, cam_ctx->data.size);
+    cam_ctx->isBusy = false;
 
         if (retval == -1) {
             print(ERROR, "cannot read from camera");
-	    return -1;
+        return -1;
         }
         cam_ctx->isNewData = true;
 

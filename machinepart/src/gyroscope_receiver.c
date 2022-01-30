@@ -24,7 +24,7 @@ parse_gyroscope_data(char *msg,
 
     if (parsed != 2) {
         print(ERROR, "parsed: %d, must be 2", parsed);
-	return -1;
+    return -1;
     }
 
 //TODO: remove functionality, deprecated

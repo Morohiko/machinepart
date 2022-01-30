@@ -82,17 +82,25 @@ set(LOG_SRC ${PROJ_DIR}/src/log.c
 set(FPS_CHECKER_SRC ${PROJ_DIR}/src/fps_checker.c
                     ${PROJ_DIR}/header/fps_checker.h)
 
+set(JSON_CONFIG_SRC ${PROJ_DIR}/src/config/json_config.c
+                    ${PROJ_DIR}/src/config/json_config.h)
+
 set(ALL_SRC ${CONTROLLER_SRC}
             ${CORE_SRC}
             ${UTILS_SRC}
             ${ALL_SRC}
             ${WIFI_SRC}
             ${LOG_SRC}
-            ${FPS_CHECKER_SRC})
+            ${FPS_CHECKER_SRC}
+            ${JSON_CONFIG_SRC})
+
 
 include_directories(header)
+include_directories(src/config)
 
 #***************************************************
 # target
 #***************************************************
 add_executable(${HEAD_MACHINE_NAME} main.c ${ALL_SRC})
+
+target_link_libraries(${HEAD_MACHINE_NAME} cjson)

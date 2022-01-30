@@ -1,0 +1,28 @@
+{
+    "MODULES": {
+        "MAIN": {
+            "name": "MAIN_MODULE"
+        },
+        "CAMERA": {
+            "name": "CAMERA_MODULE",
+            "state": 0
+        },
+        "CAMERA_TRANSMITTER": {
+            "name": "CAMERA_TRANSMITTER_MODULE",
+            "state": 0
+        },
+        "GYROSCOPE_RECEIVER": {
+            "name": "GYROSCOPE_RECEIVER_MODULE",
+            "state": 0
+        },
+        "MOTOR": {
+            "name": "MOTOR_CONTROLLER_MODULE",
+            "state": 0
+        }
+    },
+    "UTILS": {
+        "FPS_CHECKER": {
+            "time_to_update": 5
+        }
+    }
+}

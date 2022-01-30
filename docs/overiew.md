@@ -38,6 +38,9 @@ How it must work:
  - get data from memory struct
  - make interrupt for motor start move to possition based on memory struct (mocked cause not have real motor) ?
 
+### Controller
+ - receive configuration data from config_json(init)/shell/emulator/gp
+
 ## Demo
 
 ### Camera demo

@@ -3,30 +3,29 @@
 
 #include "log.h"
 #include "controller.h"
+#include "json_config.h"
 
 static int update_machine_controller(machine_controller *machineController, int module, int state) {
     assert(machineController);
-    switch (module) {
-    case CTRL_CAMERA_CONTROLER:
+    if (module == json_config.modules.camera_module.id) {
         machineController->camera_state = state;
         print(DEBUG, "request camera state to %d", machineController->camera_state);
-        break;
-    case CTRL_CAMERA_TRANSMITTER:
+        return 0;
+    } else if (module == json_config.modules.camera_transmitter_module.id) {
         machineController->camera_transmitter_state = state;
         print(DEBUG, "request camera transmitter state to %d", machineController->camera_transmitter_state);
-        break;
-    case CTRL_GYROSCOPE_RECEIVER:
+        return 0;
+    } else if (module == json_config.modules.gyroscope_receiver_module.id) {
         machineController->gyroscope_receiver_state = state;
         print(DEBUG, "request gyroscope receiver state to %d", machineController->gyroscope_receiver_state);
-        break;
-    case CTRL_MOTOR:
+        return 0;
+    } else if (module == json_config.modules.motor_module.id) {
         machineController->motor_state = state;
         print(DEBUG, "request mototr state to %d", machineController->motor_state);
-        break;
-    default:
-        print(ERROR, "cannot find module %d", module);
+        return 0;
     }
-    return 0;
+    print(ERROR, "cannot find module %d", module);
+    return -1;
 }
 
 //module_number:status(0, 1)  0:0
@@ -99,10 +98,10 @@ int receive_remote_controller_message(machine_controller *machineController) {
 
         print(DEBUG, "controller received message: %s", controller_message);
 
-	if (parse_remote_controller_message(controller_message, &n1, &n2)) {
+        if (parse_remote_controller_message(controller_message, &n1, &n2)) {
             print(ERROR, "cannot parse controller message");
             continue;
-	}
+        }
 
         update_machine_controller(machineController, n1, n2);
     }
@@ -112,16 +111,15 @@ int receive_remote_controller_message(machine_controller *machineController) {
 int init_machine_controller_states(machine_controller *controller) {
     assert(controller);
 
-    controller->camera_current_state = 0;
-    controller->camera_current_state = 0;
-    controller->camera_transmitter_current_state = 0;
-    controller->gyroscope_receiver_current_state = 0;
-    controller->motor_current_state = 0;
+    controller->camera_current_state = json_config.modules.camera_module.state;
+    controller->camera_transmitter_current_state = json_config.modules.camera_transmitter_module.state;
+    controller->gyroscope_receiver_current_state = json_config.modules.gyroscope_receiver_module.state;
+    controller->motor_current_state = json_config.modules.motor_module.state;
 
-    controller->camera_state = 0;
-    controller->camera_transmitter_state = 0;
-    controller->gyroscope_receiver_state = 0;
-    controller->motor_state = 0;
+    controller->camera_state = json_config.modules.camera_module.state;
+    controller->camera_transmitter_state = json_config.modules.camera_transmitter_module.state;
+    controller->gyroscope_receiver_state = json_config.modules.gyroscope_receiver_module.state;
+    controller->motor_state = json_config.modules.motor_module.state;
 
     return 0;
 }

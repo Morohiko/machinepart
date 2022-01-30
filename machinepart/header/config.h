@@ -7,9 +7,6 @@
 #define LOCAL_IP "0.0.0.0"
 #define TARGET_IP "192.168.43.162"
 
-#define LOCAL_CONTROLLER_PORT 3331
-#define TARGET_CONTROLLER_PORT 3332
-
 #define LOCAL_GYROSCOPE_PORT 3333
 #define TARGET_GYROSCOPE_PORT 3334
 
@@ -18,6 +15,10 @@
 
 #define LOCAL_CAMERA_ACK_PORT 3337
 #define TARGET_CAMERA_ACK_PORT 3338
+
+#define CONTROLLER_PORT 3400
+#define MAX_CONTROLLER_CONNECTION 20
+// #define TARGET_CONTROLLER_PORT 3332
 
 //using in wifi tcp/udp demoes
 #define LOCAL_TEST_PORT 3339
@@ -33,15 +34,6 @@
 
 #define CAMERA_FRAME_TYPE CV_8UC3
 #define CAMERA_FRAME_ELEM_SIZE 2
-
-
-//*********** modules name ************//
-#define MAIN_MODULE "MAIN_MODULE"
-#define REMOTE_CONTROLLER_MODULE "REMOTE_CONTROLLER_MODULE"
-#define CAMERA_MODULE "CAMERA_MODULE"
-#define CAMERA_TRANSMITTER_MODULE "CAMERA_TRANSMITTER_MODULE"
-#define GYROSCOPE_RECEIVER_MODULE "GYROSCOPE_RECEIVER_MODULE"
-#define MOTOR_CONTROLLER_MODULE "MOTOR_CONTROLLER_MODULE"
 
 // capture messages cutted to mtu message
 // compatible with gp
@@ -59,7 +51,7 @@
 
 //********* controller **************//
 // ifndef then default - stdin
-#define REMOTE_CONTROLLER
+// #define REMOTE_CONTROLLER
 
 //********* motor module ************//
 #define MOTORS_DELAY_MS 20

@@ -2,6 +2,7 @@
 #define LOG_H
 
 #include "stdio.h"
+#include "string.h"
 
 // ************* log level ************ //
 typedef enum {
@@ -31,15 +32,18 @@ void enable_log_with_module_names();
 void disable_log_with_module_names();
 void register_log_module(char *module_name, int thread_id);
 
+#define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+
 #define print(log_level, ...) \
         if (log_level <= get_log_level()) { \
-            printf("%s:%d:", __FILE__, __LINE__); \
-            print_log_level(log_level); \
-            printf(": "); \
+            printf("%s:%d", __FILENAME__, __LINE__); \
+            printf(" ["); \
             if (is_log_module_names_enabled()) { \
                 print_log_module_name(); \
-                printf(": "); \
+                printf("] "); \
             } \
+            print_log_level(log_level); \
+            printf(": "); \
             printf(__VA_ARGS__); \
             printf("\n"); \
         }

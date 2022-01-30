@@ -173,7 +173,7 @@ static int method_read() {
         FD_ZERO(&fds);
         FD_SET(fd, &fds);
 
-	/* Timeout. */
+    /* Timeout. */
         tv.tv_sec = 2;
         tv.tv_usec = 0;
 
@@ -216,7 +216,7 @@ static int method_read() {
             FILE *out_file_fd = fopen("testfile", "wb");
             fwrite(buffers[0].start, buffers[0].length, 1, out_file_fd);
 //            fwrite(buffers[0].start, buffers[0].length, 1, stdout);
-	}
+    }
         fflush(stderr);
         fprintf(stderr, ".");
         fflush(stdout);
@@ -280,7 +280,7 @@ int main() {
 
     if (retval != 0) {
         print(ERROR, "error in method read");
-	return -1;
+    return -1;
     }
     return 0;
 }

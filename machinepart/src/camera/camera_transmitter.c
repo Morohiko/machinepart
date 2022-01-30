@@ -117,7 +117,7 @@ int start_send_camera_data_through_tcp(struct camera_ctx *ctx) {
     print(DEBUG, "start configure camera frame socket");
 
     if (create_tcp_socket(&ctx->camera_tcp_sock_frame,
-			   LOCAL_CAMERA_FRAME_PORT) != 0) {
+               LOCAL_CAMERA_FRAME_PORT) != 0) {
         print(ERROR, "cannot create socket");
         return -1;
     }
@@ -138,7 +138,7 @@ int start_send_camera_data_through_tcp(struct camera_ctx *ctx) {
     print(DEBUG, "start configure camera ack socket");
 
     if (create_tcp_socket(&ctx->camera_tcp_sock_ack,
-			   LOCAL_CAMERA_ACK_PORT) != 0) {
+               LOCAL_CAMERA_ACK_PORT) != 0) {
         print(ERROR, "cannot create socket");
         return -1;
     }
@@ -173,8 +173,8 @@ int start_send_camera_data_through_tcp(struct camera_ctx *ctx) {
 
         if (ctx->data.data == NULL) {
             print(ERROR, "msg is empty, size = %zu", ctx->data.size);
-	    sleep(1);
-	    continue;
+        sleep(1);
+        continue;
         }
 #ifdef SEND_MTU_SIZE_MESSAGES
         if (send_tcp_message(&ctx->camera_tcp_sock, ctx->data.data, MTU_SIZE_MESSAGE) < 0) {
@@ -186,7 +186,7 @@ int start_send_camera_data_through_tcp(struct camera_ctx *ctx) {
             break;
         }
 
-//	print(DEBUG, "sended message");
+//    print(DEBUG, "sended message");
 
 // receive acknowledge
         while (recv_tcp_message(&ctx->camera_tcp_sock_ack, ack_message, ACK_MESSAGE_SIZE)) {
