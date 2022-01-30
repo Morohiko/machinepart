@@ -1,7 +1,7 @@
-#include <linux/kernel.h>  // printk
-#include <linux/module.h>  // module_init, module_exit
-#include <linux/fs.h>      // file_opetaions, register_chrdev
-#include <linux/slab.h>    // kmalloc, kfree
+#include <linux/fs.h>     // file_opetaions, register_chrdev
+#include <linux/kernel.h> // printk
+#include <linux/module.h> // module_init, module_exit
+#include <linux/slab.h>   // kmalloc, kfree
 
 #define DEVICE_NAME "test"
 #define DEVICE_MAJOR 77
@@ -10,18 +10,19 @@
 
 static int device_major_number = -1;
 
-static ssize_t test_read(struct file *f, char __user *user, size_t size, loff_t *loff);
-static ssize_t test_write(struct file *f, const char __user *user, size_t size, loff_t *loff);
+static ssize_t test_read(struct file *f, char __user *user, size_t size,
+                         loff_t *loff);
+static ssize_t test_write(struct file *f, const char __user *user, size_t size,
+                          loff_t *loff);
 
 static char *buffer = NULL;
 static size_t buffer_size = -1;
 
-static struct file_operations operations = {
-  .read = test_read,
-  .write = test_write
-};
+static struct file_operations operations = {.read = test_read,
+                                            .write = test_write};
 
-static ssize_t test_read(struct file *f, char __user *user, size_t size, loff_t *loff) {
+static ssize_t test_read(struct file *f, char __user *user, size_t size,
+                         loff_t *loff) {
   size_t current_buffer_size = -1;
   int retval;
 
@@ -55,7 +56,8 @@ static ssize_t test_read(struct file *f, char __user *user, size_t size, loff_t 
   return current_buffer_size;
 }
 
-static ssize_t test_write(struct file *f, const char __user *user, size_t size, loff_t *loff) {
+static ssize_t test_write(struct file *f, const char __user *user, size_t size,
+                          loff_t *loff) {
   int retval;
   printk("test_write");
 
@@ -97,11 +99,10 @@ static int test_init_module(void) {
 
 static void test_exit_module(void) {
   printk("test_exit_module");
-  if(device_major_number > 0)
-  {
+  if (device_major_number > 0) {
     unregister_chrdev(device_major_number, DEVICE_NAME);
   }
-} 
+}
 
 module_init(test_init_module);
 module_exit(test_exit_module);

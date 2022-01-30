@@ -1,15 +1,14 @@
 #include "log.h"
-#include "utils.h"  
+#include "utils.h"
 
 int main() {
-    set_log_level(DEBUG);
+  set_log_level(DEBUG);
 
-    char test_src[100];
+  char test_src[100];
 
-    get_target_ip_addr(test_src);
+  get_target_ip_addr(test_src);
 
-    print(DEBUG, "founded ip addr: %s", test_src);
+  print(DEBUG, "founded ip addr: %s", test_src);
 
-    return 0;
+  return 0;
 }
-

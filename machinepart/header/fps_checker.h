@@ -4,9 +4,9 @@
 #include "time.h"
 
 struct fps_checker_t {
-    time_t last_saved_time;
-    double diff_time;
-    int fps_value;
+  time_t last_saved_time;
+  double diff_time;
+  int fps_value;
 };
 
 int init_fps_checker(struct fps_checker_t *fps_checker);

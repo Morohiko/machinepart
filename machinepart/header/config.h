@@ -20,17 +20,16 @@
 #define MAX_CONTROLLER_CONNECTION 20
 // #define TARGET_CONTROLLER_PORT 3332
 
-//using in wifi tcp/udp demoes
+// using in wifi tcp/udp demoes
 #define LOCAL_TEST_PORT 3339
 #define TARGET_TEST_PORT 3340
-
 
 //*********** camera config ***********//
 //#define CAMERA_FRAME_WIDTH 640
 //#define CAMERA_FRAME_HEIGHT 480
 #define CAMERA_FRAME_WIDTH 350
 #define CAMERA_FRAME_HEIGHT 350
-#define CAMERA_DATA_SIZE CAMERA_FRAME_WIDTH*CAMERA_FRAME_HEIGHT*2
+#define CAMERA_DATA_SIZE CAMERA_FRAME_WIDTH *CAMERA_FRAME_HEIGHT * 2
 
 #define CAMERA_FRAME_TYPE CV_8UC3
 #define CAMERA_FRAME_ELEM_SIZE 2

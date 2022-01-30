@@ -7,19 +7,19 @@
 #include "core.h"
 
 struct camera_data {
-    void *data;
-    size_t size;
+  void *data;
+  size_t size;
 };
 
 struct camera_ctx {
-    bool isWorking;
-    bool isBusy;
-    bool isNewData;
-    struct connection_info_cam conn;
-    struct udp_socket sock;
-    struct tcp_socket camera_tcp_sock_frame;
-    struct tcp_socket camera_tcp_sock_ack;
-    struct camera_data data;
+  bool isWorking;
+  bool isBusy;
+  bool isNewData;
+  struct connection_info_cam conn;
+  struct udp_socket sock;
+  struct tcp_socket camera_tcp_sock_frame;
+  struct tcp_socket camera_tcp_sock_ack;
+  struct camera_data data;
 };
 
 #ifdef SEND_CAMERA_DATA_OVER_UDP
@@ -31,6 +31,5 @@ int stop_recv_camera_data_through_udp(struct camera_ctx *ctx);
 #endif
 
 int start_send_camera_data_through_tcp(struct camera_ctx *ctx);
-
 
 #endif // CAMERA_TRANSMITTER_H

@@ -4,13 +4,13 @@
 #include "stdbool.h"
 
 struct motors_controller_data {
-    bool is_working;
+  bool is_working;
 
-    int motor_x_gpio_pin;
-    int motor_x_angle;
+  int motor_x_gpio_pin;
+  int motor_x_angle;
 
-    int motor_y_gpio_pin;
-    int motor_y_angle;
+  int motor_y_gpio_pin;
+  int motor_y_angle;
 };
 
 int start_configure_motors_angle(struct motors_controller_data *data);

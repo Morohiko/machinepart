@@ -7,7 +7,7 @@
 
 int init_camera(struct camera_ctx *cam_ctx);
 
-//for testing
+// for testing
 int save_current_image_to_file(struct camera_ctx *cam_ctx, char *filepath);
 
 int run_camera(struct camera_ctx *cam_ctx);
