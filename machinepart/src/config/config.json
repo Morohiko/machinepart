@@ -29,15 +29,17 @@
             "name": "REMOTE_CONTROLLER_MODULE"
         }
     },
+    "SHELL": {
+        "state": 1,
+        "port": 9998,
+        "buffer_size": 1000
+    },
     "UTILS": {
         "FPS_CHECKER": {
             "time_to_update": 5
         },
         "LOG": {
             "log_level": "debug"
-        },
-        "SHELL": {
-            "state": 1
         }
     }
 }

@@ -4,6 +4,7 @@
 #include "controller.h"
 #include "json_config.h"
 #include "log.h"
+#include "shell/shell_server.h"
 
 static int update_machine_controller(machine_controller *machineController,
                                      int module, int state) {
@@ -34,6 +35,9 @@ static int update_machine_controller(machine_controller *machineController,
 // module_number:status(0, 1)  0:0
 int receive_stdin_controller_message(machine_controller *machineController) {
   assert(machineController);
+  if (json_config.shell.state == 1) {
+    start_shell_server();
+  }
   char buff[1000];
   int n1 = 0;
   int n2 = 0;

@@ -154,6 +154,24 @@ int init_json_structure_modules(cJSON *json) {
   return ret;
 }
 
+int init_json_structure_shell(cJSON *json) {
+  int ret = 0;
+  while (json != NULL) {
+    if (strcmp(json->string, "state") == 0) {
+      json_config.shell.state = json->valueint;
+    } else if (strcmp(json->string, "port") == 0) {
+      json_config.shell.port = json->valueint;
+    } else if (strcmp(json->string, "buffer_size") == 0) {
+      json_config.shell.buffer_size = json->valueint;
+    } else {
+      print(ERROR, "cant parse module %s", json->string);
+      return -1;
+    }
+    json = json->next;
+  }
+  return ret;
+}
+
 int init_json_structure() {
   if (json == NULL) {
     print(ERROR, "cjson is null?");
@@ -163,6 +181,8 @@ int init_json_structure() {
   while (json_next != NULL) {
     if (strcmp(json_next->string, "MODULES") == 0) {
       ret = init_json_structure_modules(json_next->child);
+    } else if (strcmp(json_next->string, "SHELL") == 0) {
+      ret = init_json_structure_shell(json_next->child);
     }
     json_next = json_next->next;
   }

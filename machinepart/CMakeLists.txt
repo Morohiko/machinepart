@@ -2,6 +2,7 @@ project("machinepart")
 cmake_minimum_required(VERSION 3.5)
 
 set(HEAD_MACHINE_NAME head_machine)
+set(SHELL_CLIENT_NAME shell)
 
 find_package(Threads REQUIRED)
 
@@ -85,6 +86,9 @@ set(FPS_CHECKER_SRC ${PROJ_DIR}/src/fps_checker.c
 set(JSON_CONFIG_SRC ${PROJ_DIR}/src/config/json_config.c
                     ${PROJ_DIR}/src/config/json_config.h)
 
+set(SHELL_SERVER_SRC ${PROJ_DIR}/src/shell/shell_server.c
+                     ${PROJ_DIR}/src/shell/shell_server.h)
+
 set(ALL_SRC ${CONTROLLER_SRC}
             ${CORE_SRC}
             ${UTILS_SRC}
@@ -92,15 +96,23 @@ set(ALL_SRC ${CONTROLLER_SRC}
             ${WIFI_SRC}
             ${LOG_SRC}
             ${FPS_CHECKER_SRC}
-            ${JSON_CONFIG_SRC})
+            ${JSON_CONFIG_SRC}
+            ${SHELL_SERVER_SRC})
 
+set(SHELL_CLIENT_SRC ${PROJ_DIR}/src/shell/shell_client.c
+                     ${PROJ_DIR}/src/shell/shell_client.h
+                     ${JSON_CONFIG_SRC}
+                     ${LOG_SRC})
 
 include_directories(header)
 include_directories(src/config)
+include_directories(src/shell)
 
 #***************************************************
 # target
 #***************************************************
 add_executable(${HEAD_MACHINE_NAME} main.c ${ALL_SRC})
+add_executable(${SHELL_CLIENT_NAME} ${SHELL_CLIENT_SRC})
 
 target_link_libraries(${HEAD_MACHINE_NAME} cjson)
+target_link_libraries(${SHELL_CLIENT_NAME} cjson)

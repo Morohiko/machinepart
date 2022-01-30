@@ -48,9 +48,16 @@ struct fps_checker_t {
   int time_to_update;
 };
 
+struct shell_t {
+    int state;
+    int port;
+    int buffer_size;
+};
+
 struct json_config_t {
   struct modules_t modules;
   struct fps_checker_t fps_checker;
+  struct shell_t shell;
 };
 
 struct json_config_t json_config;
