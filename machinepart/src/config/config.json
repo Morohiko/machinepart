@@ -31,7 +31,7 @@
     },
     "SHELL": {
         "state": 1,
-        "port": 9998,
+        "mgmt_port": 9017,
         "buffer_size": 1000
     },
     "UTILS": {

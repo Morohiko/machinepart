@@ -50,6 +50,7 @@ struct fps_checker_t {
 
 struct shell_t {
     int state;
+    int mgmt_port;
     int port;
     int buffer_size;
 };

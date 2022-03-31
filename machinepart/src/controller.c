@@ -1,5 +1,7 @@
 #include <assert.h>
 #include <unistd.h>
+#include "signal.h"
+#include <stdlib.h>
 
 #include "controller.h"
 #include "json_config.h"
@@ -144,4 +146,25 @@ int init_machine_controller_states(machine_controller *controller) {
   controller->motor_state = json_config.modules.motor_module.state;
 
   return 0;
+}
+
+static void sig_handler(int signum) {
+  if (signum == SIGINT) {
+    print(INFO, "Received SIGINT(skip), please use SIGQUIT for exit from process");
+    fflush(stdout);
+  } else if (signum == SIGQUIT) {
+    if (json_config.shell.state == 1) {
+        stop_shell_server();
+    }
+    print(INFO, "received SIGQUIT");
+    print(INFO, "exit from machinepart");
+    exit(0);
+  } else {
+    print(INFO, "can`t process signal %d (%s)\n", signum, strsignal(signum));
+  }
+}
+
+int init_signals() {
+  signal(SIGINT, sig_handler);
+  signal(SIGQUIT, sig_handler);
 }

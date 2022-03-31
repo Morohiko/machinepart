@@ -33,4 +33,6 @@ int receive_controller_message(machine_controller *machineController);
 
 int init_machine_controller_states(machine_controller *controller);
 
+int init_signals();
+
 #endif // CONTROLLER_H

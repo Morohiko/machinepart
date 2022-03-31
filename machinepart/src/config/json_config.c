@@ -159,6 +159,8 @@ int init_json_structure_shell(cJSON *json) {
   while (json != NULL) {
     if (strcmp(json->string, "state") == 0) {
       json_config.shell.state = json->valueint;
+    } else if (strcmp(json->string, "mgmt_port") == 0) {
+      json_config.shell.mgmt_port = json->valueint;
     } else if (strcmp(json->string, "port") == 0) {
       json_config.shell.port = json->valueint;
     } else if (strcmp(json->string, "buffer_size") == 0) {

@@ -58,4 +58,8 @@
 #define MOTOR_X_GPIO_PIN 18
 #define MOTOR_Y_GPIO_PIN 17
 
+//******* json config filepath ******//
+#define JSON_CONFIG_FILE                                                       \
+  "/home/user/work/headmachine/machinepart/machinepart/src/config/config.json"
+
 #endif // CONFIG_H
