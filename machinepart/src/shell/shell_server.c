@@ -27,6 +27,9 @@ static struct command_t commands[10];
 
 static pthread_t mgmt_thread_id;
 
+int sock_in = -1;
+int new_sock = -1;
+
 static void test_help(void *ptr) {
   char *buffer = (char *)ptr;
   sprintf(&buffer[0], "Execute shell command:\n");
@@ -89,62 +92,80 @@ static int process_commands(char *command, char *responce) {
 }
 
 static void *shell_server_loop(void *data) {
-  int port = *(int *)data;
-  free(data);
-  int sock_in = socket(AF_INET, SOCK_STREAM, 0);
-  struct sockaddr_in serv_addr;
-  memset(&serv_addr, '0', sizeof(serv_addr));
-  serv_addr.sin_family = AF_INET;
-  serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-  serv_addr.sin_port = htons(port);
-  bind(sock_in, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
-  listen(sock_in, 1);
   char *buffer = (char *)malloc(json_config.shell.buffer_size);
   if (buffer == NULL) {
     print(ERROR, "can`t allocate buffer in shell_server");
     return NULL;
   }
-  int new_sock = accept(sock_in, NULL, NULL);
+  listen(sock_in, 1);
+  int client_sock = accept(sock_in, NULL, NULL);
   char *responce_buffer = (char *)malloc(json_config.shell.buffer_size);
   while (1) {
     memset(buffer, '\0', json_config.shell.buffer_size);
-    recv(new_sock, buffer, json_config.shell.buffer_size, 0);
+    recv(client_sock, buffer, json_config.shell.buffer_size, 0);
     if (strcmp(buffer, "exit") == 0 || strlen(buffer) == 0) {
-      send(new_sock, "exit", 4, 0);
+      send(client_sock, "exit", 4, 0);
       break;
     } else {
       memset(responce_buffer, '\0', json_config.shell.buffer_size);
       process_commands(buffer, responce_buffer);
-      send(new_sock, responce_buffer, strlen(responce_buffer), 0);
+      send(client_sock, responce_buffer, strlen(responce_buffer), 0);
     }
   }
   print(INFO, "exit from shell");
   free(buffer);
-  close(new_sock);
+  close(client_sock);
   close(sock_in);
 }
 
+static void accept_connection_with_client(int mgmt_sock) {
+  int port = json_config.shell.mgmt_port + 1;
+  char *buffer = (char *)malloc(json_config.shell.buffer_size);
+  if (buffer == NULL) {
+    print(ERROR, "can`t allocate buffer in shell_server");
+    return;
+  }
+  do {
+    sock_in = socket(AF_INET, SOCK_STREAM, 0);
+    struct sockaddr_in serv_addr;
+    memset(&serv_addr, '0', sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    serv_addr.sin_port = htons(port);
+    int retv = bind(sock_in, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
+    if (retv == 0) {
+      break;
+    }
+    port++;
+  } while (1);
+
+  char portstr[4];
+  memset(portstr, '\0', 4);
+  sprintf(portstr, "%d", port);
+  send(mgmt_sock, portstr, 4, 0);
+
+  memset(buffer, '\0', json_config.shell.buffer_size);
+  recv(mgmt_sock, buffer, json_config.shell.buffer_size, 0);
+  if (strcmp(buffer, "ok") == 0) {
+    print(INFO, "connection accepted with shell client");
+  }
+  free(buffer);
+}
+
 static void *mgmt_server_loop(void *data) {
-  int new_sock;
   int sock_in = socket(AF_INET, SOCK_STREAM, 0);
-  int start_shell_port = 9020;
-  int current_shell_port = start_shell_port;
-  int amount_avail_port = 20;
   struct sockaddr_in serv_addr;
   memset(&serv_addr, '0', sizeof(serv_addr));
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
   serv_addr.sin_port = htons(json_config.shell.mgmt_port);
-  bind(sock_in, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
+  int retval = bind(sock_in, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
   listen(sock_in, 5);
-
   char *buffer = (char *)malloc(json_config.shell.buffer_size);
   if (buffer == NULL) {
     print(ERROR, "can`t allocate buffer in shell_server");
     return NULL;
   }
-
-  struct timeval tv;
   while (1) {
     fd_set fd_in;
     FD_ZERO(&fd_in);
@@ -166,26 +187,9 @@ static void *mgmt_server_loop(void *data) {
         send(new_sock, "exit", 4, 0);
         break;
       } else if (strcmp(buffer, "get_port") == 0) {
-        // find port for new shell client
-        char portstr[4];
-        memset(portstr, '\0', 4);
-        sprintf(portstr, "%d", current_shell_port);
-        send(new_sock, portstr, 4, 0);
-        int *port = (int *)malloc(4);
-        *port = current_shell_port;
-        current_shell_port++;
-        if (current_shell_port > (start_shell_port + amount_avail_port)) {
-          current_shell_port = start_shell_port;
-        }
-
-        memset(buffer, '\0', json_config.shell.buffer_size);
-        recv(new_sock, buffer, json_config.shell.buffer_size, 0);
-        if (strcmp(buffer, "ok") == 0) {
-          pthread_t shell_thread_id;
-          pthread_create(&shell_thread_id, NULL, shell_server_loop, port);
-        } else {
-          continue;
-        }
+        accept_connection_with_client(new_sock);
+        pthread_t shell_thread_id;
+        pthread_create(&shell_thread_id, NULL, shell_server_loop, NULL);
       } else {
         print(ERROR, "unknown command on mgmt_port %s", buffer);
       }
@@ -206,5 +210,10 @@ int start_shell_server() {
 int stop_shell_server() {
   // TODO: close sockets
   print(INFO, "stop_shell_server");
+  if (sock_in != -1) {
+    send(sock_in, "exit", 4, 0);
+    close(sock_in);
+  }
+  close(new_sock);
   return 0;
 }
