@@ -16,23 +16,28 @@
 
 int sockfd = 0;
 
-void sig_handler(int signum) {
-  if (signum == SIGINT) {
-    printf("\nshell> ");
-    fflush(stdout);
-  } else if (signum == SIGQUIT) {
-    printf("\nreceived SIGQUIT\n");
-    printf("exit from shell\n");
-    fflush(stdin);
-    close(sockfd);
-    exit(0);
-  } else {
-    printf("can`t process signal %d (%s)\n", signum, strsignal(signum));
-  }
+static pthread_t thread_id;
+
+int get_port_by_mgmt_socket(int *port) {
+  int ret = 0;
+  struct sockaddr_in serv_addr;
+  int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  memset(&serv_addr, '0', sizeof(serv_addr));
+  serv_addr.sin_family = AF_INET;
+  serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+  serv_addr.sin_port = htons(json_config.shell.mgmt_port);
+  ret = connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
+  char buffer[4];
+  ret = send(sockfd, "get_port", 8, 0);
+  recv(sockfd, buffer, 4, 0);
+  *port = atoi(buffer);
+  send(sockfd, "ok", 2, 0);
+  close(sockfd);
 }
 
-int shell_client_loop(int port) {
-  sleep(1);
+void *shell_client_loop(void *data) {
+  int port;
+  get_port_by_mgmt_socket(&port);
   struct sockaddr_in serv_addr;
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   memset(&serv_addr, '0', sizeof(serv_addr));
@@ -74,34 +79,23 @@ int shell_client_loop(int port) {
   return 0;
 }
 
-int get_port_by_mgmt_socket(int *port) {
-  int ret = 0;
-  struct sockaddr_in serv_addr;
-  int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-  memset(&serv_addr, '0', sizeof(serv_addr));
-  serv_addr.sin_family = AF_INET;
-  serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-  serv_addr.sin_port = htons(json_config.shell.mgmt_port);
-  ret = connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
-  char buffer[4];
-  ret = send(sockfd, "get_port", 8, 0);
-  recv(sockfd, buffer, 4, 0);
-  *port = atoi(buffer);
-  send(sockfd, "ok", 2, 0);
-  close(sockfd);
+int start_shell_client() {
+  pthread_create(&thread_id, NULL, shell_client_loop, NULL);
 }
 
-int main() {
-  signal(SIGINT, sig_handler);
-  signal(SIGQUIT, sig_handler);
-  set_log_level(DEBUG);
-  init_json_config(JSON_CONFIG_FILE);
-  if (json_config.shell.state == 0) {
-    print(ERROR, "shell is disabled");
-    return 0;
+int stop_shell_client() {}
+
+void shell_sig_handler(int signum) {
+  if (signum == SIGINT) {
+    printf("\nshell> ");
+    fflush(stdout);
+  } else if (signum == SIGQUIT) {
+    printf("\nreceived SIGQUIT\n");
+    printf("exit from shell\n");
+    // fflush(stdin);
+    close(sockfd);
+    exit(0);
+  } else {
+    printf("can`t process signal %d (%s)\n", signum, strsignal(signum));
   }
-  int new_port;
-  get_port_by_mgmt_socket(&new_port);
-  shell_client_loop(new_port);
-  return 0;
 }

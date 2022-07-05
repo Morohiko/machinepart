@@ -28,6 +28,7 @@ typedef struct {
 } machine_controller;
 
 int receive_stdin_controller_message(machine_controller *machineController);
+int receive_shell_controller_message(machine_controller *machineController);
 int receive_remote_controller_message(machine_controller *machineController);
 int receive_controller_message(machine_controller *machineController);
 

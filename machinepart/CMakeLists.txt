@@ -2,7 +2,8 @@ project("machinepart")
 cmake_minimum_required(VERSION 3.5)
 
 set(HEAD_MACHINE_NAME head_machine)
-set(SHELL_CLIENT_NAME shell)
+set(SHELL_CLIENT_LIB_NAME shell_lib)
+set(SHELL_CLIENT_NAME shell_bin)
 
 find_package(Threads REQUIRED)
 
@@ -112,7 +113,10 @@ include_directories(src/shell)
 # target
 #***************************************************
 add_executable(${HEAD_MACHINE_NAME} main.c ${ALL_SRC})
-add_executable(${SHELL_CLIENT_NAME} ${SHELL_CLIENT_SRC})
+add_library(${SHELL_CLIENT_LIB_NAME} ${SHELL_CLIENT_SRC})
+target_link_libraries(${SHELL_CLIENT_LIB_NAME} cjson)
 
-target_link_libraries(${HEAD_MACHINE_NAME} cjson)
-target_link_libraries(${SHELL_CLIENT_NAME} cjson)
+target_link_libraries(${HEAD_MACHINE_NAME} ${SHELL_CLIENT_LIB_NAME})
+
+add_executable(${SHELL_CLIENT_NAME} src/main_shell_client.c)
+target_link_libraries(${SHELL_CLIENT_NAME} ${SHELL_CLIENT_LIB_NAME})

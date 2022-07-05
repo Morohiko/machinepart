@@ -30,7 +30,8 @@ static void *remote_controller_thread(void *user_data) {
 #ifdef REMOTE_CONTROLLER
   receive_remote_controller_message(controller);
 #else  // REMOTE_CONTRLLER
-  receive_stdin_controller_message(controller);
+  // receive_stdin_controller_message(controller);
+  receive_shell_controller_message(controller);
 #endif // REMOTE_CONTRLLER
 }
 

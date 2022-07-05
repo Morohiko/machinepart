@@ -1,15 +1,16 @@
-#include <assert.h>
-#include <unistd.h>
 #include "signal.h"
+#include <assert.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "controller.h"
 #include "json_config.h"
 #include "log.h"
-#include "shell/shell_server.h"
+#include "shell_client.h"
+#include "shell_server.h"
 
-static int update_machine_controller(machine_controller *machineController,
-                                     int module, int state) {
+int update_machine_controller(machine_controller *machineController, int module,
+                              int state) {
   assert(machineController);
   if (module == json_config.modules.camera_module.id) {
     machineController->camera_state = state;
@@ -34,12 +35,20 @@ static int update_machine_controller(machine_controller *machineController,
   return -1;
 }
 
-// module_number:status(0, 1)  0:0
-int receive_stdin_controller_message(machine_controller *machineController) {
+int receive_shell_controller_message(machine_controller *machineController) {
   assert(machineController);
   if (json_config.shell.state == 1) {
     start_shell_server();
+    if (json_config.shell.local_shell_client == 1) {
+      start_shell_client();
+    }
   }
+  return 0;
+}
+
+// module_number:status(0, 1)  0:0
+int receive_stdin_controller_message(machine_controller *machineController) {
+  assert(machineController);
   char buff[1000];
   int n1 = 0;
   int n2 = 0;
@@ -148,21 +157,7 @@ int init_machine_controller_states(machine_controller *controller) {
   return 0;
 }
 
-static void sig_handler(int signum) {
-  if (signum == SIGINT) {
-    print(INFO, "Received SIGINT(skip), please use SIGQUIT for exit from process");
-    fflush(stdout);
-  } else if (signum == SIGQUIT) {
-    if (json_config.shell.state == 1) {
-        stop_shell_server();
-    }
-    print(INFO, "received SIGQUIT");
-    print(INFO, "exit from machinepart");
-    exit(0);
-  } else {
-    print(INFO, "can`t process signal %d (%s)\n", signum, strsignal(signum));
-  }
-}
+static void sig_handler(int signum) { shell_sig_handler(signum); }
 
 int init_signals() {
   signal(SIGINT, sig_handler);

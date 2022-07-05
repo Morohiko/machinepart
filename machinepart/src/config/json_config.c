@@ -165,6 +165,8 @@ int init_json_structure_shell(cJSON *json) {
       json_config.shell.port = json->valueint;
     } else if (strcmp(json->string, "buffer_size") == 0) {
       json_config.shell.buffer_size = json->valueint;
+    } else if (strcmp(json->string, "local_shell_client") == 0) {
+      json_config.shell.local_shell_client = json->valueint;
     } else {
       print(ERROR, "cant parse module %s", json->string);
       return -1;
@@ -193,7 +195,7 @@ int init_json_structure() {
 
 void init_json_config(char *json_filepath) {
   int ret = 0;
-  char json_buffer[1000];
+  char json_buffer[2000];
   int c;
   FILE *file;
   file = fopen(json_filepath, "r");

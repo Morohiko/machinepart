@@ -32,7 +32,8 @@
     "SHELL": {
         "state": 1,
         "mgmt_port": 9017,
-        "buffer_size": 1000
+        "buffer_size": 1000,
+        "local_shell_client": 1
     },
     "UTILS": {
         "FPS_CHECKER": {

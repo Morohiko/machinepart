@@ -53,6 +53,7 @@ struct shell_t {
     int mgmt_port;
     int port;
     int buffer_size;
+    int local_shell_client;
 };
 
 struct json_config_t {
