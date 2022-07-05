@@ -4,12 +4,15 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "unistd.h"
-#include "wiringPi.h"
+#ifdef BUILD_ON_ARM
 
+#include "wiringPi.h"
+#endif
 #include "config.h"
 #include "motor_controller.h"
 
 static int motor_controller_init(struct motors_controller_data *data) {
+#ifdef BUILD_ON_ARM
   if (wiringPiSetup()) {
     print(ERROR, "cannot setup wiring pi");
     return -1;
@@ -23,17 +26,17 @@ static int motor_controller_init(struct motors_controller_data *data) {
     print(ERROR, "cannot setup wiring pi sys");
     return -1;
   }
-
+#endif
   // TODO: move config to main()
   data->motor_x_gpio_pin = MOTOR_X_GPIO_PIN;
   data->motor_y_gpio_pin = MOTOR_Y_GPIO_PIN;
   //
-
+#ifdef BUILD_ON_ARM
   pinMode(data->motor_x_gpio_pin, OUTPUT);
   pinMode(data->motor_y_gpio_pin, OUTPUT);
 
   print(INFO, "wiring pi installed");
-
+#endif
   return 0;
 }
 
@@ -57,11 +60,12 @@ static int set_motor_angle(int motor_pin, int motor_angle) {
   angle_to_delay_microseconds(motor_angle, &mcs);
 
   print(DEBUG, "motor_pin = %d mcs = %d", motor_pin, mcs);
-
+#ifdef BUILD_ON_ARM
   digitalWrite(motor_pin, HIGH);
   delayMicroseconds(mcs);
   digitalWrite(motor_pin, LOW);
   delay(MOTORS_DELAY_MS);
+#endif
 }
 
 int start_configure_motors_angle(struct motors_controller_data *data) {

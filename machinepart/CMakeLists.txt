@@ -22,6 +22,18 @@ message("-- CMAKE_SYSTEM_VERSION:   ${CMAKE_SYSTEM_VERSION}")
 option(WITH_MOTOR_CONTROLLER_ONLY "Enable only gyroscope" OFF)
 option(WITH_CAMERA_ONLY "Enable camera only" OFF)
 
+set(BUILD_TARGET "" CACHE STRING "Chose build target(ubuntu/arm)")
+
+if(BUILD_TARGET STREQUAL "ubuntu")
+  message("-- BUILD FOR UBUNTU")
+  add_definitions(-DBUILD_ON_UBUNTU)
+elseif(BUILD_TARGET STREQUAL "arm")
+   message("-- BUILD FOR ARM")
+  add_definitions(-DBUILD_ON_ARM)
+else()
+  message(FATAL_ERROR "unknown target, please choose from ubuntu or arm")
+endif()
+
 if(WITH_MOTOR_CONTROLLER_ONLY)
    add_definitions(-DENABLE_GYROSCOPE_RECEIVER)
    set(ENABLE_GYROSCOPE_RECEIVER "ON")
@@ -55,7 +67,9 @@ if(ENABLE_GYROSCOPE_RECEIVER STREQUAL "ON")
    set(GYROSCOPE_RECEIVER ${PROJ_DIR}/src/gyroscope_receiver.c
                           ${PROJ_DIR}/header/gyroscope_receiver.h)
 
-   set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-lwiringPi")
+   if(BUILD_TARGET STREQUAL "arm")
+      set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-lwiringPi")
+   endif()
 
    set(MOTOR_CONTROLLER ${PROJ_DIR}/src/motor_controller.c
                         ${PROJ_DIR}/header/motor_controller.h)
