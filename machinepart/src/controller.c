@@ -9,6 +9,15 @@
 #include "shell_client.h"
 #include "shell_server.h"
 
+int update_machine_controller1(machine_controller *machineController) {
+  assert(machineController);
+  machineController->camera_state = json_config.modules.camera_module.state;
+  machineController->camera_transmitter_state = json_config.modules.camera_transmitter_module.state;
+  machineController->motor_state = json_config.modules.motor_module.state;
+  machineController->gyroscope_receiver_state = json_config.modules.gyroscope_receiver_module.state;
+  return 0;
+}
+
 int update_machine_controller(machine_controller *machineController, int module,
                               int state) {
   assert(machineController);
@@ -41,6 +50,10 @@ int receive_shell_controller_message(machine_controller *machineController) {
     start_shell_server();
     if (json_config.shell.local_shell_client == 1) {
       start_shell_client();
+    }
+    while (1) {
+      update_machine_controller1(machineController);
+      sleep(1);
     }
   }
   return 0;

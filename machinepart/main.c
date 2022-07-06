@@ -55,8 +55,8 @@ static int configure_network(struct connection_info *conn_info_controller,
   assert(conn_info_gyroscope->local_ip);
   assert(conn_info_gyroscope->target_ip);
 
-  conn_info_gyroscope->local_port = LOCAL_GYROSCOPE_PORT;
-  conn_info_gyroscope->target_port = TARGET_GYROSCOPE_PORT;
+  conn_info_gyroscope->local_port = json_config.modules.gyroscope_receiver_module.local_port;
+  conn_info_gyroscope->target_port = json_config.modules.gyroscope_receiver_module.target_port;
   print(INFO,
         "selected gyroscope connection:\n local ip: %s, target ip: %s, local "
         "port: %d, target port: %d",
@@ -93,6 +93,8 @@ static int configure_network(struct connection_info *conn_info_controller,
 int main() {
   set_log_level(DEBUG);
   init_json_config(JSON_CONFIG_FILE);
+  add_command(print_json_config, "config_show", "show json config");
+  add_command(set_modules_camera_state, "set_modules_camera_state", "Set module camera state");
   enable_log_with_module_names();
   register_log_module(json_config.modules.main_module.name, pthread_self());
   init_signals();

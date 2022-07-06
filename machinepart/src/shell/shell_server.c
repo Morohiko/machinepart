@@ -13,12 +13,12 @@
 #include "log.h"
 #include "shell_server.h"
 
-#define NAME_SIZE 10
+#define NAME_SIZE 30
 #define HELP_SIZE 100
 
 struct command_t {
   char name[NAME_SIZE];
-  void (*function)(void *);
+  void (*function)(void *, void *);
   char help[HELP_SIZE];
 };
 
@@ -30,13 +30,23 @@ static pthread_t mgmt_thread_id;
 int sock_in = -1;
 int new_sock = -1;
 
-static void test_help(void *ptr) {
-  char *buffer = (char *)ptr;
+static void test_help(void *arg, void *resp) {
+  char *buffer = (char *)resp;
   sprintf(&buffer[0], "Execute shell command:\n");
   int offset = strlen(buffer);
   for (int i = 0; i < count_of_commands; i++) {
     sprintf(&buffer[offset], "  %s: %s\n", commands[i].name, commands[i].help);
     offset += strlen(buffer);
+  }
+}
+
+static void help_command(void *arg, void *resp) {
+  // char *buffer = (char *)resp;
+  // sprintf(&buffer[0], "Execute shell command:\n");
+  // int offset = strlen(buffer);
+  for (int i = 0; i < count_of_commands; i++) {
+    printf("  %s - %s\n", commands[i].name, commands[i].help);
+    // offset += strlen(buffer);
   }
 }
 
@@ -66,9 +76,9 @@ static int create_command(struct command_t *command, void (*function)(void *),
 
 static int init_commands() {
   int ret = 0;
-  ret = create_command(&commands[0], *test_help, "help",
+  ret = create_command(&commands[count_of_commands], *help_command, "help",
                        "print avaliable commands");
-  ret = create_command(&commands[1], NULL, "exit", "Exit from shell");
+  ret = create_command(&commands[count_of_commands], NULL, "exit", "Exit from shell");
 
   if (ret != 0) {
     print(ERROR, "cant initialize commands in shell server");
@@ -77,10 +87,19 @@ static int init_commands() {
   return 0;
 }
 
-static int process_commands(char *command, char *responce) {
+static int process_commands(char *command_name, char *responce) {
+  char *args = command_name;
+  for (int i = 0; i < command_name[i]; i++) {
+    if (args[i] == ' ') {
+      args[i] = '\0';
+      args = &command_name[++i];
+      break;
+    }
+  }
+
   for (int i = 0; i < count_of_commands; i++) {
-    if (strcmp(commands[i].name, command) == 0) {
-      commands[i].function(responce);
+    if (strcmp(commands[i].name, command_name) == 0) {
+      commands[i].function(args, responce);
       if (strlen(responce) == 0) {
         sprintf(&responce[0], "done\n");
       }
@@ -216,4 +235,8 @@ int stop_shell_server() {
   }
   close(new_sock);
   return 0;
+}
+
+int add_command(void (*func), char *name, char *description) {
+  create_command(&commands[count_of_commands], func, name, description);
 }

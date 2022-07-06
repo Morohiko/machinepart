@@ -1,9 +1,10 @@
-#include "fps_checker.h"
 #include "assert.h"
-#include "config.h"
-#include "log.h"
 
-int init_fps_checker(struct fps_checker_t *fps_checker) {
+#include "fps_checker.h"
+#include "log.h"
+#include "json_config.h"
+
+int init_fps_checker(struct fps_check_t *fps_checker) {
   assert(fps_checker);
 
   fps_checker->last_saved_time = time(NULL);
@@ -18,7 +19,7 @@ int init_fps_checker(struct fps_checker_t *fps_checker) {
 
 int destroy_fps_checker() {}
 
-int update_fps_value(struct fps_checker_t *fps_checker, char *msg) {
+int update_fps_value(struct fps_check_t *fps_checker, char *msg) {
   assert(fps_checker);
   assert(msg);
 
@@ -32,11 +33,11 @@ int update_fps_value(struct fps_checker_t *fps_checker, char *msg) {
   fps_checker->diff_time +=
       difftime(current_time, fps_checker->last_saved_time);
 
-  if (fps_checker->diff_time < FPS_UPDATE_VALUE_EVERY) {
+  if (fps_checker->diff_time < json_config.fps_checker.time_to_update) {
     fps_checker->fps_value++;
   } else {
     print(INFO, "fps = %d, msg: %s",
-          (fps_checker->fps_value / FPS_UPDATE_VALUE_EVERY), msg);
+          (fps_checker->fps_value / json_config.fps_checker.time_to_update), msg);
     fps_checker->diff_time = 0;
     fps_checker->fps_value = 0;
   }

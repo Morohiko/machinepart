@@ -33,9 +33,9 @@ int main() {
 
   pthread_t motors_thread_id;
 
-  motors_data.motor_x_gpio_pin = MOTOR_X_GPIO_PIN;
+  motors_data.motor_x_gpio_pin = json_config.modules.motor_module.motor_x_gpio_pin;
 
-  motors_data.motor_y_gpio_pin = MOTOR_Y_GPIO_PIN;
+  motors_data.motor_y_gpio_pin = json_config.modules.motor_module.motor_y_gpio_pin;
 
   print(DEBUG, "x gpio pin = %d, y gpio pin = %d", motors_data.motor_x_gpio_pin,
         motors_data.motor_y_gpio_pin);

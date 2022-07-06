@@ -16,6 +16,7 @@
 #include "camera/camera_transmitter.h"
 #include "log.h"
 #include "utils.h"
+#include "json_config.h"
 
 #define CAMERA_DEVICE_NAME "/dev/video0"
 
@@ -77,8 +78,8 @@ static int init_capabilities(struct camera_ctx *cam_ctx) {
   CLEAR(fmt);
 
   fmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
-  fmt.fmt.pix.width = CAMERA_FRAME_WIDTH;
-  fmt.fmt.pix.height = CAMERA_FRAME_HEIGHT;
+  fmt.fmt.pix.width = json_config.modules.camera_module.frame_width;
+  fmt.fmt.pix.height = json_config.modules.camera_module.frame_height;
   fmt.fmt.pix.pixelformat = V4L2_PIX_FMT_MJPEG;
   fmt.fmt.pix.field = V4L2_FIELD_INTERLACED;
 
@@ -109,9 +110,10 @@ static int init_capabilities(struct camera_ctx *cam_ctx) {
 }
 
 int init_camera(struct camera_ctx *cam_ctx) {
-  print(DEBUG, "camera data size = %d", CAMERA_DATA_SIZE);
-  cam_ctx->data.data = malloc(CAMERA_DATA_SIZE);
-  cam_ctx->data.size = CAMERA_DATA_SIZE;
+  int camera_data_size = json_config.modules.camera_module.frame_height * json_config.modules.camera_module.frame_width * json_config.modules.camera_module.frame_elem_size;
+  print(DEBUG, "camera data size = %d", camera_data_size);
+  cam_ctx->data.data = malloc(camera_data_size);
+  cam_ctx->data.size = camera_data_size;
   int retval = 0;
   retval = open_device();
 

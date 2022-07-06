@@ -5,11 +5,11 @@
 #include "stdlib.h"
 #include "unistd.h"
 #ifdef BUILD_ON_ARM
-
 #include "wiringPi.h"
 #endif
 #include "config.h"
 #include "motor_controller.h"
+#include "json_config.h"
 
 static int motor_controller_init(struct motors_controller_data *data) {
 #ifdef BUILD_ON_ARM
@@ -28,8 +28,8 @@ static int motor_controller_init(struct motors_controller_data *data) {
   }
 #endif
   // TODO: move config to main()
-  data->motor_x_gpio_pin = MOTOR_X_GPIO_PIN;
-  data->motor_y_gpio_pin = MOTOR_Y_GPIO_PIN;
+  data->motor_x_gpio_pin = json_config.modules.motor_module.motor_x_gpio_pin;
+  data->motor_y_gpio_pin = json_config.modules.motor_module.motor_y_gpio_pin;
   //
 #ifdef BUILD_ON_ARM
   pinMode(data->motor_x_gpio_pin, OUTPUT);
@@ -53,7 +53,7 @@ static int set_motor_angle(int motor_pin, int motor_angle) {
   int mcs;
 
   // invert if motor pin X
-  if (motor_pin == MOTOR_Y_GPIO_PIN) {
+  if (motor_pin == json_config.modules.motor_module.motor_y_gpio_pin) {
     motor_angle = (motor_angle - 180) * -1;
   }
 
@@ -64,7 +64,7 @@ static int set_motor_angle(int motor_pin, int motor_angle) {
   digitalWrite(motor_pin, HIGH);
   delayMicroseconds(mcs);
   digitalWrite(motor_pin, LOW);
-  delay(MOTORS_DELAY_MS);
+  delay(json_config.modules.motor_module.motor_delay_ms);
 #endif
 }
 

@@ -7,6 +7,9 @@
 #include <unistd.h>
 
 #include "camera/camera_opencv.h"
+#include "json_config.h"
+
+#define CAMERA_FRAME_TYPE CV_8UC3
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,15 +57,15 @@ static int int_arr_to_mat(int *src, Mat *dest) {
 }
 
 static int check_camera_config_with_default(Mat *frame) {
-  if (CAMERA_FRAME_WIDTH != frame->cols) {
+  if (json_config.modules.camera_module.frame_width != frame->cols) {
     print(ERROR, "camera frame width: config = %d, camera = %d",
-          CAMERA_FRAME_WIDTH, frame->rows);
+          json_config.modules.camera_module.frame_width, frame->rows);
     return -1;
   }
 
-  if (CAMERA_FRAME_HEIGHT != frame->rows) {
+  if (json_config.modules.camera_module.frame_height != frame->rows) {
     print(ERROR, "camera frame height: config = %d, camera = %d",
-          CAMERA_FRAME_HEIGHT, frame->cols);
+          json_config.modules.camera_module.frame_height, frame->cols);
     return -1;
   }
 
@@ -72,9 +75,9 @@ static int check_camera_config_with_default(Mat *frame) {
     return -1;
   }
 
-  if (CAMERA_FRAME_ELEM_SIZE != frame->elemSize()) {
+  if (json_config.modules.camera_module.frame_elem_size != frame->elemSize()) {
     print(ERROR, "camera frame elem size: config = %d, camera = %zu",
-          CAMERA_FRAME_ELEM_SIZE, frame->elemSize());
+          json_config.modules.camera_module.frame_elem_size, frame->elemSize());
     return -1;
   }
 
@@ -145,7 +148,7 @@ v//        if(waitKey(30) >= 0) break;
 #else
   Mat edges;
   //    namedWindow("edges",1);
-  *size = CAMERA_FRAME_WIDTH * CAMERA_FRAME_HEIGHT * CAMERA_FRAME_ELEM_SIZE;
+  *size = json_config.modules.camera_module.frame_width * json_config.modules.camera_module.frame_height * json_config.modules.camera_module.frame_elem_size;
   for (;;) {
     Mat frame;
     cap >> frame;

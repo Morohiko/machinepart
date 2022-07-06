@@ -10,6 +10,9 @@ struct camera_module_t {
   int id;
   char *name;
   int state;
+  int frame_width;
+  int frame_height;
+  int frame_elem_size;
 };
 
 struct camera_transmitter_module_t {
@@ -22,12 +25,17 @@ struct gyroscope_receiver_module_t {
   int id;
   char *name;
   int state;
+  int local_port;
+  int target_port;
 };
 
 struct motor_module_t {
   int id;
   char *name;
   int state;
+  int motor_delay_ms;
+  int motor_x_gpio_pin;
+  int motor_y_gpio_pin;
 };
 
 struct remote_controller_module_t {
@@ -45,6 +53,7 @@ struct modules_t {
 };
 
 struct fps_checker_t {
+  int state;
   int time_to_update;
 };
 
@@ -65,5 +74,9 @@ struct json_config_t {
 struct json_config_t json_config;
 
 void init_json_config(char *json_filepath);
+
+void print_json_config();
+
+void set_modules_camera_state(void *val);
 
 #endif // JSON_CONFIG_H

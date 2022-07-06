@@ -2,6 +2,7 @@
 #include "log.h"
 #include "string.h"
 #include "wifi.h"
+#include "json_config.h"
 
 #include <assert.h>
 #include <unistd.h>
@@ -26,8 +27,8 @@ int recv_gyroscope_data(char *msg) {
 
   struct udp_socket sock;
 
-  if (create_udp_socket(&sock, LOCAL_IP, TARGET_IP, LOCAL_GYROSCOPE_PORT,
-                        TARGET_GYROSOPOPE_PORT) != 0) {
+  if (create_udp_socket(&sock, LOCAL_IP, TARGET_IP, json_config.modules.gyroscope_receiver_module.local_port,
+                        json_config.modules.gyroscope_receiver_module.target_port) != 0) {
     print(ERROR, "cannot create socket");
     return -1;
   }

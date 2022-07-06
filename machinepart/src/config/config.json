@@ -7,7 +7,10 @@
         "CAMERA": {
             "id": 1,
             "name": "CAMERA_MODULE",
-            "state": 0
+            "state": 0,
+            "frame_width": 350,
+            "frame_height": 350,
+            "frame_elem_size": 2
         },
         "CAMERA_TRANSMITTER": {
             "id": 2,
@@ -17,12 +20,17 @@
         "GYROSCOPE_RECEIVER": {
             "id": 3,
             "name": "GYROSCOPE_RECEIVER_MODULE",
-            "state": 0
+            "state": 0,
+            "local_port": 3333,
+            "target_port": 3334
         },
         "MOTOR": {
             "id": 4,
             "name": "MOTOR_CONTROLLER_MODULE",
-            "state": 0
+            "state": 0,
+            "motor_delay_ms": 20,
+            "motor_x_gpio_pin": 18,
+            "motor_y_gpio_pin": 17
         },
         "REMOTE_CONTROLLER": {
             "id": 5,
@@ -35,12 +43,8 @@
         "buffer_size": 1000,
         "local_shell_client": 1
     },
-    "UTILS": {
-        "FPS_CHECKER": {
-            "time_to_update": 5
-        },
-        "LOG": {
-            "log_level": "debug"
-        }
+    "FPS_CHECKER": {
+        "state": 1,
+        "time_to_update": 5
     }
 }

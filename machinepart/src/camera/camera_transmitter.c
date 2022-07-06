@@ -8,6 +8,7 @@
 #include "fps_checker.h"
 #include "log.h"
 #include "wifi.h"
+#include "json_config.h"
 
 #define ACK_MESSAGE_SIZE 4
 
@@ -68,7 +69,7 @@ int start_recv_camera_data_through_udp(struct camera_ctx *ctx) {
     return -1;
   }
 
-  int size = CAMERA_FRAME_WIDTH * CAMERA_FRAME_HEIGHT * CAMERA_FRAME_ELEM_SIZE;
+  int size = json_config.modules.camera_module.frame_width * json_config.modules.camera_module.frame_height * json_config.modules.camera_module.frame_elem_size;
 
   char msg[size];
   while (ctx->isWorking) {
@@ -153,7 +154,7 @@ int start_send_camera_data_through_tcp(struct camera_ctx *ctx) {
   print(DEBUG, "connection accepted");
 
 #ifdef WITH_FPS_CHECKER
-  struct fps_checker_t fps_checker;
+  struct fps_check_t fps_checker;
   init_fps_checker(&fps_checker);
 #endif // WITH_FPS_CHECKER
 

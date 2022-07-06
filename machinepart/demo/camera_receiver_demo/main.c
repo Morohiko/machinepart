@@ -20,8 +20,8 @@ int config_network(struct connection_info *conn_info) {
   assert(conn_info->target_ip);
 
   // inverted cause tested on local machine
-  conn_info->local_port = TARGET_GYROSCOPE_PORT;
-  conn_info->target_port = LOCAL_GYROSCOPE_PORT;
+  conn_info->local_port = json_config.modules.gyroscope_receiver_module.target_port;
+  conn_info->target_port = json_config.modules.gyroscope_receiver_module.local_port;
   print(INFO,
         "selected connection:\n local ip: %s, target ip: %s, local port: %d, "
         "target port: %d",
