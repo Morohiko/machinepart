@@ -3,11 +3,11 @@
 
 #include "config.h"
 #include "gyroscope_receiver.h"
+#include "json_config.h"
 #include "log.h"
 #include "motor_controller.h"
 #include "string.h"
 #include "wifi.h"
-#include "json_config.h"
 
 #define MAX_GYROSCOPE_DATA_SIZE 8
 
@@ -101,8 +101,11 @@ int recv_gyroscope_data(struct gyroscope_ctx *ctx) {
   char msg[MAX_GYROSCOPE_DATA_SIZE];
 
   assert(msg);
-  if (create_udp_socket(&ctx->sock, LOCAL_IP, TARGET_IP, json_config.modules.gyroscope_receiver_module.local_port,
-                        json_config.modules.gyroscope_receiver_module.target_port) != 0) {
+  if (create_udp_socket(
+          &ctx->sock, json_config.modules.main_module.local_ip,
+          json_config.modules.main_module.target_ip,
+          json_config.modules.gyroscope_receiver_module.local_port,
+          json_config.modules.gyroscope_receiver_module.target_port) != 0) {
     print(ERROR, "cannot create socket");
     return -1;
   }

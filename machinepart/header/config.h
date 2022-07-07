@@ -4,19 +4,19 @@
 #define MAX_TCP_CONNECTION 10
 
 //************ ip/port *************//
-#define LOCAL_IP "0.0.0.0"
-#define TARGET_IP "192.168.43.162"
+// #define LOCAL_IP "0.0.0.0"
+// #define TARGET_IP "192.168.43.162"
 
 // #define LOCAL_GYROSCOPE_PORT 3333
 // #define TARGET_GYROSCOPE_PORT 3334
 
-#define LOCAL_CAMERA_FRAME_PORT 3335
-#define TARGET_CAMERA_FRAME_PORT 3336
+// #define LOCAL_CAMERA_FRAME_PORT 3335
+// #define TARGET_CAMERA_FRAME_PORT 3336
 
-#define LOCAL_CAMERA_ACK_PORT 3337
-#define TARGET_CAMERA_ACK_PORT 3338
+// #define LOCAL_CAMERA_ACK_PORT 3337
+// #define TARGET_CAMERA_ACK_PORT 3338
 
-#define CONTROLLER_PORT 3400
+// #define CONTROLLER_PORT 3400
 // #define MAX_CONTROLLER_CONNECTION 20
 // #define TARGET_CONTROLLER_PORT 3332
 
@@ -59,7 +59,7 @@
 // #define MOTOR_Y_GPIO_PIN 17
 
 //******* json config filepath ******//
-// #define JSON_CONFIG_FILE                                                       \
+// #define JSON_CONFIG_FILE \
 //   "/home/user/work/machinepart/machinepart/src/config/config.json"
 
 #endif // CONFIG_H

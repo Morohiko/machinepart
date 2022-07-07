@@ -1,4 +1,5 @@
 #include "camera/camera.h"
+#include "json_config.h"
 #include "log.h"
 #include "wifi.h"
 
@@ -13,15 +14,17 @@ static void *camera_receiver_thread(void *user_data) {
 }
 
 int config_network(struct connection_info *conn_info) {
-  memcpy(conn_info->local_ip, LOCAL_IP, 16);
-  memcpy(conn_info->target_ip, LOCAL_IP, 16);
+  memcpy(conn_info->local_ip, json_config.modules.main_module.local_ip, 16);
+  memcpy(conn_info->target_ip, json_config.modules.main_module.local_ip, 16);
 
   assert(conn_info->local_ip);
   assert(conn_info->target_ip);
 
   // inverted cause tested on local machine
-  conn_info->local_port = json_config.modules.gyroscope_receiver_module.target_port;
-  conn_info->target_port = json_config.modules.gyroscope_receiver_module.local_port;
+  conn_info->local_port =
+      json_config.modules.gyroscope_receiver_module.target_port;
+  conn_info->target_port =
+      json_config.modules.gyroscope_receiver_module.local_port;
   print(INFO,
         "selected connection:\n local ip: %s, target ip: %s, local port: %d, "
         "target port: %d",

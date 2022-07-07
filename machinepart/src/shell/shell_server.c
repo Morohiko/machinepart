@@ -78,7 +78,8 @@ static int init_commands() {
   int ret = 0;
   ret = create_command(&commands[count_of_commands], *help_command, "help",
                        "print avaliable commands");
-  ret = create_command(&commands[count_of_commands], NULL, "exit", "Exit from shell");
+  ret = create_command(&commands[count_of_commands], NULL, "exit",
+                       "Exit from shell");
 
   if (ret != 0) {
     print(ERROR, "cant initialize commands in shell server");
@@ -237,6 +238,6 @@ int stop_shell_server() {
   return 0;
 }
 
-int add_command(void (*func), char *name, char *description) {
+int add_command(void(*func), char *name, char *description) {
   create_command(&commands[count_of_commands], func, name, description);
 }

@@ -24,6 +24,8 @@ option(WITH_CAMERA_ONLY "Enable camera only" OFF)
 
 set(BUILD_TARGET "" CACHE STRING "Chose build target(ubuntu/arm)")
 
+set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+
 add_compile_definitions(JSON_CONFIG_FILE="${PROJ_DIR}/src/config/config.json")
 
 if(BUILD_TARGET STREQUAL "ubuntu")
@@ -47,8 +49,6 @@ else()
    set(ENABLE_GYROSCOPE_RECEIVER "ON")
    add_definitions(-DENABLE_CAMERA -DENABLE_GYROSCOPE_RECEIVER)
 endif()
-
-set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-pthread")
 

@@ -4,6 +4,8 @@
 struct main_module_t {
   int id;
   char *name;
+  char *local_ip;
+  char *target_ip;
 };
 
 struct camera_module_t {
@@ -19,6 +21,10 @@ struct camera_transmitter_module_t {
   int id;
   char *name;
   int state;
+  int local_port;
+  int target_port;
+  int local_ack_port;
+  int target_ack_port;
 };
 
 struct gyroscope_receiver_module_t {
@@ -58,11 +64,11 @@ struct fps_checker_t {
 };
 
 struct shell_t {
-    int state;
-    int mgmt_port;
-    int port;
-    int buffer_size;
-    int local_shell_client;
+  int state;
+  int mgmt_port;
+  int port;
+  int buffer_size;
+  int local_shell_client;
 };
 
 struct json_config_t {
