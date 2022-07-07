@@ -24,6 +24,8 @@ option(WITH_CAMERA_ONLY "Enable camera only" OFF)
 
 set(BUILD_TARGET "" CACHE STRING "Chose build target(ubuntu/arm)")
 
+add_compile_definitions(JSON_CONFIG_FILE="${PROJ_DIR}/src/config/config.json")
+
 if(BUILD_TARGET STREQUAL "ubuntu")
   message("-- BUILD FOR UBUNTU")
   add_definitions(-DBUILD_ON_UBUNTU)

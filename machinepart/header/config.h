@@ -59,7 +59,7 @@
 // #define MOTOR_Y_GPIO_PIN 17
 
 //******* json config filepath ******//
-#define JSON_CONFIG_FILE                                                       \
-  "/home/user/work/machinepart/machinepart/src/config/config.json"
+// #define JSON_CONFIG_FILE                                                       \
+//   "/home/user/work/machinepart/machinepart/src/config/config.json"
 
 #endif // CONFIG_H
