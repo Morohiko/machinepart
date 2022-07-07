@@ -80,7 +80,7 @@ camera("=============== create socket ==============");
     if (parse_gyroscope_data(msg, &ctx->data, &ctx->motor_data)) {
       print(ERROR, "cant parse gyroscope data, msg: %s", msg);
       memset(msg, '\0', MAX_GYROSCOPE_DATA_SIZE);
-      break;
+      // break;
     }
   }
 }

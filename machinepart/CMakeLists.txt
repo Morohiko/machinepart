@@ -136,3 +136,12 @@ target_link_libraries(${HEAD_MACHINE_NAME} ${SHELL_CLIENT_LIB_NAME})
 
 add_executable(${SHELL_CLIENT_NAME} src/main_shell_client.c)
 target_link_libraries(${SHELL_CLIENT_NAME} ${SHELL_CLIENT_LIB_NAME})
+
+#***************************************************
+# emulator
+#***************************************************
+if (BUILD_TARGET STREQUAL "ubuntu")
+  set(GYROSCOPE_EMULATOR_NAME "gyroscope_emulator")
+  add_executable(${GYROSCOPE_EMULATOR_NAME} ${PROJ_DIR}/emulator/gyroscope_emulator/main.c ${LOG_SRC} ${WIFI_SRC} ${JSON_CONFIG_SRC})
+  target_link_libraries(${GYROSCOPE_EMULATOR_NAME} cjson)
+endif()

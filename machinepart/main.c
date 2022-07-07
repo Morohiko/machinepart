@@ -52,7 +52,7 @@ static int configure_network(struct connection_info *conn_info_controller,
 #ifdef ENABLE_GYROSCOPE_RECEIVER
   memcpy(conn_info_gyroscope->local_ip,
          json_config.modules.main_module.local_ip, 16);
-  memcpy(conn_info_gyroscope->target_ip, ip_addr, 16);
+  memcpy(conn_info_gyroscope->target_ip, json_config.modules.main_module.target_ip, 16);
 
   assert(conn_info_gyroscope->local_ip);
   assert(conn_info_gyroscope->target_ip);

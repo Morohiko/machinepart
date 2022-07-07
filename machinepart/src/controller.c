@@ -153,12 +153,10 @@ int receive_remote_controller_message(machine_controller *machineController) {
 int init_machine_controller_states(machine_controller *controller) {
   assert(controller);
 
-  controller->camera_current_state = json_config.modules.camera_module.state;
-  controller->camera_transmitter_current_state =
-      json_config.modules.camera_transmitter_module.state;
-  controller->gyroscope_receiver_current_state =
-      json_config.modules.gyroscope_receiver_module.state;
-  controller->motor_current_state = json_config.modules.motor_module.state;
+  controller->camera_current_state = 0;
+  controller->camera_transmitter_current_state = 0;
+  controller->gyroscope_receiver_current_state = 0;
+  controller->motor_current_state = 0;
 
   controller->camera_state = json_config.modules.camera_module.state;
   controller->camera_transmitter_state =

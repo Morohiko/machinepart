@@ -266,16 +266,13 @@ void init_json_config(char *json_filepath) {
   }
   int iter = 0;
   while ((c = getc(file)) != EOF) {
-    if (iter++ >= JSON_BUFFER_SIZE) {
-      print(ERROR, "json buffer overflow");
-    }
-    json_buffer[iter] = c;
+    json_buffer[iter++] = c;
   }
   fclose(file);
 
   json = cJSON_Parse(json_buffer);
   if (json == NULL) {
-    print(ERROR, "json is null, errno = %s\n", strerror(errno));
+    print(ERROR, "json is null, errno = %s, filepath = %s", strerror(errno), json_filepath);
     return;
   }
   ret = init_json_structure();

@@ -145,7 +145,7 @@ int create_udp_socket(struct udp_socket *sock, const char *local_ip,
   assert(target_ip);
 
   if (!inet_aton(target_ip, &sock->target_sock.sin_addr)) {
-    print(ERROR, "cannot do inet_aton, local_ip = %s", local_ip);
+    print(ERROR, "cannot do inet_aton, target_ip = %s", target_ip);
     return -1;
   }
 
