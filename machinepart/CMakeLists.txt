@@ -22,7 +22,7 @@ message("-- CMAKE_SYSTEM_VERSION:   ${CMAKE_SYSTEM_VERSION}")
 option(WITH_MOTOR_CONTROLLER_ONLY "Enable only gyroscope" OFF)
 option(WITH_CAMERA_ONLY "Enable camera only" OFF)
 
-set(BUILD_TARGET "" CACHE STRING "Chose build target(ubuntu/arm)")
+set(BUILD_TARGET "" CACHE STRING "Chose build target(ubuntu/pi)")
 
 set(PROJ_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -31,11 +31,11 @@ add_compile_definitions(JSON_CONFIG_FILE="${PROJ_DIR}/src/config/config.json")
 if(BUILD_TARGET STREQUAL "ubuntu")
   message("-- BUILD FOR UBUNTU")
   add_definitions(-DBUILD_ON_UBUNTU)
-elseif(BUILD_TARGET STREQUAL "arm")
-   message("-- BUILD FOR ARM")
-  add_definitions(-DBUILD_ON_ARM)
+elseif(BUILD_TARGET STREQUAL "pi")
+   message("-- BUILD FOR PI")
+  add_definitions(-DBUILD_ON_PI)
 else()
-  message(FATAL_ERROR "unknown target, please choose from ubuntu or arm")
+  message(FATAL_ERROR "unknown target, please choose from ubuntu or pi")
 endif()
 
 if(WITH_MOTOR_CONTROLLER_ONLY)
@@ -69,14 +69,21 @@ if(ENABLE_GYROSCOPE_RECEIVER STREQUAL "ON")
    set(GYROSCOPE_RECEIVER ${PROJ_DIR}/src/gyroscope_receiver.c
                           ${PROJ_DIR}/header/gyroscope_receiver.h)
 
-   if(BUILD_TARGET STREQUAL "arm")
+   if(BUILD_TARGET STREQUAL "pi")
       set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-lwiringPi")
+      set(PLATFORM_SRC ${PROJ_DIR}/src/platforms/pi/motor.c
+                       ${PROJ_DIR}/src/platforms/pi/motor.h)
+      include_directories(${PROJ_DIR}/src/platforms/pi/)
+   elseif(BUILD_TARGET STREQUAL "ubuntu")
+      set(PLATFORM_SRC ${PROJ_DIR}/src/platforms/ubuntu/motor.c
+                       ${PROJ_DIR}/src/platforms/ubuntu/motor.h)
+      include_directories(${PROJ_DIR}/src/platforms/ubuntu)
    endif()
 
    set(MOTOR_CONTROLLER ${PROJ_DIR}/src/motor_controller.c
                         ${PROJ_DIR}/header/motor_controller.h)
 
-   set(ALL_SRC ${ALL_SRC} ${GYROSCOPE_RECEIVER} ${MOTOR_CONTROLLER})
+   set(ALL_SRC ${ALL_SRC} ${GYROSCOPE_RECEIVER} ${MOTOR_CONTROLLER} ${PLATFORM_SRC})
 endif()
 
 #***************************************************
@@ -121,9 +128,9 @@ set(SHELL_CLIENT_SRC ${PROJ_DIR}/src/shell/shell_client.c
                      ${JSON_CONFIG_SRC}
                      ${LOG_SRC})
 
-include_directories(header)
-include_directories(src/config)
-include_directories(src/shell)
+include_directories(${PROJ_DIR}/header)
+include_directories(${PROJ_DIR}/src/config)
+include_directories(${PROJ_DIR}/src/shell)
 
 #***************************************************
 # target

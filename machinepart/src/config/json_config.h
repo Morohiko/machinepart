@@ -84,7 +84,9 @@ void init_json_config(char *json_filepath);
 void print_json_config();
 
 void start_gyroscope_receiver(void *data);
-
 void stop_gyroscope_receiver(void *data);
+
+void start_motor_controller(void *data);
+void stop_motor_controller(void *data);
 
 #endif // JSON_CONFIG_H

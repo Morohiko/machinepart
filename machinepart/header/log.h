@@ -9,6 +9,7 @@ typedef enum {
   ERROR = 0,
   INFO,
   DEBUG,
+  TRACE,
 } log_level;
 
 log_level get_log_level();
