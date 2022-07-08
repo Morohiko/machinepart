@@ -57,8 +57,8 @@ if(ENABLE_CAMERA STREQUAL "ON")
 
    set(CAMERA_SRC ${PROJ_DIR}/src/camera/camera_transmitter.c
                   ${PROJ_DIR}/header/camera/camera_transmitter.h)
-   set(CAMERA_INTERNAL_SRC ${PROJ_DIR}/src/camera/camera_v4l.c
-                              ${PROJ_DIR}/header/camera/camera_v4l.h)
+   set(CAMERA_INTERNAL_SRC ${PROJ_DIR}/src/camera/camera.c
+                           ${PROJ_DIR}/header/camera/camera.h)
 
    set(ALL_SRC ${ALL_SRC} ${CAMERA_SRC} ${CAMERA_INTERNAL_SRC})
 endif()
@@ -72,11 +72,15 @@ if(ENABLE_GYROSCOPE_RECEIVER STREQUAL "ON")
    if(BUILD_TARGET STREQUAL "pi")
       set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-lwiringPi")
       set(PLATFORM_SRC ${PROJ_DIR}/src/platforms/pi/motor.c
-                       ${PROJ_DIR}/src/platforms/pi/motor.h)
+                       ${PROJ_DIR}/src/platforms/pi/motor.h
+                       ${PROJ_DIR}/src/platforms/pi/camera_v4l.c
+                       ${PROJ_DIR}/src/platforms/pi/camera_v4l.h)
       include_directories(${PROJ_DIR}/src/platforms/pi/)
    elseif(BUILD_TARGET STREQUAL "ubuntu")
       set(PLATFORM_SRC ${PROJ_DIR}/src/platforms/ubuntu/motor.c
-                       ${PROJ_DIR}/src/platforms/ubuntu/motor.h)
+                       ${PROJ_DIR}/src/platforms/ubuntu/motor.h
+                       ${PROJ_DIR}/src/platforms/ubuntu/camera_v4l.c
+                       ${PROJ_DIR}/src/platforms/ubuntu/camera_v4l.h)
       include_directories(${PROJ_DIR}/src/platforms/ubuntu)
    endif()
 
@@ -150,5 +154,11 @@ target_link_libraries(${SHELL_CLIENT_NAME} ${SHELL_CLIENT_LIB_NAME})
 if (BUILD_TARGET STREQUAL "ubuntu")
   set(GYROSCOPE_EMULATOR_NAME "gyroscope_emulator")
   add_executable(${GYROSCOPE_EMULATOR_NAME} ${PROJ_DIR}/emulator/gyroscope_emulator/main.c ${LOG_SRC} ${WIFI_SRC} ${JSON_CONFIG_SRC})
+  target_link_libraries(${GYROSCOPE_EMULATOR_NAME} cjson)
+endif()
+
+if (BUILD_TARGET STREQUAL "ubuntu")
+  set(GYROSCOPE_EMULATOR_NAME "camera_receiver_emulator")
+  add_executable(${GYROSCOPE_EMULATOR_NAME} ${PROJ_DIR}/emulator/camera_receiver_emulator/main.c ${LOG_SRC} ${WIFI_SRC} ${JSON_CONFIG_SRC})
   target_link_libraries(${GYROSCOPE_EMULATOR_NAME} cjson)
 endif()

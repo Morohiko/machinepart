@@ -314,6 +314,23 @@ void stop_motor_controller(void *data) {
   json_config.modules.motor_module.state = 0;
 }
 
+void start_camera_module(void *data) {
+  if (json_config.modules.camera_module.state == 1) {
+    print(INFO, "camera module already run");
+    return;
+  }
+  json_config.modules.camera_module.state = 1;
+}
+
+void stop_camera_module(void *data) {
+  if (json_config.modules.camera_module.state == 0) {
+    print(INFO, "camera module already stopped");
+    return;
+  }
+  json_config.modules.camera_module.state = 0;
+}
+
+
 void print_json_config() {
   printf("modules:\n");
 

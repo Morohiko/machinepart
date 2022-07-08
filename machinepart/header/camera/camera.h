@@ -1,7 +1,5 @@
-#ifndef CAMERA_V4L_H
-#define CAMERA_V4L_H
-
-#include "stdbool.h"
+#ifndef CAMERA_H
+#define CAMERA_H
 
 #include "camera/camera_transmitter.h"
 
@@ -14,6 +12,6 @@ int run_camera(struct camera_ctx *cam_ctx);
 
 int pause_camera();
 
-int get_frame_from_camera(struct camera_ctx *cam_ctx);
+int camera_module_loop(struct camera_ctx *cam_ctx);
 
-#endif // CAMERA_V4L_H
+#endif // CAMERA_H

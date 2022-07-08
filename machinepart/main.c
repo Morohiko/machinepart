@@ -108,6 +108,8 @@ static int init_shell_server_commands() {
               "Stop gyroscope receiver module");
   add_command(start_motor_controller, "start_motor_controller", "Start motor controller module");
   add_command(stop_motor_controller, "stop_motor_controller", "Stop motor controller module");
+  add_command(start_camera_module, "start_camera_module", "Start camera module");
+  add_command(stop_camera_module, "stop_camera_module", "Stop camera module");
 }
 
 int main() {

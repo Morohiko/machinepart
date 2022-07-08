@@ -15,7 +15,7 @@
 
 #ifdef ENABLE_CAMERA
 #include "camera/camera_transmitter.h"
-#include "camera/camera_v4l.h"
+#include "camera/camera.h"
 #endif
 
 #define MAX_GYROSCOPE_DATA_SIZE 15
@@ -54,7 +54,7 @@ static void *camera_thread(void *user_data) {
   int retval = 0;
   cam_ctx.isBusy = false;
   while (1) {
-    get_frame_from_camera(&cam_ctx);
+    camera_module_loop(&cam_ctx);
     print(DEBUG, "camera thread");
     sleep(1);
   }

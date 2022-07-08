@@ -17,7 +17,7 @@
 #include <linux/videodev2.h>
 
 #include "camera/camera_transmitter.h"
-#include "camera/camera_v4l.h"
+#include "camera/camera.h"
 
 #include "log.h"
 

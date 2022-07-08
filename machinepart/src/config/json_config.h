@@ -89,4 +89,7 @@ void stop_gyroscope_receiver(void *data);
 void start_motor_controller(void *data);
 void stop_motor_controller(void *data);
 
+void start_camera_module(void *data);
+void stop_camera_module(void *data);
+
 #endif // JSON_CONFIG_H

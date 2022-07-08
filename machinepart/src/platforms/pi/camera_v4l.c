@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
+#include "errno.h"
 #include <linux/videodev2.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
@@ -109,7 +109,7 @@ static int init_capabilities(struct camera_ctx *cam_ctx) {
   return 0;
 }
 
-int init_camera(struct camera_ctx *cam_ctx) {
+int v4l2_init_camera(struct camera_ctx *cam_ctx) {
   int camera_data_size = json_config.modules.camera_module.frame_height * json_config.modules.camera_module.frame_width * json_config.modules.camera_module.frame_elem_size;
   print(DEBUG, "camera data size = %d", camera_data_size);
   cam_ctx->data.data = malloc(camera_data_size);
@@ -133,7 +133,7 @@ int init_camera(struct camera_ctx *cam_ctx) {
 }
 
 // for testing
-int save_current_image_to_file(struct camera_ctx *cam_ctx, char *filepath) {
+int v4l2_save_current_image_to_file(struct camera_ctx *cam_ctx, char *filepath) {
   assert(cam_ctx);
   assert(filepath);
 
@@ -160,7 +160,7 @@ int save_current_image_to_file(struct camera_ctx *cam_ctx, char *filepath) {
   return 0;
 }
 
-int run_camera(struct camera_ctx *cam_ctx) {
+int v4l2_run_camera(struct camera_ctx *cam_ctx) {
   //    cam_ctx->isWorking = true;
   for (;;) {
     fd_set fds;
@@ -199,17 +199,13 @@ int run_camera(struct camera_ctx *cam_ctx) {
       return -1;
     }
     cam_ctx->isNewData = true;
-
-    //        print(DEBUG, "camera data size = %zu", cam_ctx->data.size);
   }
   return 0;
 }
 
-int pause_camera() {}
+int v4l2_pause_camera() {}
 
-// int get_frame_from_camera(void *data, size_t *size, bool *isBusy, bool
-// *isNewData) {
-int get_frame_from_camera(struct camera_ctx *cam_ctx) {
+int v4l2_camera_module_loop(struct camera_ctx *cam_ctx) {
   if (cam_ctx->isBusy) {
     print(DEBUG, "ftw cam is busy?");
   }
@@ -217,7 +213,7 @@ int get_frame_from_camera(struct camera_ctx *cam_ctx) {
 
   print(INFO, "init camera");
 
-  retval = init_camera(cam_ctx);
+  retval = v4l2_init_camera(cam_ctx);
 
   if (retval != 0) {
     print(ERROR, "cannot init camera");
@@ -226,7 +222,7 @@ int get_frame_from_camera(struct camera_ctx *cam_ctx) {
 
   print(INFO, "run camera");
 
-  retval = run_camera(cam_ctx);
+  retval = v4l2_run_camera(cam_ctx);
 
   if (retval != 0) {
     print(ERROR, "run camera error");
