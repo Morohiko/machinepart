@@ -13,7 +13,7 @@ int gyroscope_receiver_logic() {
                     json_config.modules.gyroscope_receiver_module.local_port);
 
   while (1) {
-    send_udp_message(&sock, "1234567890", 10);
+    send_udp_message(&sock, "1:2", 10);
     sleep(1);
   }
   return 0;

@@ -52,7 +52,8 @@ static int configure_network(struct connection_info *conn_info_controller,
 #ifdef ENABLE_GYROSCOPE_RECEIVER
   memcpy(conn_info_gyroscope->local_ip,
          json_config.modules.main_module.local_ip, 16);
-  memcpy(conn_info_gyroscope->target_ip, json_config.modules.main_module.target_ip, 16);
+  memcpy(conn_info_gyroscope->target_ip,
+         json_config.modules.main_module.target_ip, 16);
 
   assert(conn_info_gyroscope->local_ip);
   assert(conn_info_gyroscope->target_ip);
@@ -99,15 +100,21 @@ static int configure_network(struct connection_info *conn_info_controller,
   return 0;
 }
 
+static int init_shell_server_commands() {
+  add_command(print_json_config, "config_show", "show json config");
+  add_command(start_gyroscope_receiver, "start_gyroscope_receiver",
+              "Start gyroscope receiver module");
+  add_command(stop_gyroscope_receiver, "stop_gyroscope_receiver",
+              "Stop gyroscope receiver module");
+}
+
 int main() {
   set_log_level(DEBUG);
   init_json_config(JSON_CONFIG_FILE);
-  add_command(print_json_config, "config_show", "show json config");
-  add_command(set_modules_camera_state, "set_modules_camera_state",
-              "Set module camera state");
   enable_log_with_module_names();
   register_log_module(json_config.modules.main_module.name, pthread_self());
   init_signals();
+  init_shell_server_commands();
   print(INFO, "======== Start Machinepart =======");
 
   print(INFO, "======== configure network =======");

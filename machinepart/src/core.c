@@ -134,6 +134,7 @@ int start_gyroscope_data_receiver(machine_controller *controller,
 
 int stop_gyroscope_data_receiver(machine_controller *controller) {
   print(DEBUG, "stop gyroscope data receiver");
+  stop_receive_gyroscope_data(&ctx);
   pthread_cancel(controller->gyroscopeRecvThreadID);
   return 0;
 }

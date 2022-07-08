@@ -272,7 +272,8 @@ void init_json_config(char *json_filepath) {
 
   json = cJSON_Parse(json_buffer);
   if (json == NULL) {
-    print(ERROR, "json is null, errno = %s, filepath = %s", strerror(errno), json_filepath);
+    print(ERROR, "json is null, errno = %s, filepath = %s", strerror(errno),
+          json_filepath);
     return;
   }
   ret = init_json_structure();
@@ -281,13 +282,20 @@ void init_json_config(char *json_filepath) {
   }
 }
 
-void set_modules_camera_state(void *val) {
-  if (val == NULL) {
-    print(ERROR, "set_modules_camera_state args is null");
+void start_gyroscope_receiver(void *data) {
+  if (json_config.modules.gyroscope_receiver_module.state == 1) {
+    print(INFO, "gyroscop receiver module already run");
     return;
   }
-  int value = atoi((char *)val);
-  json_config.modules.camera_module.state = value;
+  json_config.modules.gyroscope_receiver_module.state = 1;
+}
+
+void stop_gyroscope_receiver(void *data) {
+  if (json_config.modules.gyroscope_receiver_module.state == 0) {
+    print(INFO, "gyroscop receiver module already stopped");
+    return;
+  }
+  json_config.modules.gyroscope_receiver_module.state = 0;
 }
 
 void print_json_config() {

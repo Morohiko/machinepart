@@ -83,6 +83,8 @@ void init_json_config(char *json_filepath);
 
 void print_json_config();
 
-void set_modules_camera_state(void *val);
+void start_gyroscope_receiver(void *data);
+
+void stop_gyroscope_receiver(void *data);
 
 #endif // JSON_CONFIG_H
