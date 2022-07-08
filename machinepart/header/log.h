@@ -38,9 +38,9 @@ void register_log_module(char *module_name, int thread_id);
 
 #define print(log_level, ...)                                                  \
   if (log_level <= get_log_level()) {                                          \
-    printf("%s:%d", __FILENAME__, __LINE__);                                   \
-    printf(" [");                                                              \
+    printf("%s:%d ", __FILENAME__, __LINE__);                                  \
     if (is_log_module_names_enabled()) {                                       \
+      printf("[");                                                             \
       print_log_module_name();                                                 \
       printf("] ");                                                            \
     }                                                                          \
