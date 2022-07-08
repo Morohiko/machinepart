@@ -141,7 +141,7 @@ target_link_libraries(${SHELL_CLIENT_LIB_NAME} cjson)
 
 target_link_libraries(${HEAD_MACHINE_NAME} ${SHELL_CLIENT_LIB_NAME})
 
-add_executable(${SHELL_CLIENT_NAME} src/main_shell_client.c)
+add_executable(${SHELL_CLIENT_NAME} ${PROJ_DIR}/src/shell/main_shell_client.c)
 target_link_libraries(${SHELL_CLIENT_NAME} ${SHELL_CLIENT_LIB_NAME})
 
 #***************************************************
