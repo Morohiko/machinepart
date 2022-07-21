@@ -7,7 +7,7 @@
 #define LOW 0
 #define HIGH 1
 
-int motor_initialize();
+int motor_initialize(int pwm_width_mcs);
 
 int motor_pin_mode(int pin, int mode);
 

@@ -141,7 +141,7 @@ include_directories(${PROJ_DIR}/src/shell)
 #***************************************************
 add_executable(${HEAD_MACHINE_NAME} main.c ${ALL_SRC})
 add_library(${SHELL_CLIENT_LIB_NAME} ${SHELL_CLIENT_SRC})
-target_link_libraries(${SHELL_CLIENT_LIB_NAME} cjson)
+target_link_libraries(${SHELL_CLIENT_LIB_NAME} cjson rt)
 
 target_link_libraries(${HEAD_MACHINE_NAME} ${SHELL_CLIENT_LIB_NAME})
 
@@ -155,6 +155,12 @@ if (BUILD_TARGET STREQUAL "ubuntu")
   set(GYROSCOPE_EMULATOR_NAME "gyroscope_emulator")
   add_executable(${GYROSCOPE_EMULATOR_NAME} ${PROJ_DIR}/emulator/gyroscope_emulator/main.c ${LOG_SRC} ${WIFI_SRC} ${JSON_CONFIG_SRC})
   target_link_libraries(${GYROSCOPE_EMULATOR_NAME} cjson)
+endif()
+
+if (BUILD_TARGET STREQUAL "ubuntu")
+  set(GYROSCOPE_EMULATOR_NAME "motor_emulator")
+  add_executable(${GYROSCOPE_EMULATOR_NAME} ${PROJ_DIR}/emulator/motor_emulator/main.c ${LOG_SRC} ${JSON_CONFIG_SRC})
+  target_link_libraries(${GYROSCOPE_EMULATOR_NAME} cjson rt)
 endif()
 
 if (BUILD_TARGET STREQUAL "ubuntu")

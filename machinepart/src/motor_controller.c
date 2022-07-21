@@ -13,7 +13,7 @@
 static int motor_controller_init(struct motors_controller_data *data) {
   int retval = 0;
 
-  retval = motor_initialize();
+  retval = motor_initialize(json_config.modules.motor_module.motor_delay_ms);
 
   if (retval != 0) {
     print(ERROR, "motor initialization error");
@@ -53,7 +53,6 @@ static int set_motor_angle(int motor_pin, int motor_angle) {
 
   angle_to_delay_microseconds(motor_angle, &mcs);
 
-  print(DEBUG, "motor_pin = %d mcs = %d", motor_pin, mcs);
 
   motor_digital_write(motor_pin, HIGH);
   motor_delay_microseconds(mcs);
@@ -78,6 +77,9 @@ int start_configure_motors_angle(struct motors_controller_data *data) {
   data->motor_y_angle = 90;
 
   while (data->is_working) {
+    // TODO:
+    // motor_angle_update(data->motor_x_gpio_pin, data->motor_x_angle,
+    //                    data->motor_y_gpio_pin, data->motor_y_angle);
     set_motor_angle(data->motor_x_gpio_pin, data->motor_x_angle);
 
     set_motor_angle(data->motor_y_gpio_pin, data->motor_y_angle);

@@ -3,7 +3,7 @@
 
 #include "wiringPi.h"
 
-int motor_initialize() {
+int motor_initialize(int pwm_width_mcs) {
   int retval = 0;
 
   retval = wiringPiSetup();
