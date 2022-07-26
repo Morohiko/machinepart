@@ -18,8 +18,6 @@ int main() {
     return 0;
   }
   start_shell_client();
-  while (1) {
-    sleep(1);
-  }
+  shell_wait_until_run();
   return 0;
 }

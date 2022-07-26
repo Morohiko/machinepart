@@ -168,7 +168,12 @@ int init_machine_controller_states(machine_controller *controller) {
   return 0;
 }
 
-static void sig_handler(int signum) { shell_sig_handler(signum); }
+static void sig_handler(int signum) {
+  if (signum == SIGQUIT) {
+    stop_shell_server();
+  }
+  shell_sig_handler(signum);
+}
 
 int init_signals() {
   signal(SIGINT, sig_handler);

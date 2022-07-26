@@ -1,82 +1,111 @@
 #include "assert.h"
 #include "errno.h"
 #include "netinet/in.h"
-#include "pthread.h"
 #include "signal.h"
 #include "stdbool.h"
-#include "stdlib.h"
-#include "string.h"
 #include "sys/select.h"
-#include "sys/socket.h"
 #include "unistd.h"
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include "pthread.h"
 
 #include "config.h"
 #include "json_config.h"
 #include "log.h"
+#include "shell_client.h"
 
 int sockfd = 0;
 
-static pthread_t thread_id;
+pthread_t thread_id;
 
-int get_port_by_mgmt_socket(int *port) {
-  int ret = 0;
-  struct sockaddr_in serv_addr;
-  int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-  memset(&serv_addr, '0', sizeof(serv_addr));
-  serv_addr.sin_family = AF_INET;
-  serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-  serv_addr.sin_port = htons(json_config.shell.mgmt_port);
-  ret = connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
-  char buffer[4];
-  ret = send(sockfd, "get_port", 8, 0);
-  recv(sockfd, buffer, 4, 0);
-  *port = atoi(buffer);
-  send(sockfd, "ok", 2, 0);
-  close(sockfd);
-}
-
-void *shell_client_loop(void *data) {
-  int port;
-  get_port_by_mgmt_socket(&port);
-  struct sockaddr_in serv_addr;
-  sockfd = socket(AF_INET, SOCK_STREAM, 0);
-  memset(&serv_addr, '0', sizeof(serv_addr));
-  serv_addr.sin_family = AF_INET;
-  serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-  serv_addr.sin_port = htons(port);
-  printf("Welcome to MP shell: port = %d\n", port);
-  sleep(1);
-  connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
+void shell_client_handle_msgs(int sockfd) {
   char *buffer = (char *)malloc(json_config.shell.buffer_size);
   memset(buffer, '\0', json_config.shell.buffer_size);
   while (1) {
     printf("shell> ");
-    fflush(stdin);
+    fflush(stdout);
     memset(buffer, '\0', json_config.shell.buffer_size);
-    fgets(buffer, json_config.shell.buffer_size, stdin);
-    if (strlen(buffer) > 1 && buffer[strlen(buffer) - 1] == 10) {
-      buffer[strlen(buffer) - 1] = '\0';
-    }
-    for (int i = 0; i < json_config.shell.buffer_size; i++) {
-      if (buffer[i] == '\0') {
-        break;
-      }
-    }
-    if (buffer[0] == '\0' || buffer[0] == '\n') {
+    fd_set fd_in;
+    FD_ZERO(&fd_in);
+    FD_SET(sockfd, &fd_in);
+    FD_SET(0, &fd_in);
+
+    int ret = select(sockfd + 1, &fd_in, NULL, NULL, NULL);
+    if (ret == -1) {
+      print(ERROR, "error after select");
       continue;
     }
-    send(sockfd, buffer, strlen(buffer), 0);
-    memset(buffer, '\0', json_config.shell.buffer_size);
-    recv(sockfd, buffer, json_config.shell.buffer_size, 0);
-    if (strcmp(buffer, "exit") == 0) {
-      printf("Exit from shell\n");
-      break;
-    } else {
-      printf("%s\n", buffer);
+    if (FD_ISSET(sockfd, &fd_in)) {
+      recv(sockfd, buffer, json_config.shell.buffer_size, 0);
+      if (strcmp(buffer, "exit") == 0) {
+        send(sockfd, "exit", 4, 0);
+        printf("Exit from shell\n");
+        break;
+      } else {
+        printf("%s\n", buffer);
+      }
+      continue;
+    }
+    if (FD_ISSET(0, &fd_in)) {
+      fgets(buffer, json_config.shell.buffer_size, stdin);
+      if (strlen(buffer) > 1 && buffer[strlen(buffer) - 1] == 10) {
+        buffer[strlen(buffer) - 1] = '\0';
+      }
+      for (int i = 0; i < json_config.shell.buffer_size; i++) {
+        if (buffer[i] == '\0') {
+          break;
+        }
+      }
+      if (buffer[0] == '\0' || buffer[0] == '\n') {
+        continue;
+      }
+      send(sockfd, buffer, strlen(buffer), 0);
+      memset(buffer, '\0', json_config.shell.buffer_size);
+      recv(sockfd, buffer, json_config.shell.buffer_size, 0);
+      if (strcmp(buffer, "exit") == 0) {
+        printf("Exit from shell\n");
+        send(sockfd, "exit", 4, 0);
+        break;
+      } else {
+        printf("%s\n", buffer);
+      }
     }
   }
+}
+
+void *shell_client_loop(void *data) {
+  int retval;
+  struct sockaddr_in servaddr, cli;
+
+  sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  if (sockfd == -1) {
+    print(ERROR, "socket creation failed...\n");
+    exit(0);
+  }
+
+  bzero(&servaddr, sizeof(servaddr));
+
+  servaddr.sin_family = AF_INET;
+  servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+  servaddr.sin_port = htons(json_config.shell.mgmt_port);
+
+  retval = connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
+
+  if (retval != 0) {
+    print(ERROR, "connection with the server failed...\n");
+    exit(0);
+  }
+
+  shell_client_handle_msgs(sockfd);
   close(sockfd);
-  return 0;
+}
+
+void shell_wait_until_run() { 
+  pthread_join(thread_id, NULL);
 }
 
 int start_shell_client() {

@@ -6,7 +6,6 @@
 #include "stdbool.h"
 #include "stdlib.h"
 #include "string.h"
-#include "sys/select.h"
 #include "unistd.h"
 
 #include "json_config.h"
@@ -16,42 +15,35 @@
 #define NAME_SIZE 30
 #define HELP_SIZE 100
 
+#define MAX_SHELL_CONNECTIONS 10
+
 struct command_t {
   char name[NAME_SIZE];
   void (*function)(void *, void *);
   char help[HELP_SIZE];
 };
 
-static int count_of_commands = 0;
-static struct command_t commands[10];
+int count_of_commands = 0;
+struct command_t commands[10];
+
+int shell_connection_fds[MAX_SHELL_CONNECTIONS];
 
 static pthread_t mgmt_thread_id;
 
-int sock_in = -1;
-int new_sock = -1;
-
-static void test_help(void *arg, void *resp) {
+int mgmt_sock;
+static void help_command(void *arg, void *resp) {
   char *buffer = (char *)resp;
   sprintf(&buffer[0], "Execute shell command:\n");
   int offset = strlen(buffer);
   for (int i = 0; i < count_of_commands; i++) {
-    sprintf(&buffer[offset], "  %s: %s\n", commands[i].name, commands[i].help);
-    offset += strlen(buffer);
+    sprintf(&buffer[offset], "  %s - %s\n", commands[i].name, commands[i].help);
+    offset = strlen(buffer);
   }
 }
 
-static void help_command(void *arg, void *resp) {
-  // char *buffer = (char *)resp;
-  // sprintf(&buffer[0], "Execute shell command:\n");
-  // int offset = strlen(buffer);
-  for (int i = 0; i < count_of_commands; i++) {
-    printf("  %s - %s\n", commands[i].name, commands[i].help);
-    // offset += strlen(buffer);
-  }
-}
-
-static int create_command(struct command_t *command, void (*function)(void *),
-                          char *name, char *help) {
+static int create_command(struct command_t *command,
+                          void (*function)(void *, void *), char *name,
+                          char *help) {
   assert(command);
   if (strlen(name) > NAME_SIZE) {
     print(
@@ -111,20 +103,23 @@ static int process_commands(char *command_name, char *responce) {
   return 0;
 }
 
-static void *shell_server_loop(void *data) {
+void *shell_server_loop(void *conn) {
+  int client_sock = *(int *)conn;
+
   char *buffer = (char *)malloc(json_config.shell.buffer_size);
   if (buffer == NULL) {
     print(ERROR, "can`t allocate buffer in shell_server");
     return NULL;
   }
-  listen(sock_in, 1);
-  int client_sock = accept(sock_in, NULL, NULL);
+
   char *responce_buffer = (char *)malloc(json_config.shell.buffer_size);
+
   while (1) {
     memset(buffer, '\0', json_config.shell.buffer_size);
     recv(client_sock, buffer, json_config.shell.buffer_size, 0);
     if (strcmp(buffer, "exit") == 0 || strlen(buffer) == 0) {
       send(client_sock, "exit", 4, 0);
+      *(int *)conn = 0;
       break;
     } else {
       memset(responce_buffer, '\0', json_config.shell.buffer_size);
@@ -132,109 +127,80 @@ static void *shell_server_loop(void *data) {
       send(client_sock, responce_buffer, strlen(responce_buffer), 0);
     }
   }
-  print(INFO, "exit from shell");
-  free(buffer);
   close(client_sock);
-  close(sock_in);
 }
 
-static void accept_connection_with_client(int mgmt_sock) {
-  int port = json_config.shell.mgmt_port + 1;
-  char *buffer = (char *)malloc(json_config.shell.buffer_size);
-  if (buffer == NULL) {
-    print(ERROR, "can`t allocate buffer in shell_server");
-    return;
-  }
-  do {
-    sock_in = socket(AF_INET, SOCK_STREAM, 0);
-    struct sockaddr_in serv_addr;
-    memset(&serv_addr, '0', sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    serv_addr.sin_port = htons(port);
-    int retv = bind(sock_in, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
-    if (retv == 0) {
-      break;
-    }
-    port++;
-  } while (1);
+void *mgmt_server_loop(void *data) {
+  int connfd, retval;
+  struct sockaddr_in servaddr;
 
-  char portstr[4];
-  memset(portstr, '\0', 4);
-  sprintf(portstr, "%d", port);
-  send(mgmt_sock, portstr, 4, 0);
-
-  memset(buffer, '\0', json_config.shell.buffer_size);
-  recv(mgmt_sock, buffer, json_config.shell.buffer_size, 0);
-  if (strcmp(buffer, "ok") == 0) {
-    print(INFO, "connection accepted with shell client");
-  }
-  free(buffer);
-}
-
-static void *mgmt_server_loop(void *data) {
-  int sock_in = socket(AF_INET, SOCK_STREAM, 0);
-  struct sockaddr_in serv_addr;
-  memset(&serv_addr, '0', sizeof(serv_addr));
-  serv_addr.sin_family = AF_INET;
-  serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-  serv_addr.sin_port = htons(json_config.shell.mgmt_port);
-  int retval = bind(sock_in, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
-  listen(sock_in, 5);
-  char *buffer = (char *)malloc(json_config.shell.buffer_size);
-  if (buffer == NULL) {
-    print(ERROR, "can`t allocate buffer in shell_server");
+  mgmt_sock = socket(AF_INET, SOCK_STREAM, 0);
+  if (mgmt_sock == -1) {
+    print(ERROR, "socket creation failed...\n");
     return NULL;
   }
-  while (1) {
-    fd_set fd_in;
-    FD_ZERO(&fd_in);
-    FD_SET(sock_in, &fd_in);
-    int ret = select(sock_in + 1, &fd_in, NULL, NULL, NULL);
-    if (ret == -1) {
-      print(ERROR, "error after select");
-      continue;
-    }
-    if (FD_ISSET(sock_in, &fd_in)) {
-      new_sock = accept(sock_in, NULL, NULL);
-      if (new_sock < 0) {
-        print(ERROR, "cannot create new_sock, errno = %s", strerror(errno));
-        continue;
-      }
-      memset(buffer, '\0', json_config.shell.buffer_size);
-      recv(new_sock, buffer, json_config.shell.buffer_size, 0);
-      if (strcmp(buffer, "exit") == 0) {
-        send(new_sock, "exit", 4, 0);
-        break;
-      } else if (strcmp(buffer, "get_port") == 0) {
-        accept_connection_with_client(new_sock);
-        pthread_t shell_thread_id;
-        pthread_create(&shell_thread_id, NULL, shell_server_loop, NULL);
-      } else {
-        print(ERROR, "unknown command on mgmt_port %s", buffer);
-      }
-    }
+
+  bzero(&servaddr, sizeof(servaddr));
+
+  servaddr.sin_family = AF_INET;
+  servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+  servaddr.sin_port = htons(json_config.shell.mgmt_port);
+
+  retval = bind(mgmt_sock, (struct sockaddr *)&servaddr, sizeof(servaddr));
+  if (retval != 0) {
+    print(ERROR, "socket bind failed...\n");
+    close(mgmt_sock);
+    return NULL;
   }
-  close(new_sock);
-  close(sock_in);
-  free(buffer);
+
+  retval = listen(mgmt_sock, 5);
+  if ((retval) != 0) {
+    print(ERROR, "Listen failed...\n");
+    close(mgmt_sock);
+    return NULL;
+  }
+
+  while (1) {
+    connfd = accept(mgmt_sock, NULL, NULL);
+    if (connfd < 0) {
+      print(ERROR, "server accept failed...\n");
+      break;
+    }
+    pthread_t thread_id;
+    int i;
+    for (i = 0; i < MAX_SHELL_CONNECTIONS; i++) {
+      if (shell_connection_fds[i] == 0) {
+        shell_connection_fds[i] = connfd;
+        break;
+      }
+    }
+    pthread_create(&thread_id, NULL, shell_server_loop,
+                   (void *)&shell_connection_fds[i]);
+    sleep(1);
+  }
+
+  close(mgmt_sock);
 }
 
 int start_shell_server() {
-  init_commands();
   print(INFO, "start_shell_server");
+  init_commands();
+  for (int i = 0; i < MAX_SHELL_CONNECTIONS; i++) {
+    shell_connection_fds[i] = 0;
+  }
   pthread_create(&mgmt_thread_id, NULL, mgmt_server_loop, NULL);
   return 0;
 }
 
 int stop_shell_server() {
-  // TODO: close sockets
   print(INFO, "stop_shell_server");
-  if (sock_in != -1) {
-    send(sock_in, "exit", 4, 0);
-    close(sock_in);
+  for (int i = 0; i < MAX_SHELL_CONNECTIONS; i++) {
+    if (shell_connection_fds[i] != 0) {
+      send(shell_connection_fds[i], "exit", 4, 0);
+      shell_connection_fds[i] = 0;
+    }
   }
-  close(new_sock);
+  close(mgmt_sock);
   return 0;
 }
 
