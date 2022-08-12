@@ -73,7 +73,8 @@ static int configure_network(struct connection_info *conn_info_controller,
   // install connection info for camera frame
   memcpy(conn_info_camera->local_ip, json_config.modules.main_module.local_ip,
          16);
-  memcpy(conn_info_camera->target_ip, ip_addr, 16);
+  memcpy(conn_info_camera->target_ip, json_config.modules.main_module.target_ip,
+         16);
 
   assert(conn_info_camera->local_ip);
   assert(conn_info_camera->target_ip);
@@ -106,10 +107,16 @@ static int init_shell_server_commands() {
               "Start gyroscope receiver module");
   add_command(stop_gyroscope_receiver, "stop_gyroscope_receiver",
               "Stop gyroscope receiver module");
-  add_command(start_motor_controller, "start_motor_controller", "Start motor controller module");
-  add_command(stop_motor_controller, "stop_motor_controller", "Stop motor controller module");
-  add_command(start_camera_module, "start_camera_module", "Start camera module");
+  add_command(start_motor_controller, "start_motor_controller",
+              "Start motor controller module");
+  add_command(stop_motor_controller, "stop_motor_controller",
+              "Stop motor controller module");
+  add_command(start_camera_module, "start_camera_module",
+              "Start camera module");
   add_command(stop_camera_module, "stop_camera_module", "Stop camera module");
+  add_command(start_camera_transmitter, "start_camera_transmitter",
+              "Start camera transmitter module");
+  return 0;
 }
 
 int main() {
@@ -131,6 +138,8 @@ int main() {
                     &conn_info_camera);
 
   print(DEBUG, "start remote controller");
+
+  init_modules();
 
   machine_controller controller;
 

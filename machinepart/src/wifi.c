@@ -1,3 +1,4 @@
+#include "errno.h"
 #include <arpa/inet.h>
 #include <assert.h>
 #include <netinet/in.h>
@@ -64,7 +65,11 @@ int send_tcp_message(struct tcp_socket *sock, char *msg, size_t msg_size) {
     return -1;
   }
 
-  int sended = send(sock->connfd, msg, msg_size, 0);
+  size_t sended = send(sock->connfd, msg, msg_size, 0);
+  if (msg_size != sended) {
+    print(ERROR, "in some reason cant send full message");
+    return -1;
+  }
 
   return 0;
 }

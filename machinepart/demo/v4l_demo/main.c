@@ -16,8 +16,8 @@
 
 #include <linux/videodev2.h>
 
-#include "camera/camera_transmitter.h"
 #include "camera/camera.h"
+#include "camera/camera_transmitter.h"
 
 #include "log.h"
 
@@ -232,30 +232,6 @@ static void *try_save_image_to_file() {
   }
 }
 
-static int machinepart_api() {
-  int retval = 0;
-
-  print(INFO, "init camera");
-
-  retval = init_camera(&cam_ctx);
-
-  if (retval != 0) {
-    print(ERROR, "cannot init camera");
-    return -1;
-  }
-
-  print(INFO, "run camera");
-
-  retval = run_camera(&cam_ctx);
-
-  if (retval != 0) {
-    print(ERROR, "run camera error");
-    return -1;
-  }
-
-  return 0;
-}
-
 int main() {
   set_log_level(DEBUG);
   int retval;
@@ -270,7 +246,7 @@ int main() {
   pthread_create(&controllerThread, NULL, try_save_image_to_file, NULL);
   // *** for testing only ***
 
-  retval = machinepart_api();
+  retval = start_camera(&cam_ctx);
 #endif
 
   if (retval != 0) {

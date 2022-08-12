@@ -5,7 +5,6 @@
 
 #include "json_config.h"
 #include "log.h"
-#include "shell_server.h"
 
 cJSON *json;
 
@@ -330,6 +329,13 @@ void stop_camera_module(void *data) {
   json_config.modules.camera_module.state = 0;
 }
 
+void start_camera_transmitter(void *data) {
+  if (json_config.modules.camera_transmitter_module.state == 1) {
+    print(INFO, "camera transmitter module already run");
+    return;
+  }
+  json_config.modules.camera_transmitter_module.state = 1;
+}
 
 void print_json_config() {
   printf("modules:\n");

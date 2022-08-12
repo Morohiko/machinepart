@@ -6,6 +6,8 @@
 #include "controller.h"
 #include "wifi.h"
 
+int init_modules();
+
 int core_loop(machine_controller *controller,
               struct connection_info *conn_info_gyroscope,
               struct connection_info_cam *conn_info_camera);

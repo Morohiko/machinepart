@@ -92,4 +92,6 @@ void stop_motor_controller(void *data);
 void start_camera_module(void *data);
 void stop_camera_module(void *data);
 
+void start_camera_transmitter(void *data);
+
 #endif // JSON_CONFIG_H

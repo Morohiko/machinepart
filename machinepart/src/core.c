@@ -14,8 +14,8 @@
 #endif
 
 #ifdef ENABLE_CAMERA
-#include "camera/camera_transmitter.h"
 #include "camera/camera.h"
+#include "camera/camera_transmitter.h"
 #endif
 
 #define MAX_GYROSCOPE_DATA_SIZE 15
@@ -49,13 +49,15 @@ int stop_remote_controller(machine_controller *controller) {
 #ifdef ENABLE_CAMERA
 static struct camera_ctx cam_ctx;
 
+int init_modules() {
+  camera_init(&cam_ctx);
+  return 0;
+}
+
 static void *camera_thread(void *user_data) {
   register_log_module(json_config.modules.camera_module.name, pthread_self());
-  int retval = 0;
-  cam_ctx.isBusy = false;
   while (1) {
-    camera_module_loop(&cam_ctx);
-    print(DEBUG, "camera thread");
+    run_camera(&cam_ctx);
     sleep(1);
   }
 }
@@ -70,9 +72,6 @@ int stop_camera(machine_controller *controller) {
   pthread_cancel(controller->cameraThreadID);
   return 0;
 }
-
-static struct connection_info conn_info_camera_frame;
-static struct connection_info conn_info_camera_ack;
 
 static void *camera_transmitter_thread(void *user_data) {
   register_log_module(json_config.modules.camera_transmitter_module.name,
@@ -92,8 +91,9 @@ static void *camera_transmitter_thread(void *user_data) {
   start_send_camera_data_through_tcp(&cam_ctx);
 }
 
-int start_camera_transmitter(machine_controller *controller,
-                             struct connection_info_cam *conn_info_camera) {
+int start_camera_transmitter_module(
+    machine_controller *controller,
+    struct connection_info_cam *conn_info_camera) {
 
   pthread_create(&controller->cameraTransmitterThreadID, NULL,
                  camera_transmitter_thread, conn_info_camera);
@@ -185,7 +185,7 @@ int core_loop(machine_controller *controller,
     if (controller->camera_transmitter_current_state !=
         controller->camera_transmitter_state) {
       if (controller->camera_transmitter_state == 1) {
-        status = start_camera_transmitter(controller, conn_info_camera);
+        status = start_camera_transmitter_module(controller, conn_info_camera);
       }
       if (controller->camera_transmitter_state == 0) {
         status = stop_camera_transmitter(controller);

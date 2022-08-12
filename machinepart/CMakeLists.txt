@@ -79,8 +79,10 @@ if(ENABLE_GYROSCOPE_RECEIVER STREQUAL "ON")
    elseif(BUILD_TARGET STREQUAL "ubuntu")
       set(PLATFORM_SRC ${PROJ_DIR}/src/platforms/ubuntu/motor.c
                        ${PROJ_DIR}/src/platforms/ubuntu/motor.h
-                       ${PROJ_DIR}/src/platforms/ubuntu/camera_v4l.c
-                       ${PROJ_DIR}/src/platforms/ubuntu/camera_v4l.h)
+                       ${PROJ_DIR}/src/platforms/ubuntu/camera_file.c
+                       ${PROJ_DIR}/src/platforms/ubuntu/camera_file.h)
+      add_compile_definitions(CAMERA_RSC_DIR="${PROJ_DIR}/rsc/")
+
       include_directories(${PROJ_DIR}/src/platforms/ubuntu)
    endif()
 
@@ -165,6 +167,13 @@ endif()
 
 if (BUILD_TARGET STREQUAL "ubuntu")
   set(GYROSCOPE_EMULATOR_NAME "camera_receiver_emulator")
+
+  find_package(PkgConfig REQUIRED)
+  pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+  include_directories(${GTK3_INCLUDE_DIRS})
+  link_directories(${GTK3_LIBRARY_DIRS})
+  add_definitions(${GTK3_CFLAGS_OTHER})
+
   add_executable(${GYROSCOPE_EMULATOR_NAME} ${PROJ_DIR}/emulator/camera_receiver_emulator/main.c ${LOG_SRC} ${WIFI_SRC} ${JSON_CONFIG_SRC})
-  target_link_libraries(${GYROSCOPE_EMULATOR_NAME} cjson)
+  target_link_libraries(${GYROSCOPE_EMULATOR_NAME} ${GTK3_LIBRARIES} cjson)
 endif()

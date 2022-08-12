@@ -4,7 +4,7 @@
       "id": 0,
       "name": "MAIN_MODULE",
       "local_ip": "0.0.0.0",
-      "target_ip": "192.168.43.162"
+      "target_ip": "0.0.0.0"
     },
     "CAMERA": {
       "id": 1,
@@ -41,9 +41,14 @@
       "name": "REMOTE_CONTROLLER_MODULE"
     }
   },
+  "CAMERA_RECEIVER_EMULATOR": {
+    "state": 1,
+    "port": 3334,
+    "with_gtk": 0
+  },
   "SHELL": {
     "state": 1,
-    "mgmt_port": 9017,
+    "mgmt_port": 9021,
     "buffer_size": 1000,
     "local_shell_client": 1
   },

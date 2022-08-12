@@ -1,22 +1,22 @@
+#include "errno.h"
 #include <assert.h>
 #include <fcntl.h>
 #include <getopt.h>
+#include <linux/videodev2.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include "errno.h"
-#include <linux/videodev2.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#include <unistd.h>
 
 #include "camera/camera_transmitter.h"
+#include "json_config.h"
 #include "log.h"
 #include "utils.h"
-#include "json_config.h"
 
 #define CAMERA_DEVICE_NAME "/dev/video0"
 
@@ -70,6 +70,8 @@ static int init_capabilities(struct camera_ctx *cam_ctx) {
     print(ERROR, "%s is no video capture device", CAMERA_DEVICE_NAME);
     return -1;
   }
+
+  // TODO: need check if supports V4L2_CAP_STREAMING for pi platform
   if (!(cap.capabilities & V4L2_CAP_READWRITE)) {
     print(ERROR, "%s does not support read i/o", CAMERA_DEVICE_NAME);
     return -1;
@@ -109,8 +111,10 @@ static int init_capabilities(struct camera_ctx *cam_ctx) {
   return 0;
 }
 
-int v4l2_init_camera(struct camera_ctx *cam_ctx) {
-  int camera_data_size = json_config.modules.camera_module.frame_height * json_config.modules.camera_module.frame_width * json_config.modules.camera_module.frame_elem_size;
+static int platform_init_camera(struct camera_ctx *cam_ctx) {
+  int camera_data_size = json_config.modules.camera_module.frame_height *
+                         json_config.modules.camera_module.frame_width *
+                         json_config.modules.camera_module.frame_elem_size;
   print(DEBUG, "camera data size = %d", camera_data_size);
   cam_ctx->data.data = malloc(camera_data_size);
   cam_ctx->data.size = camera_data_size;
@@ -132,36 +136,7 @@ int v4l2_init_camera(struct camera_ctx *cam_ctx) {
   return retval;
 }
 
-// for testing
-int v4l2_save_current_image_to_file(struct camera_ctx *cam_ctx, char *filepath) {
-  assert(cam_ctx);
-  assert(filepath);
-
-  FILE *out_file_fd = fopen("testfile", "wb");
-
-  print(DEBUG, "wait while camera is busy");
-
-  while (cam_ctx->isBusy) {
-    continue;
-  }
-
-  print(DEBUG, "start write to file %s", filepath);
-
-  cam_ctx->isBusy = true;
-  fwrite(cam_ctx->data.data, cam_ctx->data.size, 1, out_file_fd);
-  cam_ctx->isBusy = false;
-
-  print(DEBUG, "writed");
-
-  fclose(out_file_fd);
-
-  print(DEBUG, "closed");
-
-  return 0;
-}
-
-int v4l2_run_camera(struct camera_ctx *cam_ctx) {
-  //    cam_ctx->isWorking = true;
+static int read_from_camera(struct camera_ctx *cam_ctx) {
   for (;;) {
     fd_set fds;
     struct timeval tv;
@@ -186,13 +161,10 @@ int v4l2_run_camera(struct camera_ctx *cam_ctx) {
       continue;
     }
 
-    if (cam_ctx->isBusy == true) {
-      continue;
-    }
-
-    cam_ctx->isBusy = true;
+    pthread_mutex_lock(&cam_ctx->lock);
     retval = read(fd, cam_ctx->data.data, cam_ctx->data.size);
-    cam_ctx->isBusy = false;
+
+    pthread_mutex_unlock(&cam_ctx->lock);
 
     if (retval == -1) {
       print(ERROR, "cannot read from camera");
@@ -203,17 +175,14 @@ int v4l2_run_camera(struct camera_ctx *cam_ctx) {
   return 0;
 }
 
-int v4l2_pause_camera() {}
+int platform_pause_camera() {}
 
-int v4l2_camera_module_loop(struct camera_ctx *cam_ctx) {
-  if (cam_ctx->isBusy) {
-    print(DEBUG, "ftw cam is busy?");
-  }
+int platform_run_camera(struct camera_ctx *cam_ctx) {
   int retval = 0;
 
   print(INFO, "init camera");
 
-  retval = v4l2_init_camera(cam_ctx);
+  retval = platform_init_camera(cam_ctx);
 
   if (retval != 0) {
     print(ERROR, "cannot init camera");
@@ -222,7 +191,7 @@ int v4l2_camera_module_loop(struct camera_ctx *cam_ctx) {
 
   print(INFO, "run camera");
 
-  retval = v4l2_run_camera(cam_ctx);
+  retval = read_from_camera(cam_ctx);
 
   if (retval != 0) {
     print(ERROR, "run camera error");

@@ -30,5 +30,5 @@ set(ALL_SRC ${LOG_SRC}
 include_directories(${PROJ_DIR}/header)
 include_directories(${PROJ_DIR}/src/config)
 
-add_executable(${GTK_DEMO_NAME} main.c ${ALL_SRC})
+add_executable(${GTK_DEMO_NAME} main.cpp ${ALL_SRC})
 target_link_libraries(${GTK_DEMO_NAME} ${GTK3_LIBRARIES} cjson)

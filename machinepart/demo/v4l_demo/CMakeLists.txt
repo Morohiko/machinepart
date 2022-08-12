@@ -25,7 +25,7 @@ set(WIFI_SRC ${PROJ_DIR}/src/wifi.c
 set(ALL_SRC ${LOG_SRC}
             ${UTILS_SRC}
             ${CAMERA_SRC}
-        ${CAMERA_V4L_SRC}
+            ${CAMERA_V4L_SRC}
             ${WIFI_SRC})
 
 include_directories(${PROJ_DIR}/header)
