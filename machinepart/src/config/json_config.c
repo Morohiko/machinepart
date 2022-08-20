@@ -6,6 +6,8 @@
 #include "json_config.h"
 #include "log.h"
 
+struct json_config_t json_config;
+
 cJSON *json;
 
 #define JSON_BUFFER_SIZE 3000
@@ -253,7 +255,7 @@ int init_json_structure() {
   return ret;
 }
 
-void init_json_config(char *json_filepath) {
+int init_json_config(char *json_filepath) {
   int ret = 0;
   char json_buffer[JSON_BUFFER_SIZE];
   int c;
@@ -261,7 +263,7 @@ void init_json_config(char *json_filepath) {
   file = fopen(json_filepath, "r");
   if (file == NULL) {
     print(ERROR, "file is unavailable, json_filepath = %s", json_filepath);
-    return;
+    return -1;
   }
   int iter = 0;
   while ((c = getc(file)) != EOF) {
@@ -273,12 +275,13 @@ void init_json_config(char *json_filepath) {
   if (json == NULL) {
     print(ERROR, "json is null, errno = %s, filepath = %s", strerror(errno),
           json_filepath);
-    return;
+    return -1;
   }
   ret = init_json_structure();
   if (ret != 0) {
     print(ERROR, "issue while create json structure");
   }
+  return ret;
 }
 
 void start_gyroscope_receiver(void *data) {

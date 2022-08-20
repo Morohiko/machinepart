@@ -70,7 +70,7 @@ if(ENABLE_GYROSCOPE_RECEIVER STREQUAL "ON")
                           ${PROJ_DIR}/header/gyroscope_receiver.h)
 
    if(BUILD_TARGET STREQUAL "pi")
-      set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-lwiringPi")
+      find_library(WIRINGPI_LIBRARIES NAMES wiringPi)
       set(PLATFORM_SRC ${PROJ_DIR}/src/platforms/pi/motor.c
                        ${PROJ_DIR}/src/platforms/pi/motor.h
                        ${PROJ_DIR}/src/platforms/pi/camera_v4l.c
@@ -146,6 +146,9 @@ add_library(${SHELL_CLIENT_LIB_NAME} ${SHELL_CLIENT_SRC})
 target_link_libraries(${SHELL_CLIENT_LIB_NAME} cjson rt)
 
 target_link_libraries(${HEAD_MACHINE_NAME} ${SHELL_CLIENT_LIB_NAME})
+if(BUILD_TARGET STREQUAL "pi")
+  target_link_libraries(${HEAD_MACHINE_NAME} ${WIRINGPI_LIBRARIES})
+endif()
 
 add_executable(${SHELL_CLIENT_NAME} ${PROJ_DIR}/src/shell/main_shell_client.c)
 target_link_libraries(${SHELL_CLIENT_NAME} ${SHELL_CLIENT_LIB_NAME})

@@ -77,9 +77,9 @@ struct json_config_t {
   struct shell_t shell;
 };
 
-struct json_config_t json_config;
+extern struct json_config_t json_config;
 
-void init_json_config(char *json_filepath);
+int init_json_config(char *json_filepath);
 
 void print_json_config();
 

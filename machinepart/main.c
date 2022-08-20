@@ -120,8 +120,13 @@ static int init_shell_server_commands() {
 }
 
 int main() {
+  int retval = 0;
   set_log_level(DEBUG);
-  init_json_config(JSON_CONFIG_FILE);
+  retval = init_json_config(JSON_CONFIG_FILE);
+  if (retval != 0) {
+    print(ERROR, "cant init json config path: %s", JSON_CONFIG_FILE);
+    return 0;
+  }
   enable_log_with_module_names();
   register_log_module(json_config.modules.main_module.name, pthread_self());
   init_signals();
