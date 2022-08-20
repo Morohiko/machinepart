@@ -16,7 +16,7 @@ int motor_delay_microseconds(int mcs);
 int motor_digital_write(int pin, int mode);
 int motor_delay(int ms);
 
-int motor_angle_update(int motor_pin_x, int motor_angle_x,
-                       int motor_pin_y, int motor_angle_y);
+int motor_angle_update(int motor_pin_x, int motor_angle_x, int motor_pin_y,
+                       int motor_angle_y);
 
 #endif // MOTOR_H

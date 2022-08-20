@@ -12,9 +12,11 @@
 int update_machine_controller1(machine_controller *machineController) {
   assert(machineController);
   machineController->camera_state = json_config.modules.camera_module.state;
-  machineController->camera_transmitter_state = json_config.modules.camera_transmitter_module.state;
+  machineController->camera_transmitter_state =
+      json_config.modules.camera_transmitter_module.state;
   machineController->motor_state = json_config.modules.motor_module.state;
-  machineController->gyroscope_receiver_state = json_config.modules.gyroscope_receiver_module.state;
+  machineController->gyroscope_receiver_state =
+      json_config.modules.gyroscope_receiver_module.state;
   return 0;
 }
 

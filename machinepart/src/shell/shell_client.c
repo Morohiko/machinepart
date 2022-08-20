@@ -1,6 +1,7 @@
 #include "assert.h"
 #include "errno.h"
 #include "netinet/in.h"
+#include "pthread.h"
 #include "signal.h"
 #include "stdbool.h"
 #include "sys/select.h"
@@ -11,7 +12,6 @@
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include "pthread.h"
 
 #include "config.h"
 #include "json_config.h"
@@ -104,9 +104,7 @@ void *shell_client_loop(void *data) {
   close(sockfd);
 }
 
-void shell_wait_until_run() { 
-  pthread_join(thread_id, NULL);
-}
+void shell_wait_until_run() { pthread_join(thread_id, NULL); }
 
 int start_shell_client() {
   pthread_create(&thread_id, NULL, shell_client_loop, NULL);

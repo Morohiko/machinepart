@@ -15,5 +15,4 @@ int motor_digital_write(int pin, int mode);
 int motor_delay_microseconds(int mcs);
 int motor_delay(int ms);
 
-
 #endif // MOTOR_H

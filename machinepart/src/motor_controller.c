@@ -4,11 +4,11 @@
 #include "stdlib.h"
 #include "unistd.h"
 
+#include "config.h"
+#include "json_config.h"
 #include "log.h"
 #include "motor.h"
-#include "config.h"
 #include "motor_controller.h"
-#include "json_config.h"
 
 static int motor_controller_init(struct motors_controller_data *data) {
   int retval = 0;
@@ -52,7 +52,6 @@ static int set_motor_angle(int motor_pin, int motor_angle) {
   }
 
   angle_to_delay_microseconds(motor_angle, &mcs);
-
 
   motor_digital_write(motor_pin, HIGH);
   motor_delay_microseconds(mcs);

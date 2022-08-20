@@ -148,7 +148,9 @@ v//        if(waitKey(30) >= 0) break;
 #else
   Mat edges;
   //    namedWindow("edges",1);
-  *size = json_config.modules.camera_module.frame_width * json_config.modules.camera_module.frame_height * json_config.modules.camera_module.frame_elem_size;
+  *size = json_config.modules.camera_module.frame_width *
+          json_config.modules.camera_module.frame_height *
+          json_config.modules.camera_module.frame_elem_size;
   for (;;) {
     Mat frame;
     cap >> frame;

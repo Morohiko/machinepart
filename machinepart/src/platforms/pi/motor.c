@@ -26,21 +26,21 @@ int motor_initialize(int pwm_width_mcs) {
 }
 
 int motor_pin_mode(int pin, int mode) {
-    pinMode(pin, mode);
-    return 0;
+  pinMode(pin, mode);
+  return 0;
 }
 
 int motor_digital_write(int pin, int mode) {
-    digitalWrite(pin, mode);
-    return 0;
+  digitalWrite(pin, mode);
+  return 0;
 }
 
 int motor_delay_microseconds(int mcs) {
-    delayMicroseconds(mcs);
-    return 0;
+  delayMicroseconds(mcs);
+  return 0;
 }
 
 int motor_delay(int ms) {
-    delay(ms);
-    return 0;
+  delay(ms);
+  return 0;
 }

@@ -1,8 +1,8 @@
 #include "assert.h"
 
 #include "fps_checker.h"
-#include "log.h"
 #include "json_config.h"
+#include "log.h"
 
 int init_fps_checker(struct fps_check_t *fps_checker) {
   assert(fps_checker);
@@ -37,7 +37,8 @@ int update_fps_value(struct fps_check_t *fps_checker, char *msg) {
     fps_checker->fps_value++;
   } else {
     print(INFO, "fps = %d, msg: %s",
-          (fps_checker->fps_value / json_config.fps_checker.time_to_update), msg);
+          (fps_checker->fps_value / json_config.fps_checker.time_to_update),
+          msg);
     fps_checker->diff_time = 0;
     fps_checker->fps_value = 0;
   }
