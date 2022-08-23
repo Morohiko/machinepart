@@ -7,6 +7,7 @@
 #include "core.h"
 #include "json_config.h"
 #include "log.h"
+#include "shell_server.h"
 #include "utils.h"
 #include "wifi.h"
 
