@@ -1,7 +1,7 @@
 #ifndef SHELL_CLIENT_H
 #define SHELL_CLIENT_H
 
-int start_shell_client(int is_remote);
+int start_shell_client(int *is_remote);
 int stop_shell_client();
 
 void shell_wait_until_run();

@@ -92,7 +92,7 @@ void *shell_client_loop(void *data) {
 
   servaddr.sin_family = AF_INET;
   servaddr.sin_addr.s_addr =
-      is_remote ? inet_addr(json_config.modules.main_module.gp_ip)
+      is_remote ? inet_addr(json_config.modules.main_module.mp_ip)
                 : inet_addr("127.0.0.1");
   servaddr.sin_port = htons(json_config.shell.mgmt_port);
 
@@ -109,8 +109,8 @@ void *shell_client_loop(void *data) {
 
 void shell_wait_until_run() { pthread_join(thread_id, NULL); }
 
-int start_shell_client(int is_remote) {
-  pthread_create(&thread_id, NULL, shell_client_loop, &is_remote);
+int start_shell_client(int *is_remote) {
+  pthread_create(&thread_id, NULL, shell_client_loop, is_remote);
 }
 
 int stop_shell_client() {}

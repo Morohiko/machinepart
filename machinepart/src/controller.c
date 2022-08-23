@@ -50,8 +50,9 @@ int receive_shell_controller_message(machine_controller *machineController) {
   assert(machineController);
   if (json_config.shell.state == 1) {
     start_shell_server();
+    int is_remote = 0;
     if (json_config.shell.local_shell_client == 1) {
-      start_shell_client(0);
+      start_shell_client(&is_remote);
     }
     while (1) {
       update_machine_controller1(machineController);

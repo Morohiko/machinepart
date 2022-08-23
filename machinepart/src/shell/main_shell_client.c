@@ -17,7 +17,8 @@ int main() {
     print(ERROR, "shell is disabled");
     return 0;
   }
-  start_shell_client(1);
+  int is_remote = 1;
+  start_shell_client(&is_remote);
   shell_wait_until_run();
   return 0;
 }
