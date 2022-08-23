@@ -51,7 +51,7 @@ int receive_shell_controller_message(machine_controller *machineController) {
   if (json_config.shell.state == 1) {
     start_shell_server();
     if (json_config.shell.local_shell_client == 1) {
-      start_shell_client();
+      start_shell_client(0);
     }
     while (1) {
       update_machine_controller1(machineController);

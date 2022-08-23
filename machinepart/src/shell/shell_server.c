@@ -7,6 +7,7 @@
 #include "stdlib.h"
 #include "string.h"
 #include "unistd.h"
+#include <arpa/inet.h>
 
 #include "json_config.h"
 #include "log.h"
@@ -143,7 +144,7 @@ void *mgmt_server_loop(void *data) {
   bzero(&servaddr, sizeof(servaddr));
 
   servaddr.sin_family = AF_INET;
-  servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+  servaddr.sin_addr.s_addr = inet_addr("0.0.0.0");
   servaddr.sin_port = htons(json_config.shell.mgmt_port);
 
   retval = bind(mgmt_sock, (struct sockaddr *)&servaddr, sizeof(servaddr));

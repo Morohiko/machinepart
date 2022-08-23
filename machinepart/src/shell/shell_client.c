@@ -79,6 +79,7 @@ void shell_client_handle_msgs(int sockfd) {
 
 void *shell_client_loop(void *data) {
   int retval;
+  int is_remote = *(int*)data;
   struct sockaddr_in servaddr, cli;
 
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -90,7 +91,7 @@ void *shell_client_loop(void *data) {
   bzero(&servaddr, sizeof(servaddr));
 
   servaddr.sin_family = AF_INET;
-  servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+  servaddr.sin_addr.s_addr = is_remote ? inet_addr(json_config.modules.main_module.target_ip) : inet_addr("127.0.0.1");
   servaddr.sin_port = htons(json_config.shell.mgmt_port);
 
   retval = connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
@@ -106,8 +107,8 @@ void *shell_client_loop(void *data) {
 
 void shell_wait_until_run() { pthread_join(thread_id, NULL); }
 
-int start_shell_client() {
-  pthread_create(&thread_id, NULL, shell_client_loop, NULL);
+int start_shell_client(int is_remote) {
+  pthread_create(&thread_id, NULL, shell_client_loop, &is_remote);
 }
 
 int stop_shell_client() {}
