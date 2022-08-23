@@ -22,15 +22,15 @@ int init_json_structure_module_main(cJSON *json) {
           (char *)malloc(strlen(json->valuestring));
       memcpy(json_config.modules.main_module.name, json->valuestring,
              strlen(json->valuestring));
-    } else if (strcmp(json->string, "local_ip") == 0) {
-      json_config.modules.main_module.local_ip =
+    } else if (strcmp(json->string, "mp_ip") == 0) {
+      json_config.modules.main_module.mp_ip =
           (char *)malloc(strlen(json->valuestring));
-      memcpy(json_config.modules.main_module.local_ip, json->valuestring,
+      memcpy(json_config.modules.main_module.mp_ip, json->valuestring,
              strlen(json->valuestring));
-    } else if (strcmp(json->string, "target_ip") == 0) {
-      json_config.modules.main_module.target_ip =
+    } else if (strcmp(json->string, "gp_ip") == 0) {
+      json_config.modules.main_module.gp_ip =
           (char *)malloc(strlen(json->valuestring));
-      memcpy(json_config.modules.main_module.target_ip, json->valuestring,
+      memcpy(json_config.modules.main_module.gp_ip, json->valuestring,
              strlen(json->valuestring));
 
     } else {
@@ -82,11 +82,10 @@ int init_json_structure_module_camera_transmitter(cJSON *json) {
              json->valuestring, strlen(json->valuestring));
     } else if (strcmp(json->string, "state") == 0) {
       json_config.modules.camera_transmitter_module.state = json->valueint;
-    } else if (strcmp(json->string, "local_port") == 0) {
-      json_config.modules.camera_transmitter_module.local_port = json->valueint;
-    } else if (strcmp(json->string, "target_port") == 0) {
-      json_config.modules.camera_transmitter_module.target_port =
-          json->valueint;
+    } else if (strcmp(json->string, "mp_port") == 0) {
+      json_config.modules.camera_transmitter_module.mp_port = json->valueint;
+    } else if (strcmp(json->string, "gp_port") == 0) {
+      json_config.modules.camera_transmitter_module.gp_port = json->valueint;
     } else if (strcmp(json->string, "local_ack_port") == 0) {
       json_config.modules.camera_transmitter_module.local_ack_port =
           json->valueint;
@@ -114,11 +113,10 @@ int init_json_structure_module_gyroscope_receiver(cJSON *json) {
              json->valuestring, strlen(json->valuestring));
     } else if (strcmp(json->string, "state") == 0) {
       json_config.modules.gyroscope_receiver_module.state = json->valueint;
-    } else if (strcmp(json->string, "local_port") == 0) {
-      json_config.modules.gyroscope_receiver_module.local_port = json->valueint;
-    } else if (strcmp(json->string, "target_port") == 0) {
-      json_config.modules.gyroscope_receiver_module.target_port =
-          json->valueint;
+    } else if (strcmp(json->string, "mp_port") == 0) {
+      json_config.modules.gyroscope_receiver_module.mp_port = json->valueint;
+    } else if (strcmp(json->string, "gp_port") == 0) {
+      json_config.modules.gyroscope_receiver_module.gp_port = json->valueint;
     } else {
       print(ERROR, "cant parse argument %s", json->string);
       return -1;
@@ -346,8 +344,8 @@ void print_json_config() {
   printf("\tmain_module:\n");
   printf("\t\tid: %d\n", json_config.modules.main_module.id);
   printf("\t\tname: %s\n", json_config.modules.main_module.name);
-  printf("\t\tlocal_ip: %s\n", json_config.modules.main_module.local_ip);
-  printf("\t\ttarget_ip: %s\n", json_config.modules.main_module.target_ip);
+  printf("\t\tmp_ip: %s\n", json_config.modules.main_module.mp_ip);
+  printf("\t\tgp_ip: %s\n", json_config.modules.main_module.gp_ip);
 
   printf("\tcamera_module:\n");
   printf("\t\tid: %d\n", json_config.modules.camera_module.id);
@@ -365,10 +363,10 @@ void print_json_config() {
   printf("\t\tname: %s\n", json_config.modules.camera_transmitter_module.name);
   printf("\t\tstate: %d\n",
          json_config.modules.camera_transmitter_module.state);
-  printf("\t\tlocal_port: %d\n",
-         json_config.modules.camera_transmitter_module.local_port);
-  printf("\t\ttarget_port: %d\n",
-         json_config.modules.camera_transmitter_module.target_port);
+  printf("\t\tmp_port: %d\n",
+         json_config.modules.camera_transmitter_module.mp_port);
+  printf("\t\tgp_port: %d\n",
+         json_config.modules.camera_transmitter_module.gp_port);
   printf("\t\tlocal_ack_port: %d\n",
          json_config.modules.camera_transmitter_module.local_ack_port);
   printf("\t\ttarget_ack_port: %d\n",
@@ -379,10 +377,10 @@ void print_json_config() {
   printf("\t\tname: %s\n", json_config.modules.gyroscope_receiver_module.name);
   printf("\t\tstate: %d\n",
          json_config.modules.gyroscope_receiver_module.state);
-  printf("\t\tlocal_port: %d\n",
-         json_config.modules.gyroscope_receiver_module.local_port);
-  printf("\t\ttarget_port: %d\n",
-         json_config.modules.gyroscope_receiver_module.target_port);
+  printf("\t\tmp_port: %d\n",
+         json_config.modules.gyroscope_receiver_module.mp_port);
+  printf("\t\tgp_port: %d\n",
+         json_config.modules.gyroscope_receiver_module.gp_port);
 
   printf("\tmotor_module:\n");
   printf("\t\tid: %d\n", json_config.modules.motor_module.id);

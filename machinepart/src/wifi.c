@@ -114,8 +114,8 @@ int close_tcp_socket(struct tcp_socket *sock) {
   return 0;
 }
 
-int create_udp_socket(struct udp_socket *sock, const char *local_ip,
-                      const char *target_ip, int local_port, int target_port) {
+int create_udp_socket(struct udp_socket *sock, const char *mp_ip,
+                      const char *gp_ip, int mp_port, int gp_port) {
   assert(sock);
 
   sock->sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -127,32 +127,32 @@ int create_udp_socket(struct udp_socket *sock, const char *local_ip,
 
   bzero(&sock->local_sock, sizeof(sock->local_sock));
   sock->local_sock.sin_family = AF_INET;
-  sock->local_sock.sin_port = htons(local_port);
+  sock->local_sock.sin_port = htons(mp_port);
 
-  assert(local_ip);
+  assert(mp_ip);
 
-  if (!inet_aton(local_ip, &sock->local_sock.sin_addr)) {
-    print(ERROR, "cannot do inet_aton, local_ip = %s", local_ip);
+  if (!inet_aton(mp_ip, &sock->local_sock.sin_addr)) {
+    print(ERROR, "cannot do inet_aton, mp_ip = %s", mp_ip);
     return -1;
   }
 
   bind(sock->sock_fd, (struct sockaddr *)&sock->local_sock,
        sizeof(sock->local_sock));
 
-  print(DEBUG, "local socket created with port = %d", local_port);
+  print(DEBUG, "local socket created with port = %d", mp_port);
 
   bzero(&sock->target_sock, sizeof(sock->target_sock));
   sock->target_sock.sin_family = AF_INET;
-  sock->target_sock.sin_port = htons(target_port);
+  sock->target_sock.sin_port = htons(gp_port);
 
-  assert(target_ip);
+  assert(gp_ip);
 
-  if (!inet_aton(target_ip, &sock->target_sock.sin_addr)) {
-    print(ERROR, "cannot do inet_aton, target_ip = %s", target_ip);
+  if (!inet_aton(gp_ip, &sock->target_sock.sin_addr)) {
+    print(ERROR, "cannot do inet_aton, gp_ip = %s", gp_ip);
     return -1;
   }
 
-  print(DEBUG, "target sock is on port = %d", target_port);
+  print(DEBUG, "target sock is on port = %d", gp_port);
 
   return 0;
 }

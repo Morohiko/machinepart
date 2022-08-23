@@ -28,10 +28,10 @@ int recv_gyroscope_data(char *msg) {
   struct udp_socket sock;
 
   if (create_udp_socket(
-          &sock, json_config.modules.main_module.local_ip,
-          json_config.modules.main_module.target_ip,
-          json_config.modules.gyroscope_receiver_module.local_port,
-          json_config.modules.gyroscope_receiver_module.target_port) != 0) {
+          &sock, json_config.modules.main_module.mp_ip,
+          json_config.modules.main_module.gp_ip,
+          json_config.modules.gyroscope_receiver_module.mp_port,
+          json_config.modules.gyroscope_receiver_module.gp_port) != 0) {
     print(ERROR, "cannot create socket");
     return -1;
   }

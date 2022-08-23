@@ -39,9 +39,8 @@ int start_receive_gyroscope_data(struct gyroscope_ctx *ctx) {
 
   ctx->is_working = true;
 
-  retval =
-      create_udp_socket(&ctx->sock, ctx->conn.local_ip, ctx->conn.target_ip,
-                        ctx->conn.local_port, ctx->conn.target_port);
+  retval = create_udp_socket(&ctx->sock, ctx->conn.mp_ip, ctx->conn.gp_ip,
+                             ctx->conn.mp_port, ctx->conn.gp_port);
 
   if (retval != 0) {
     print(ERROR, "cannot create socket");

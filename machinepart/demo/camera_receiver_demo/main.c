@@ -14,22 +14,20 @@ static void *camera_receiver_thread(void *user_data) {
 }
 
 int config_network(struct connection_info *conn_info) {
-  memcpy(conn_info->local_ip, json_config.modules.main_module.local_ip, 16);
-  memcpy(conn_info->target_ip, json_config.modules.main_module.local_ip, 16);
+  memcpy(conn_info->mp_ip, json_config.modules.main_module.mp_ip, 16);
+  memcpy(conn_info->gp_ip, json_config.modules.main_module.mp_ip, 16);
 
-  assert(conn_info->local_ip);
-  assert(conn_info->target_ip);
+  assert(conn_info->mp_ip);
+  assert(conn_info->gp_ip);
 
   // inverted cause tested on local machine
-  conn_info->local_port =
-      json_config.modules.gyroscope_receiver_module.target_port;
-  conn_info->target_port =
-      json_config.modules.gyroscope_receiver_module.local_port;
+  conn_info->mp_port = json_config.modules.gyroscope_receiver_module.gp_port;
+  conn_info->gp_port = json_config.modules.gyroscope_receiver_module.mp_port;
   print(INFO,
-        "selected connection:\n local ip: %s, target ip: %s, local port: %d, "
-        "target port: %d",
-        conn_info->local_ip, conn_info->target_ip, conn_info->local_port,
-        conn_info->target_port);
+        "selected connection:\n mp ip: %s, gp ip: %s, mp port: %d, "
+        "gp port: %d",
+        conn_info->mp_ip, conn_info->gp_ip, conn_info->mp_port,
+        conn_info->gp_port);
 
   return 0;
 }

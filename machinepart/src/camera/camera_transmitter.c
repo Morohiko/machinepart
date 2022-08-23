@@ -16,17 +16,17 @@
 int start_send_camera_data_through_udp(struct camera_ctx *cam_ctx) {
 #if 1
   print(DEBUG, "=============== create socket ==============");
-  print(DEBUG, "local ip = %s", cam_ctx->conn.local_ip);
-  print(DEBUG, "target ip = %s", cam_ctx->conn.target_ip);
-  print(DEBUG, "local port = %d", cam_ctx->conn.local_port);
-  print(DEBUG, "target port = %d", cam_ctx->conn.target_port);
+  print(DEBUG, "mp ip = %s", cam_ctx->conn.mp_ip);
+  print(DEBUG, "gp ip = %s", cam_ctx->conn.gp_ip);
+  print(DEBUG, "mp port = %d", cam_ctx->conn.mp_port);
+  print(DEBUG, "gp port = %d", cam_ctx->conn.gp_port);
 #endif
   print(DEBUG, "start send camera data through udp");
   int retval = 0;
 
-  if (create_udp_socket(&cam_ctx->sock, cam_ctx->conn.local_ip,
-                        cam_ctx->conn.target_ip, cam_ctx->conn.local_port,
-                        cam_ctx->conn.target_port) != 0) {
+  if (create_udp_socket(&cam_ctx->sock, cam_ctx->conn.mp_ip,
+                        cam_ctx->conn.gp_ip, cam_ctx->conn.mp_port,
+                        cam_ctx->conn.gp_port) != 0) {
     print(ERROR, "cannot create socket");
     return -1;
   }
@@ -59,9 +59,9 @@ int stop_send_camera_data_through_udp(struct camera_ctx *cam_ctx) { return 0; }
 
 int start_recv_camera_data_through_udp(struct camera_ctx *cam_ctx) {
 
-  if (create_udp_socket(&cam_ctx->sock, cam_ctx->conn.local_ip,
-                        cam_ctx->conn.target_ip, cam_ctx->conn.local_port,
-                        cam_ctx->conn.target_port) != 0) {
+  if (create_udp_socket(&cam_ctx->sock, cam_ctx->conn.mp_ip,
+                        cam_ctx->conn.gp_ip, cam_ctx->conn.mp_port,
+                        cam_ctx->conn.gp_port) != 0) {
     print(ERROR, "cannot create socket");
     return -1;
   }
@@ -95,23 +95,23 @@ int start_send_camera_data_through_tcp(struct camera_ctx *cam_ctx) {
 #if 1
   print(DEBUG, "\n=============== camera create socket ==============");
 
-  print(DEBUG, "local ip = %s", cam_ctx->conn.local_ip);
-  print(DEBUG, "target ip = %s", cam_ctx->conn.target_ip);
+  print(DEBUG, "mp ip = %s", cam_ctx->conn.mp_ip);
+  print(DEBUG, "gp ip = %s", cam_ctx->conn.gp_ip);
 
-  print(DEBUG, "frame local port = %d", cam_ctx->conn.frame_local_port);
-  print(DEBUG, "frame target port = %d", cam_ctx->conn.frame_target_port);
+  print(DEBUG, "frame mp port = %d", cam_ctx->conn.frame_mp_port);
+  print(DEBUG, "frame gp port = %d", cam_ctx->conn.frame_gp_port);
 
-  print(DEBUG, "ack local port = %d", cam_ctx->conn.ack_local_port);
-  print(DEBUG, "ack target port = %d", cam_ctx->conn.ack_target_port);
+  print(DEBUG, "ack mp port = %d", cam_ctx->conn.ack_mp_port);
+  print(DEBUG, "ack gp port = %d", cam_ctx->conn.ack_gp_port);
 #endif
   print(DEBUG, "start send camera data through tcp");
 
   // configure camera frame socket
   print(DEBUG, "start configure camera frame socket");
 
-  retval = create_tcp_socket(
-      &cam_ctx->camera_tcp_sock_frame,
-      json_config.modules.camera_transmitter_module.local_port);
+  retval =
+      create_tcp_socket(&cam_ctx->camera_tcp_sock_frame,
+                        json_config.modules.camera_transmitter_module.mp_port);
   if (retval != 0) {
     print(ERROR, "cannot create socket");
     return retval;

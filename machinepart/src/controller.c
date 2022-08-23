@@ -99,15 +99,15 @@ int receive_remote_controller_message(machine_controller *machineController) {
 
   print(DEBUG, "\n=============== controller create socket ==============");
 
-  print(DEBUG, "local ip = %s", machineController->conn.local_ip);
-  print(DEBUG, "target ip = %s", machineController->conn.target_ip);
+  print(DEBUG, "mp ip = %s", machineController->conn.mp_ip);
+  print(DEBUG, "gp ip = %s", machineController->conn.gp_ip);
 
-  print(DEBUG, "local port = %d", machineController->conn.local_port);
-  print(DEBUG, "target port = %d", machineController->conn.target_port);
+  print(DEBUG, "mp port = %d", machineController->conn.mp_port);
+  print(DEBUG, "gp port = %d", machineController->conn.gp_port);
 
   // configure remote controller socket
   if (create_tcp_socket(&machineController->controller_sock,
-                        machineController->conn.local_port) != 0) {
+                        machineController->conn.mp_port) != 0) {
     print(ERROR, "cannot create socket");
     return -1;
   }

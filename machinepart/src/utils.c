@@ -131,7 +131,7 @@ static int get_once_ip_from_heap(char *src, char *dest, int requested_ip) {
 }
 
 // get ip`s addr from /proc/net/arp
-int get_target_ip_addr(char *dest) {
+int get_gp_ip_addr(char *dest) {
   assert(dest);
 
   char *filename = "/proc/net/arp";

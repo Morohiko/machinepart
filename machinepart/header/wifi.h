@@ -6,22 +6,22 @@
 #include "config.h"
 
 struct connection_info {
-  char local_ip[16];
-  char target_ip[16];
+  char mp_ip[16];
+  char gp_ip[16];
 
-  int local_port;
-  int target_port;
+  int mp_port;
+  int gp_port;
 };
 
 struct connection_info_cam {
-  char local_ip[16];
-  char target_ip[16];
+  char mp_ip[16];
+  char gp_ip[16];
 
-  int frame_local_port;
-  int frame_target_port;
+  int frame_mp_port;
+  int frame_gp_port;
 
-  int ack_local_port;
-  int ack_target_port;
+  int ack_mp_port;
+  int ack_gp_port;
 };
 
 struct tcp_socket {
@@ -46,8 +46,8 @@ struct udp_socket {
   struct sockaddr_in target_sock;
 };
 
-int create_udp_socket(struct udp_socket *sock, const char *local_ip,
-                      const char *target_ip, int local_port, int target_port);
+int create_udp_socket(struct udp_socket *sock, const char *mp_ip,
+                      const char *gp_ip, int mp_port, int gp_port);
 int close_udp_socket(struct udp_socket *sock);
 int send_udp_message(struct udp_socket *sock, char *msg, size_t msg_size);
 int recv_udp_message(struct udp_socket *sock, char *msg, size_t msg_size);

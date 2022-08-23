@@ -30,7 +30,7 @@ int camera_receiver_logic() {
   servaddr.sin_family = AF_INET;
   servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
   servaddr.sin_port =
-      htons(json_config.modules.camera_transmitter_module.local_port);
+      htons(json_config.modules.camera_transmitter_module.mp_port);
   int retval = 0;
 
   do {

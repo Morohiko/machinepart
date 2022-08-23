@@ -12,15 +12,15 @@ int send_message_through_udp(char *msg, size_t msg_size, int quantity) {
 
   struct udp_socket sock;
 
-  print(DEBUG, "local ip = %s", json_config.modules.main_module.local_ip);
-  print(DEBUG, "target ip = %s", json_config.modules.main_module.target_ip);
+  print(DEBUG, "mp ip = %s", json_config.modules.main_module.mp_ip);
+  print(DEBUG, "gp ip = %s", json_config.modules.main_module.gp_ip);
 
-  print(DEBUG, "local port = %d", LOCAL_TEST_PORT);
-  print(DEBUG, "target port = %d", TARGET_TEST_PORT);
+  print(DEBUG, "mp port = %d", LOCAL_TEST_PORT);
+  print(DEBUG, "gp port = %d", TARGET_TEST_PORT);
 
-  if (create_udp_socket(&sock, json_config.modules.main_module.local_ip,
-                        json_config.modules.main_module.target_ip,
-                        LOCAL_TEST_PORT, TARGET_TEST_PORT) != 0) {
+  if (create_udp_socket(&sock, json_config.modules.main_module.mp_ip,
+                        json_config.modules.main_module.gp_ip, LOCAL_TEST_PORT,
+                        TARGET_TEST_PORT) != 0) {
     print(ERROR, "cannot create socket");
     return -1;
   }
@@ -51,9 +51,9 @@ int recv_message_through_udp(char *msg, size_t msg_size, int quantity) {
 
   struct udp_socket sock;
 
-  if (create_udp_socket(&sock, json_config.modules.main_module.local_ip,
-                        json_config.modules.main_module.target_ip,
-                        LOCAL_TEST_PORT, TARGET_TEST_PORT) != 0) {
+  if (create_udp_socket(&sock, json_config.modules.main_module.mp_ip,
+                        json_config.modules.main_module.gp_ip, LOCAL_TEST_PORT,
+                        TARGET_TEST_PORT) != 0) {
     print(ERROR, "cannot create socket");
     return -1;
   }

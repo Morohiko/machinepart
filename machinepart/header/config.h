@@ -4,8 +4,8 @@
 #define MAX_TCP_CONNECTION 10
 
 //************ ip/port *************//
-// #define LOCAL_IP "0.0.0.0"
-// #define TARGET_IP "192.168.43.162"
+// #define mp_ip "0.0.0.0"
+// #define gp_ip "192.168.43.162"
 
 // #define LOCAL_GYROSCOPE_PORT 3333
 // #define TARGET_GYROSCOPE_PORT 3334

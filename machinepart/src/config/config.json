@@ -3,8 +3,8 @@
     "MAIN": {
       "id": 0,
       "name": "MAIN_MODULE",
-      "local_ip": "0.0.0.0",
-      "target_ip": "0.0.0.0"
+      "mp_ip": "0.0.0.0",
+      "gp_ip": "0.0.0.0"
     },
     "CAMERA": {
       "id": 1,
@@ -18,15 +18,15 @@
       "id": 2,
       "name": "CAMERA_TRANSMITTER_MODULE",
       "state": 0,
-      "local_port": 3335,
-      "target_port": 3336
+      "mp_port": 3335,
+      "gp_port": 3336
     },
     "GYROSCOPE_RECEIVER": {
       "id": 3,
       "name": "GYROSCOPE_RECEIVER_MODULE",
       "state": 0,
-      "local_port": 3333,
-      "target_port": 3334
+      "mp_port": 3333,
+      "gp_port": 3334
     },
     "MOTOR": {
       "id": 4,

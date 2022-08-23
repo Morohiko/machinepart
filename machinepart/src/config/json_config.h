@@ -4,8 +4,8 @@
 struct main_module_t {
   int id;
   char *name;
-  char *local_ip;
-  char *target_ip;
+  char *mp_ip;
+  char *gp_ip;
 };
 
 struct camera_module_t {
@@ -21,8 +21,8 @@ struct camera_transmitter_module_t {
   int id;
   char *name;
   int state;
-  int local_port;
-  int target_port;
+  int mp_port;
+  int gp_port;
   int local_ack_port;
   int target_ack_port;
 };
@@ -31,8 +31,8 @@ struct gyroscope_receiver_module_t {
   int id;
   char *name;
   int state;
-  int local_port;
-  int target_port;
+  int mp_port;
+  int gp_port;
 };
 
 struct motor_module_t {

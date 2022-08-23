@@ -78,14 +78,14 @@ static void *camera_transmitter_thread(void *user_data) {
                       pthread_self());
 
   struct connection_info_cam *conn = (struct connection_info_cam *)user_data;
-  memcpy(cam_ctx.conn.local_ip, conn->local_ip, 16);
-  memcpy(cam_ctx.conn.target_ip, conn->target_ip, 16);
+  memcpy(cam_ctx.conn.mp_ip, conn->mp_ip, 16);
+  memcpy(cam_ctx.conn.gp_ip, conn->gp_ip, 16);
 
-  cam_ctx.conn.frame_local_port = conn->frame_local_port;
-  cam_ctx.conn.frame_target_port = conn->frame_target_port;
+  cam_ctx.conn.frame_mp_port = conn->frame_mp_port;
+  cam_ctx.conn.frame_gp_port = conn->frame_gp_port;
 
-  cam_ctx.conn.ack_local_port = conn->ack_local_port;
-  cam_ctx.conn.ack_target_port = conn->ack_target_port;
+  cam_ctx.conn.ack_mp_port = conn->ack_mp_port;
+  cam_ctx.conn.ack_gp_port = conn->ack_gp_port;
 
   //    start_send_camera_data_through_udp(&cam_ctx);
   start_send_camera_data_through_tcp(&cam_ctx);
@@ -116,11 +116,11 @@ static void *gyroscope_receiver_thread(void *user_data) {
                       pthread_self());
   struct connection_info *conn = (struct connection_info *)user_data;
 
-  ctx.conn.local_port = conn->local_port;
-  memcpy(ctx.conn.local_ip, conn->local_ip, 16);
+  ctx.conn.mp_port = conn->mp_port;
+  memcpy(ctx.conn.mp_ip, conn->mp_ip, 16);
 
-  ctx.conn.target_port = conn->target_port;
-  memcpy(ctx.conn.target_ip, conn->target_ip, 16);
+  ctx.conn.gp_port = conn->gp_port;
+  memcpy(ctx.conn.gp_ip, conn->gp_ip, 16);
 
   start_receive_gyroscope_data(&ctx);
 }

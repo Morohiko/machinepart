@@ -22,82 +22,78 @@ static int configure_network(struct connection_info *conn_info_controller,
 
 #if 0 // TODO: some issue
 #ifdef GET_CUSTOM_IP_FROM_CONFIG
-  memcpy(ip_addr, json_config.modules.main_module.target_ip, 16);
+  memcpy(ip_addr, json_config.modules.main_module.gp_ip, 16);
 #else  // get ip from /proc/net/arp
-  retval = get_target_ip_addr(ip_addr);
+  retval = get_gp_ip_addr(ip_addr);
   if (retval != 0) {
-    print(ERROR, "cannot get target ip addr, retval: %d", retval);
+    print(ERROR, "cannot get gp ip addr, retval: %d", retval);
     return retval;
   }
 #endif // GET_CUSTOM_IP_FROM_CONFIG
 #endif
   // // #ifdef REMOTE_CONTROLLER
-  //     memcpy(conn_info_controller->local_ip,
-  //     json_config.modules.main_module.local_ip, 16);
-  //     memcpy(conn_info_controller->target_ip, ip_addr, 16);
+  //     memcpy(conn_info_controller->mp_ip,
+  //     json_config.modules.main_module.mp_ip, 16);
+  //     memcpy(conn_info_controller->gp_ip, ip_addr, 16);
 
-  //     assert(conn_info_controller->local_ip);
-  //     assert(conn_info_controller->target_ip);
+  //     assert(conn_info_controller->mp_ip);
+  //     assert(conn_info_controller->gp_ip);
 
-  //     conn_info_controller->local_port = LOCAL_CONTROLLER_PORT;
-  //     conn_info_controller->target_port = TARGET_CONTROLLER_PORT;
+  //     conn_info_controller->mp_port = LOCAL_CONTROLLER_PORT;
+  //     conn_info_controller->gp_port = TARGET_CONTROLLER_PORT;
 
-  //     print(INFO, "selected controller connection:\n local ip: %s, target ip:
-  //     %s, local port: %d, target port: %d",
-  //                 conn_info_controller->local_ip,
-  //                 conn_info_controller->target_ip,
-  //                 conn_info_controller->local_port,
-  //                 conn_info_controller->target_port);
+  //     print(INFO, "selected controller connection:\n mp ip: %s, gp ip:
+  //     %s, mp port: %d, gp port: %d",
+  //                 conn_info_controller->mp_ip,
+  //                 conn_info_controller->gp_ip,
+  //                 conn_info_controller->mp_port,
+  //                 conn_info_controller->gp_port);
   // // #endif // REMOTE_CONTROLLER
 
 #ifdef ENABLE_GYROSCOPE_RECEIVER
-  memcpy(conn_info_gyroscope->local_ip,
-         json_config.modules.main_module.local_ip, 16);
-  memcpy(conn_info_gyroscope->target_ip,
-         json_config.modules.main_module.target_ip, 16);
+  memcpy(conn_info_gyroscope->mp_ip, json_config.modules.main_module.mp_ip, 16);
+  memcpy(conn_info_gyroscope->gp_ip, json_config.modules.main_module.gp_ip, 16);
 
-  assert(conn_info_gyroscope->local_ip);
-  assert(conn_info_gyroscope->target_ip);
+  assert(conn_info_gyroscope->mp_ip);
+  assert(conn_info_gyroscope->gp_ip);
 
-  conn_info_gyroscope->local_port =
-      json_config.modules.gyroscope_receiver_module.local_port;
-  conn_info_gyroscope->target_port =
-      json_config.modules.gyroscope_receiver_module.target_port;
+  conn_info_gyroscope->mp_port =
+      json_config.modules.gyroscope_receiver_module.mp_port;
+  conn_info_gyroscope->gp_port =
+      json_config.modules.gyroscope_receiver_module.gp_port;
   print(INFO,
-        "selected gyroscope connection:\n local ip: %s, target ip: %s, local "
-        "port: %d, target port: %d",
-        conn_info_gyroscope->local_ip, conn_info_gyroscope->target_ip,
-        conn_info_gyroscope->local_port, conn_info_gyroscope->target_port);
+        "selected gyroscope connection:\n mp ip: %s, gp ip: %s, local "
+        "port: %d, gp port: %d",
+        conn_info_gyroscope->mp_ip, conn_info_gyroscope->gp_ip,
+        conn_info_gyroscope->mp_port, conn_info_gyroscope->gp_port);
 #endif // ENABLE_GYROSCOPE_RECEIVER
 
 #ifdef ENABLE_CAMERA
   // install connection info for camera frame
-  memcpy(conn_info_camera->local_ip, json_config.modules.main_module.local_ip,
-         16);
-  memcpy(conn_info_camera->target_ip, json_config.modules.main_module.target_ip,
-         16);
+  memcpy(conn_info_camera->mp_ip, json_config.modules.main_module.mp_ip, 16);
+  memcpy(conn_info_camera->gp_ip, json_config.modules.main_module.gp_ip, 16);
 
-  assert(conn_info_camera->local_ip);
-  assert(conn_info_camera->target_ip);
+  assert(conn_info_camera->mp_ip);
+  assert(conn_info_camera->gp_ip);
 
   // configure camera frame port
-  conn_info_camera->frame_local_port =
-      json_config.modules.camera_transmitter_module.local_port;
-  conn_info_camera->frame_target_port =
-      json_config.modules.camera_transmitter_module.target_port;
+  conn_info_camera->frame_mp_port =
+      json_config.modules.camera_transmitter_module.mp_port;
+  conn_info_camera->frame_gp_port =
+      json_config.modules.camera_transmitter_module.gp_port;
   // configure camera ack port
-  conn_info_camera->ack_local_port =
+  conn_info_camera->ack_mp_port =
       json_config.modules.camera_transmitter_module.local_ack_port;
-  conn_info_camera->ack_target_port =
+  conn_info_camera->ack_gp_port =
       json_config.modules.camera_transmitter_module.target_ack_port;
 
   print(INFO,
-        "selected camera frame connection:\n local ip: %s, target ip: %s, "
-        "frame local port: %d, frame target port: %d, ack local port: %d, ack "
-        "target port: %d",
-        conn_info_camera->local_ip, conn_info_camera->target_ip,
-        conn_info_camera->frame_local_port, conn_info_camera->frame_target_port,
-        conn_info_camera->ack_local_port, conn_info_camera->ack_target_port);
+        "selected camera frame connection:\n mp ip: %s, gp ip: %s, "
+        "frame mp port: %d, frame gp port: %d, ack mp port: %d, ack "
+        "gp port: %d",
+        conn_info_camera->mp_ip, conn_info_camera->gp_ip,
+        conn_info_camera->frame_mp_port, conn_info_camera->frame_gp_port,
+        conn_info_camera->ack_mp_port, conn_info_camera->ack_gp_port);
 #endif // ENABLE_CAMERA
   return 0;
 }
