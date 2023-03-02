@@ -1,4 +1,4 @@
-# preconfigure environment
+#preconfigure environment
 
 defaule logi: pi
 default pwd: raspberry
@@ -35,7 +35,7 @@ to /etc/network/interfaces
 ## start ssh server on boot
 sudo systemctl enable ssh
 
-# install environment for machinepart
+#install environment for machinepart
 
 sudo apt update
 sudo apt upgrade
@@ -78,7 +78,7 @@ TODO: fully deprecate OpenCV
     sudo apt-get -y install libopencore-amrnb-dev libopencore-amrwb-dev
     sudo apt-get -y install libavresample-dev
     sudo apt-get -y install x264 v4l-utils
- 
+ci
 ### Optional dependencies
     sudo apt-get -y install libprotobuf-dev protobuf-compiler
     sudo apt-get -y install libgoogle-glog-dev libgflags-dev

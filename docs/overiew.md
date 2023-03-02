@@ -58,4 +58,6 @@ Provide example of functional for using communication with client part through U
 
 ### Gyroscope data receiver demo
 
-Provide example of functional for using receive gyroscope data from client and try parse it to x, y, z coordinates.
+Provide example of functional for using receive gyroscope data from client and
+try
+parse it to x, y, z coordinates.
