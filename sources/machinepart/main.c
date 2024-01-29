@@ -160,11 +160,25 @@ static void init_signals()
 int main(int argc, char **argv)
 {
     hm_log_info("main: ======== Start Machinepart =======\n");
-    int ret = 0;
+
+    // Process command-line options
+    int option;
     char *config = NULL;
-    if (argc == 2) {
-        config = argv[1];
-    } else if (argc < 2) {
+    while ((option = getopt(argc, argv, "cdf:")) != -1) {
+        switch (option) {
+        case 'd':
+            hm_log_info("main: run as a daemon\n");
+            break;
+        case 'f':
+            config = optarg;
+            break;
+        default:
+            hm_log_error("main: invalid args\n");
+            return -1;
+        }
+    }
+
+    if (config == NULL) {
         config = JSON_CONFIG_FILE;
     }
 
@@ -178,7 +192,7 @@ int main(int argc, char **argv)
     init_signals();
 
     // init machinepart
-    machinepart = (machinepart_t*) malloc(sizeof(machinepart_t));
+    machinepart = (machinepart_t *)malloc(sizeof(machinepart_t));
     memset(machinepart, '\0', sizeof(machinepart_t));
 
     // init json_config
@@ -196,7 +210,7 @@ int main(int argc, char **argv)
         hm_log_error("main: can`t init shell_server\n");
         goto exit;
     }
-    ret = init_shell_server_commands(machinepart->shell_server);
+    int ret = init_shell_server_commands(machinepart->shell_server);
     if (ret) {
         hm_log_error("main: can`t init shell commands\n");
         goto exit;
